@@ -3,14 +3,24 @@ package main
 import (
 	"CyclicDungeonGenerator/layout_generation"
 	cw "TCellConsoleWrapper"
+	rnd "github.com/sidav/goLibRL/random"
 )
 
 func main() {
 	cw.Init_console()
 	defer cw.Close_console()
 
+	rnd.Randomize()
+	//for i:=0;i<10000;i++ {
+	//	x, y := rnd.RandomCoordsInRangeFrom(40, 12, 10)
+	//	cw.PutChar('#', x, y)
+	//}
+	//cw.Flush_console()
+	//cw.ReadKey()
+
 	generatedMap := layout_generation.Generate()
 	putMap(generatedMap)
+	cw.Flush_console()
 	cw.ReadKey()
 }
 

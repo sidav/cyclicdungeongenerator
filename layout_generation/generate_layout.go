@@ -4,14 +4,12 @@ import rnd "github.com/sidav/goLibRL/random"
 import "github.com/sidav/golibrl/astar"
 
 var (
-	size        = 10
+	size        = 8
 	divisor  = 3
 	layout = LayoutMap{}
 )
 
 const (
-	null_rune     = rune(0)
-	temp_obstacle = ';'
 )
 
 func Generate() *LayoutMap {
@@ -20,21 +18,20 @@ func Generate() *LayoutMap {
 	layout.init(size, size)
 
 	// place beginning randomly
-	fx, fy := rnd.Random(size/divisor), rnd.Random(size/divisor)
+	fx, fy := 1, 1 // rnd.Random(size/divisor), rnd.Random(size/divisor)
 	layout.placeNodeAtCoords(fx, fy, 'S')
 
 	// place end randomly
-	tx, ty := size-1-rnd.Random(size/divisor), size-1-rnd.Random(size/divisor)
+	tx, ty := size-2, size-2 // size-1-rnd.Random(size/divisor), size-1-rnd.Random(size/divisor)
 	layout.placeNodeAtCoords(tx, ty, 'F')
 
 	// place big obstacle in center and some random obstacles for path to be less straight
-	for i := 0; i < size/3+1; i++ {
-		for j := 0; j < size/3+1; j++ {
-			layout.placeObstacleAtCoords(size/3+i, size/3+j)
+	for i := -size/4; i < size/4; i++ {
+		for j := -size/4; j < size/4; j++ {
+			layout.placeObstacleAtCoords(size/2+i, size/2+j)
 		}
 	}
-
-	rnd_obstcls_count := rnd.RandInRange(size/2, size/2+size/4)
+	rnd_obstcls_count := rnd.RandInRange(size/2, size/2+size/2)
 	placeTempObstacles(rnd_obstcls_count)
 
 	// draw the path itself
@@ -46,10 +43,9 @@ func Generate() *LayoutMap {
 	layout.removeAllObstacles()
 
 	// add node to path
-
 	nx, ny := layout.getRandomPathCell(-1)
 	layout.placeNodeAtCoords(nx, ny, 'N')
-
+	// place new obstacles and draw a path
 	placeTempObstacles(5)
 	findAndDrawPathFromTo(nx, ny, tx, ty, 3)
 
@@ -94,7 +90,10 @@ func getPassabilityMapForPathfinder() *[][]int {
 
 func placeTempObstacles(count int) {
 	for i := 0; i < count; i++ {
-		x, y := layout.getRandomEmptyCellCoords()
+		x, y := 0, 0
+		for x*y == 0 || x == size-1 || y == size-1 {
+			x, y = layout.getRandomEmptyCellCoords()
+		}
 		layout.placeObstacleAtCoords(x, y)
 	}
 }
