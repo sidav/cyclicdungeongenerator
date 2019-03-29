@@ -1,12 +1,12 @@
-package cyc_dung_gen
+package layout_generation
 
 import rnd "github.com/sidav/goLibRL/random"
 import "github.com/sidav/golibrl/astar"
 
 var (
-	size    = 10
-	divisor = 3
-	lay     [][]rune
+	size        = 10
+	divisor  = 3
+	layout = LayoutMap{}
 )
 
 const (
@@ -14,25 +14,23 @@ const (
 	temp_obstacle = ';'
 )
 
-func Generate() *[][]rune {
+func Generate() *LayoutMap {
 	rnd.Randomize()
 
-	lay = make([][]rune, size)
-	for i := range lay {
-		lay[i] = make([]rune, size)
-	}
+	layout.init(size, size)
+
 	// place beginning randomly
 	fx, fy := rnd.Random(size/divisor), rnd.Random(size/divisor)
-	lay[fx][fy] = 'S'
+	layout.placeNodeAtCoords(fx, fy, 'S')
 
 	// place end randomly
 	tx, ty := size-1-rnd.Random(size/divisor), size-1-rnd.Random(size/divisor)
-	lay[tx][ty] = 'F'
+	layout.placeNodeAtCoords(tx, ty, 'F')
 
 	// place big obstacle in center and some random obstacles for path to be less straight
 	for i := 0; i < size/3+1; i++ {
 		for j := 0; j < size/3+1; j++ {
-			lay[size/3+i][size/3+j] = temp_obstacle
+			layout.placeObstacleAtCoords(size/3+i, size/3+j)
 		}
 	}
 
@@ -40,40 +38,30 @@ func Generate() *[][]rune {
 	placeTempObstacles(rnd_obstcls_count)
 
 	// draw the path itself
-	findAndDrawPathFromTo(fx, fy, tx, ty)
+	findAndDrawPathFromTo(fx, fy, tx, ty, 1)
 
 	// draw the second path
-	findAndDrawPathFromTo(fx, fy, tx, ty)
+	findAndDrawPathFromTo(fx, fy, tx, ty, 2)
 
-	clearTemps()
+	layout.removeAllObstacles()
 
 	// add node to path
 
-	nx, ny := getRandomCoordsWithChar('*')
-	lay[nx][ny] = 'N'
+	nx, ny := layout.getRandomPathCell(-1)
+	layout.placeNodeAtCoords(nx, ny, 'N')
 
 	placeTempObstacles(5)
-	findAndDrawPathFromTo(nx, ny, tx, ty)
+	findAndDrawPathFromTo(nx, ny, tx, ty, 3)
 
-	// addNodeToPathAtRandom()
-	// shit dots on empty cells
-	for x := 0; x < size; x++ {
-		for y := 0; y < size; y++ {
-			if lay[x][y] == null_rune {
-				lay[x][y] = '.'
-			}
-		}
-	}
-
-	return &lay
+	return &layout
 }
 
 func addNodeToPathAtRandom() {
-	x, y := getRandomCoordsWithChar('*')
-	lay[x][y] = 'N'
+	nx, ny := layout.getRandomPathCell(-1)
+	layout.placeNodeAtCoords(nx, ny, 'N')
 }
 
-func findAndDrawPathFromTo(fx, fy, tx, ty int) {
+func findAndDrawPathFromTo(fx, fy, tx, ty, pathNumber int) {
 	pmap := getPassabilityMapForPathfinder()
 	path := astar.FindPath(pmap, fx, fy, tx, ty, false, true)
 	if path == nil {
@@ -82,7 +70,7 @@ func findAndDrawPathFromTo(fx, fy, tx, ty int) {
 	for path.Child != nil {
 		path = path.Child
 		x, y := path.GetCoords()
-		lay[x][y] = '*'
+		layout.placePathAtCoords(x, y, pathNumber)
 	}
 }
 
@@ -94,7 +82,7 @@ func getPassabilityMapForPathfinder() *[][]int {
 
 	for x := 0; x < size; x++ {
 		for y := 0; y < size; y++ {
-			if lay[x][y] == null_rune {
+			if layout.areCoordsEmpty(x, y) {
 				pmap[x][y] = 1
 			} else {
 				pmap[x][y] = -1
@@ -104,28 +92,9 @@ func getPassabilityMapForPathfinder() *[][]int {
 	return &pmap
 }
 
-func getRandomCoordsWithChar(chr rune) (int, int) {
-	x, y := rnd.Random(size), rnd.Random(size)
-	for lay[x][y] != chr {
-		x, y = rnd.Random(size), rnd.Random(size)
-	}
-	return x, y
-}
-
 func placeTempObstacles(count int) {
 	for i := 0; i < count; i++ {
-		x, y := getRandomCoordsWithChar(null_rune)
-		lay[x][y] = temp_obstacle
-	}
-
-}
-
-func clearTemps() {
-	for x := 0; x < size; x++ {
-		for y := 0; y < size; y++ {
-			if lay[x][y] == temp_obstacle {
-				lay[x][y] = null_rune
-			}
-		}
+		x, y := layout.getRandomEmptyCellCoords()
+		layout.placeObstacleAtCoords(x, y)
 	}
 }
