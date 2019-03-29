@@ -35,11 +35,9 @@ func Generate() *[][]rune {
 			lay[size/3+i][size/3+j] = temp_obstacle
 		}
 	}
-	rnd_obstcls_count := rnd.RandInRange(size/2, size)
-	for i := 0; i < rnd_obstcls_count; i++ {
-		x, y := getRandomCoordsWithChar(null_rune)
-		lay[x][y] = temp_obstacle
-	}
+
+	rnd_obstcls_count := rnd.RandInRange(size/2, size/2+size/4)
+	placeTempObstacles(rnd_obstcls_count)
 
 	// draw the path itself
 	findAndDrawPathFromTo(fx, fy, tx, ty)
@@ -48,6 +46,16 @@ func Generate() *[][]rune {
 	findAndDrawPathFromTo(fx, fy, tx, ty)
 
 	clearTemps()
+
+	// add node to path
+
+	nx, ny := getRandomCoordsWithChar('*')
+	lay[nx][ny] = 'N'
+
+	placeTempObstacles(5)
+	findAndDrawPathFromTo(nx, ny, tx, ty)
+
+	// addNodeToPathAtRandom()
 	// shit dots on empty cells
 	for x := 0; x < size; x++ {
 		for y := 0; y < size; y++ {
@@ -58,6 +66,11 @@ func Generate() *[][]rune {
 	}
 
 	return &lay
+}
+
+func addNodeToPathAtRandom() {
+	x, y := getRandomCoordsWithChar('*')
+	lay[x][y] = 'N'
 }
 
 func findAndDrawPathFromTo(fx, fy, tx, ty int) {
@@ -97,6 +110,14 @@ func getRandomCoordsWithChar(chr rune) (int, int) {
 		x, y = rnd.Random(size), rnd.Random(size)
 	}
 	return x, y
+}
+
+func placeTempObstacles(count int) {
+	for i := 0; i < count; i++ {
+		x, y := getRandomCoordsWithChar(null_rune)
+		lay[x][y] = temp_obstacle
+	}
+
 }
 
 func clearTemps() {
