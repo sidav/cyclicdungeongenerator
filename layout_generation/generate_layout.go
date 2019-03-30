@@ -4,7 +4,7 @@ import rnd "github.com/sidav/goLibRL/random"
 import "github.com/sidav/golibrl/astar"
 
 var (
-	size        = 8
+	size        = 5
 	divisor  = 3
 	layout = LayoutMap{}
 )
@@ -46,7 +46,7 @@ func Generate() *LayoutMap {
 	nx, ny := layout.getRandomPathCell(-1)
 	layout.placeNodeAtCoords(nx, ny, 'N')
 	// place new obstacles and draw a path
-	placeTempObstacles(5)
+	// placeTempObstacles(2)
 	findAndDrawPathFromTo(nx, ny, tx, ty, 3)
 
 	return &layout
