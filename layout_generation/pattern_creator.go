@@ -12,6 +12,8 @@ var patterns_array = [][]*patternStep{
 		// draw two paths
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "Start", nameTo: "Finish"},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "Start", nameTo: "Finish"},
+		// clear temp obstacles
+		&patternStep{actionType: ACTION_CLEAR_OBSTACLES},
 	},
 }
 

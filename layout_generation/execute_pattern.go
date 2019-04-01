@@ -3,13 +3,12 @@ package layout_generation
 import rnd "github.com/sidav/golibrl/random"
 import "github.com/sidav/golibrl/astar"
 
-//ACTION_PLACE_NODE_AT_EMPTY    = iota
 //ACTION_PLACE_NODE_AT_PATH     = iota
 //ACTION_PLACE_NODE_NEAR_PATH   = iota
-//ACTION_PLACE_PATH_FROM_TO     = iota
-//ACTION_PLACE_OBSTACLE_IN_CENTER        = iota
-//ACTION_PLACE_RANDOM_OBSTACLES = iota
-//ACTION_CLEAR_OBSTACLES        = iota
+
+var (
+	currPathNumber = 1
+)
 
 
 func execPatternStep(step *patternStep) {
@@ -22,6 +21,8 @@ func execPatternStep(step *patternStep) {
 		execPlaceRandomObstacles(step)
 	case ACTION_PLACE_PATH_FROM_TO:
 		execPlacePathFromTo(step)
+	case ACTION_CLEAR_OBSTACLES:
+		execClearObstacles()
 	}
 }
 
@@ -68,8 +69,13 @@ func execPlacePathFromTo(step *patternStep) {
 	for path.Child != nil {
 		path = path.Child
 		x, y := path.GetCoords()
-		layout.placePathAtCoords(x, y, 1)
+		layout.placePathAtCoords(x, y, currPathNumber)
 	}
+	currPathNumber++
+}
+
+func execClearObstacles() {
+	layout.removeAllObstacles()
 }
 
 // technical shit below
