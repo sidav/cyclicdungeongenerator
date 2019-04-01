@@ -8,47 +8,45 @@ import "github.com/sidav/golibrl/astar"
 //ACTION_PLACE_NODE_AT_PATH     = iota
 //ACTION_PLACE_NODE_NEAR_PATH   = iota
 
-var (
-	currPathNumber = 1
-)
-
-
-func execPatternStep(step *patternStep) {
+func execPatternStep(step *patternStep) bool {
 	switch step.actionType {
 	case ACTION_PLACE_NODE_AT_EMPTY:
-		execPlaceNodeAtEmpty(step)
+		return execPlaceNodeAtEmpty(step)
 	case ACTION_PLACE_OBSTACLE_IN_CENTER:
-		execPlaceObstacleInCenter(step)
+		return execPlaceObstacleInCenter(step)
 	case ACTION_PLACE_RANDOM_OBSTACLES:
-		execPlaceRandomObstacles(step)
+		return execPlaceRandomObstacles(step)
 	case ACTION_PLACE_PATH_FROM_TO:
-		execPlacePathFromTo(step)
+		return execPlacePathFromTo(step)
 	case ACTION_CLEAR_OBSTACLES:
-		execClearObstacles()
+		return execClearObstacles()
 	case ACTION_PLACE_NODE_NEAR_PATH:
-		execPlaceNodeNearPath(step)
+		return execPlaceNodeNearPath(step)
 	}
+	return true
 }
 
-func execPlaceNodeAtEmpty(step *patternStep) {
+func execPlaceNodeAtEmpty(step *patternStep) bool {
 	const tries = 25
 	for try := 0; try < tries; try++ {
 		x, y := getRandomCoordsForStep(step)
 		if layout.areCoordsEmpty(x, y) {
 			layout.placeNodeAtCoords(x, y, step.nameOfNode)
-			return
+			return true
 		}
 	}
+	return false
 	panic("execPlaceNodeAtEmpty: Node " + step.nameOfNode + " refuses to be placed!")
 }
 
-func execPlaceNodeNearPath(step *patternStep) {
+func execPlaceNodeNearPath(step *patternStep) bool {
 	num := step.pathNumber
 	x, y :=  layout.getRandomCellNearPath(num)
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
+	return true
 }
 
-func execPlaceObstacleInCenter(step *patternStep) {
+func execPlaceObstacleInCenter(step *patternStep) bool {
 	obstSize := step.obstacleRadius
 	cx, cy := size/2, size/2
 	//if size % 2 == 1 {
@@ -62,9 +60,10 @@ func execPlaceObstacleInCenter(step *patternStep) {
 			}
 		}
 	}
+	return true
 }
 
-func execPlaceRandomObstacles(step *patternStep) {
+func execPlaceRandomObstacles(step *patternStep) bool {
 	count := getRandomCountForStep(step)
 	for i := 0; i < count; i++ {
 		x, y := layout.getRandomEmptyCellCoords()
@@ -72,26 +71,28 @@ func execPlaceRandomObstacles(step *patternStep) {
 			layout.placeObstacleAtCoords(x, y)
 		}
 	}
+	return true
 }
 
-func execPlacePathFromTo(step *patternStep) {
+func execPlacePathFromTo(step *patternStep) bool {
 	pmap := layout.getPassabilityMapForPathfinder()
 	fx, fy := layout.getCoordsOfNode(step.nameFrom)
 	tx, ty := layout.getCoordsOfNode(step.nameTo)
 	path := astar.FindPath(pmap, fx, fy, tx, ty, false, false, true)
 	if path == nil {
-		return
+		return false
 	}
 	for path.Child != nil {
 		path = path.Child
 		x, y := path.GetCoords()
-		layout.placePathAtCoords(x, y, currPathNumber)
+		layout.placePathAtCoords(x, y, step.pathNumber)
 	}
-	currPathNumber++
+	return true
 }
 
-func execClearObstacles() {
+func execClearObstacles() bool {
 	layout.removeAllObstacles()
+	return true
 }
 
 // technical shit below
