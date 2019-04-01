@@ -7,9 +7,6 @@ import (
 )
 
 func main() {
-	cw.Init_console()
-	defer cw.Close_console()
-
 	rnd.Randomize()
 	//for i:=0;i<10000;i++ {
 	//	x, y := rnd.RandomCoordsInRangeFrom(40, 12, 10)
@@ -19,6 +16,10 @@ func main() {
 	//cw.ReadKey()
 
 	generatedMap := layout_generation.Generate()
+
+	cw.Init_console()
+	defer cw.Close_console()
+
 	putMap(generatedMap)
 	cw.Flush_console()
 	cw.ReadKey()

@@ -1,6 +1,8 @@
 package layout_generation
 
-import rnd "github.com/sidav/golibrl/random"
+import (
+	rnd "github.com/sidav/golibrl/random"
+)
 import "github.com/sidav/golibrl/astar"
 
 //ACTION_PLACE_NODE_AT_PATH     = iota
@@ -23,11 +25,19 @@ func execPatternStep(step *patternStep) {
 		execPlacePathFromTo(step)
 	case ACTION_CLEAR_OBSTACLES:
 		execClearObstacles()
+	case ACTION_PLACE_NODE_NEAR_PATH:
+		execPlaceNodeNearPath(step)
 	}
 }
 
 func execPlaceNodeAtEmpty(step *patternStep) {
 	x, y :=  getRandomCoordsForStep(step)
+	layout.placeNodeAtCoords(x, y, step.nameOfNode)
+}
+
+func execPlaceNodeNearPath(step *patternStep) {
+	num := step.pathNumber
+	x, y :=  layout.getRandomCellNearPath(num)
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
 }
 
@@ -50,11 +60,10 @@ func execPlaceObstacleInCenter(step *patternStep) {
 func execPlaceRandomObstacles(step *patternStep) {
 	count := getRandomCountForStep(step)
 	for i := 0; i < count; i++ {
-		x, y := 0, 0
-		for x*y == 0 || x == size-1 || y == size-1 {
-			x, y = layout.getRandomEmptyCellCoords()
+		x, y := layout.getRandomEmptyCellCoords()
+		if !(x*y == 0 || x == size-1 || y == size-1) {
+			layout.placeObstacleAtCoords(x, y)
 		}
-		layout.placeObstacleAtCoords(x, y)
 	}
 }
 

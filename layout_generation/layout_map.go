@@ -5,7 +5,8 @@ import (
 	"strconv"
 )
 
-type LayoutMap struct {// room map with connections or smth
+type LayoutMap struct {
+	// room map with connections or smth
 	elements [][] *element
 }
 
@@ -14,15 +15,15 @@ func (r *LayoutMap) init(sizex, sizey int) {
 	for i := range r.elements {
 		r.elements[i] = make([]*element, size)
 	}
-	for x:=0;x<sizex;x++{
-		for y :=0; y <sizey; y++{
+	for x := 0; x < sizex; x++ {
+		for y := 0; y < sizey; y++ {
 			r.elements[x][y] = &element{}
 		}
 	}
 }
 
 func (r *LayoutMap) placeNodeAtCoords(x, y int, nodeName string) {
-	r.elements[x][y].nodeInfo = &node_cell{nodeName:nodeName}
+	r.elements[x][y].nodeInfo = &node_cell{nodeName: nodeName}
 }
 
 func (r *LayoutMap) placePathAtCoords(x, y int, pathNum int) {
@@ -34,8 +35,8 @@ func (r *LayoutMap) placeObstacleAtCoords(x, y int) {
 }
 
 func (r *LayoutMap) removeAllObstacles() {
-	for x:=0;x<len(r.elements);x++{
-		for y :=0; y <len(r.elements[0]); y++{
+	for x := 0; x < len(r.elements); x++ {
+		for y := 0; y < len(r.elements[0]); y++ {
 			r.elements[x][y].isObstacle = false
 		}
 	}
@@ -43,18 +44,38 @@ func (r *LayoutMap) removeAllObstacles() {
 
 func (r *LayoutMap) getRandomPathCell(desiredPathNum int) (int, int) { // desiredPathNum -1 means any path
 	x, y := rnd.Random(size), rnd.Random(size)
-	for !r.elements[x][y].isPartOfAPath() || (desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber)  {
+	const tries = 40
+	try := 0
+	for try < tries && !r.elements[x][y].isPartOfAPath() || (desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber) {
+		try++
 		x, y = rnd.Random(size), rnd.Random(size)
 	}
 	return x, y
 }
 
-func (r *LayoutMap) getRandomEmptyCellCoords() (int, int) { // desiredPathNum -1 means any path
-	x, y := rnd.Random(size), rnd.Random(size)
-	for !r.elements[x][y].isEmpty()  {
-		x, y = rnd.Random(size), rnd.Random(size)
+func (r *LayoutMap) getRandomCellNearPath(pathNum int) (int, int) {
+	const tries = 10
+	for try := 0; try < tries; try++ {
+		px, py := r.getRandomPathCell(pathNum)
+		for try2 := 0; try2 < tries; try2++ {
+			x, y := rnd.RandInRange(px-1, px+1), rnd.RandInRange(py-1, py+1)
+			if x >= 0 && y >= 0 && x < len(r.elements) && y < len(r.elements[0]) && r.elements[x][y].isEmpty() {
+				return x, y
+			}
+		}
 	}
-	return x, y
+	return -1, -1
+}
+
+func (r *LayoutMap) getRandomEmptyCellCoords() (int, int) { // desiredPathNum -1 means any path
+	const tries = 25
+	for i := 0; i < tries; i++ {
+		x, y := rnd.Random(size), rnd.Random(size)
+		if r.elements[x][y].isEmpty() {
+			return x, y
+		}
+	}
+	return -1, -1
 }
 
 func (r *LayoutMap) areCoordsEmpty(x, y int) bool {
@@ -62,14 +83,14 @@ func (r *LayoutMap) areCoordsEmpty(x, y int) bool {
 }
 
 func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
-	for x:=0;x<len(r.elements);x++{
-		for y :=0; y <len(r.elements[0]); y++{
+	for x := 0; x < len(r.elements); x++ {
+		for y := 0; y < len(r.elements[0]); y++ {
 			if r.elements[x][y].isNode() && r.elements[x][y].nodeInfo.nodeName == nodeName {
 				return x, y
 			}
 		}
 	}
-	panic("fuck")
+	panic("getCoordsOfNode failed with node "+nodeName)
 	return -1, -1
 }
 
@@ -85,7 +106,7 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 	if elem.isEmpty() {
 		return '.'
 	}
-	if elem.isObstacle{
+	if elem.isObstacle {
 		return '#'
 	}
 	if elem.isNode() {
@@ -115,4 +136,3 @@ func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
 	}
 	return &pmap
 }
-
