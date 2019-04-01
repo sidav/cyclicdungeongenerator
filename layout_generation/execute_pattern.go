@@ -31,8 +31,15 @@ func execPatternStep(step *patternStep) {
 }
 
 func execPlaceNodeAtEmpty(step *patternStep) {
-	x, y :=  getRandomCoordsForStep(step)
-	layout.placeNodeAtCoords(x, y, step.nameOfNode)
+	const tries = 25
+	for try := 0; try < tries; try++ {
+		x, y := getRandomCoordsForStep(step)
+		if layout.areCoordsEmpty(x, y) {
+			layout.placeNodeAtCoords(x, y, step.nameOfNode)
+			return
+		}
+	}
+	panic("execPlaceNodeAtEmpty: Node " + step.nameOfNode + " refuses to be placed!")
 }
 
 func execPlaceNodeNearPath(step *patternStep) {
@@ -71,7 +78,7 @@ func execPlacePathFromTo(step *patternStep) {
 	pmap := layout.getPassabilityMapForPathfinder()
 	fx, fy := layout.getCoordsOfNode(step.nameFrom)
 	tx, ty := layout.getCoordsOfNode(step.nameTo)
-	path := astar.FindPath(pmap, fx, fy, tx, ty, false, true)
+	path := astar.FindPath(pmap, fx, fy, tx, ty, false, false, true)
 	if path == nil {
 		return
 	}

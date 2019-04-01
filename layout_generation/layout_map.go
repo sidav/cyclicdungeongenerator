@@ -46,7 +46,7 @@ func (r *LayoutMap) getRandomPathCell(desiredPathNum int) (int, int) { // desire
 	x, y := rnd.Random(size), rnd.Random(size)
 	const tries = 40
 	try := 0
-	for try < tries && !r.elements[x][y].isPartOfAPath() || (desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber) {
+	for try < tries && (!r.elements[x][y].isPartOfAPath() || (desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber)) {
 		try++
 		x, y = rnd.Random(size), rnd.Random(size)
 	}
