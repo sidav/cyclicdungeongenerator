@@ -3,7 +3,7 @@ package main
 import (
 	"CyclicDungeonGenerator/layout_generation"
 	cw "TCellConsoleWrapper"
-	rnd "github.com/sidav/goLibRL/random"
+	rnd "github.com/sidav/golibrl/random"
 )
 
 func main() {

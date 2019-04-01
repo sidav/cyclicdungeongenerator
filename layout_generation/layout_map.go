@@ -1,7 +1,7 @@
 package layout_generation
 
 import (
-	rnd "github.com/sidav/goLibRL/random"
+	rnd "github.com/sidav/golibrl/random"
 	"strconv"
 )
 
@@ -21,8 +21,8 @@ func (r *LayoutMap) init(sizex, sizey int) {
 	}
 }
 
-func (r *LayoutMap) placeNodeAtCoords(x, y int, nodeRune rune) {
-	r.elements[x][y].nodeInfo = &node_cell{nodeChar: nodeRune}
+func (r *LayoutMap) placeNodeAtCoords(x, y int, nodeName string) {
+	r.elements[x][y].nodeInfo = &node_cell{nodeName:nodeName}
 }
 
 func (r *LayoutMap) placePathAtCoords(x, y int, pathNum int) {
@@ -61,6 +61,18 @@ func (r *LayoutMap) areCoordsEmpty(x, y int) bool {
 	return r.elements[x][y].isEmpty()
 }
 
+func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
+	for x:=0;x<len(r.elements);x++{
+		for y :=0; y <len(r.elements[0]); y++{
+			if r.elements[x][y].isNode() && r.elements[x][y].nodeInfo.nodeName == nodeName {
+				return x, y
+			}
+		}
+	}
+	panic("fuck")
+	return -1, -1
+}
+
 // exported
 
 func (r *LayoutMap) GetSize() (int, int) {
@@ -77,7 +89,7 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 		return '#'
 	}
 	if elem.isNode() {
-		return elem.nodeInfo.nodeChar
+		return rune(elem.nodeInfo.nodeName[0])
 	}
 	if elem.isPartOfAPath() {
 		number := elem.pathInfo.pathNumber
@@ -85,3 +97,22 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 	}
 	return '?'
 }
+
+func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
+	pmap := make([][]int, size)
+	for i := range pmap {
+		pmap[i] = make([]int, size)
+	}
+
+	for x := 0; x < size; x++ {
+		for y := 0; y < size; y++ {
+			if layout.areCoordsEmpty(x, y) {
+				pmap[x][y] = 1
+			} else {
+				pmap[x][y] = -1
+			}
+		}
+	}
+	return &pmap
+}
+
