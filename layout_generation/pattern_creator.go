@@ -59,3 +59,7 @@ func getRandomPatternNumber() int {
 	patternNumber := rnd.Random(len(patterns_array))
 	return patternNumber
 }
+
+func getTotalPatternsNumber() int {
+	return len(patterns_array)
+}

@@ -41,9 +41,23 @@ generationStart:
 
 // benchmarking below
 
-func getTriesAndSuccessForGeneration(patternNumber int) (int, bool) {
-	rnd.Randomize()
+func Benchmark(patternNum int) {
+	if patternNum == -1 {
+		fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
+		for i := 0; i < getTotalPatternsNumber(); i++ {
+			benchmarkPattern(i)
+		}
+	} else {
+		fmt.Printf("\rBENCHMARKING PATTERN %d:\n", patternNum)
+		benchmarkPattern(patternNum)
+	}
+	fmt.Printf("Benchmark finished. Press Enter. \n")
+	var input string
+	fmt.Scanln(&input)
+}
 
+func getCharmapAndTriesAndSuccessForGeneration(patternNumber int) (*[][]rune, int, bool) {
+	rnd.Randomize()
 	const triesForPattern = 1000
 
 	if patternNumber == -1 {
@@ -61,21 +75,27 @@ generationStart:
 				continue generationStart
 			}
 		}
-		return patternTry, true
+		return layout.WholeMapToCharArray(), patternTry, true
 	}
-	// fmt.Printf("Generation failed for pattern #%d after %d tries\n", patternNumber, triesForPattern)
-	return triesForPattern, false
+	return nil, triesForPattern, false
 }
 
-func Benchmark(patternNum int) {
+func benchmarkPattern(patternNum int) {
 	const benchLoopsForPattern = 100000
+	generatedMaps := make([]*[][]rune, 0)
 	maxSteps := 0
 	minSteps := 99999999
 	stepsSum := 0
 	fails := 0
+	repeats := 0
 	for loopNum := 0; loopNum < benchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, benchLoopsForPattern, 20)
-		tries , success := getTriesAndSuccessForGeneration(patternNum)
+		cMap, tries , success := getCharmapAndTriesAndSuccessForGeneration(patternNum)
+		if !isCharmapAlreadyInArray(cMap, &generatedMaps) {
+			generatedMaps = append(generatedMaps, cMap)
+		} else {
+			repeats ++
+		}
 		stepsSum += tries
 		if maxSteps < tries {
 			maxSteps = tries
@@ -90,6 +110,31 @@ func Benchmark(patternNum int) {
 
 	fmt.Printf("Pattern #%d, min tries %d, max tries %d, mean tries number %f, %d failed attempts\n", patternNum,
 		minSteps, maxSteps, float64(stepsSum)/float64(benchLoopsForPattern), fails)
+	fmt.Printf("There was %d unique maps and %d repeats, repeats consist %.2f%% of total maps generated).\n\n",
+		len(generatedMaps), repeats, 100.0*float64(repeats)/float64(repeats+len(generatedMaps)))
+}
+
+func isCharmapAlreadyInArray(c *[][]rune, arr *[]*[][]rune) bool {
+	for i := 0;i<len(*arr);i++{
+		if areTwoCharArraysEqual(c, (*arr)[i]) {
+			return true
+		}
+	}
+	return false
+}
+
+func areTwoCharArraysEqual(c1, c2 *[][]rune) bool {
+	if len(*c1) != len(*c2) {
+		return false
+	}
+	for i:=0;i<len(*c1);i++{
+		for j:=0;j<len((*c1)[0]);j++ {
+			if (*c1)[i][j] != (*c2)[i][j] {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func progressBarCLI(title string, value, endvalue, bar_length int) { // because I can
