@@ -100,6 +100,26 @@ func (r *LayoutMap) GetSize() (int, int) {
 	return len(r.elements), len(r.elements[0])
 }
 
+func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
+	pmap := make([][]int, size)
+	for i := range pmap {
+		pmap[i] = make([]int, size)
+	}
+
+	for x := 0; x < size; x++ {
+		for y := 0; y < size; y++ {
+			if layout.areCoordsEmpty(x, y) {
+				pmap[x][y] = 1
+			} else {
+				pmap[x][y] = -1
+			}
+		}
+	}
+	return &pmap
+}
+
+// output TODO: remove
+
 func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for rendering, TODO: remove
 	elem := r.elements[x][y]
 	// rune := '?'
@@ -119,20 +139,43 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 	return '?'
 }
 
-func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
-	pmap := make([][]int, size)
-	for i := range pmap {
-		pmap[i] = make([]int, size)
+func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
+	e := r.elements[cellx][celly]
+	ca := make([][]rune, 5)
+	for i := range (ca) {
+		ca[i] = make([]rune, 5)
 	}
 
-	for x := 0; x < size; x++ {
-		for y := 0; y < size; y++ {
-			if layout.areCoordsEmpty(x, y) {
-				pmap[x][y] = 1
-			} else {
-				pmap[x][y] = -1
+	if e.isEmpty() {
+		return ca
+	}
+
+	for x := 0; x < 5; x++ {
+		for y := 0; y < 5; y++ {
+			ca[x][y] = '#'
+		}
+	}
+	if e.nodeInfo != nil {
+		for x := 1; x < 4; x++ {
+			for y := 1; y < 4; y++ {
+				ca[x][y] = ' '
 			}
 		}
 	}
-	return &pmap
+	if e.pathInfo != nil {
+		for x := 0; x < 5; x++ {
+			for y := 0; y < 5; y++ {
+				ca[x][y] = '.'
+			}
+		}
+		ca[2][2] = rune(e.pathInfo.pathNumber - '0')
+	}
+	for x := -1; x <= 1; x++ {
+		for y := -1; y <= 2; y++ {
+			if e.getConnectionByCoords(x, y) != nil {
+				ca[2+x*2][2+y*2] = '+'
+			}
+		}
+	}
+	return ca
 }
