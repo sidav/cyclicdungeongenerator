@@ -13,27 +13,25 @@ var (
 
 func Generate() *LayoutMap {
 	rnd.Randomize()
-	var patternNumber int
 
-	try := 0
+	const triesForPattern = 10
+
+	patternNumber := getRandomPatternNumber()
+	pattern := getPattern(patternNumber)
 
 generationStart:
-	for {
-		try++
+	for	patternTry:=1;patternTry<=triesForPattern; patternTry++ {
 		layout.init(size, size)
 
-		patternNumber = getRandomPatternNumber()
-		pattern := getPattern(patternNumber) // getPattern(1)
-
 		for i := range pattern {
-			// fmt.Printf("%d, ", i)
 			success := execPatternStep(pattern[i])
 			if !success {
 				continue generationStart
 			}
 		}
-		break
+		fmt.Printf("Generation finised, %d tries, final build pattern #%d \n", patternTry, patternNumber)
+		return &layout
 	}
-	fmt.Printf("Generation finised, %d tries, final build pattern #%d \n", try, patternNumber)
-	return &layout
+	fmt.Printf("Generation failed for pattern #%d after %d tries\n", patternNumber, triesForPattern)
+	return nil
 }

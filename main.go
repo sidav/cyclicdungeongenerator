@@ -3,6 +3,7 @@ package main
 import (
 	"CyclicDungeonGenerator/layout_generation"
 	cw "TCellConsoleWrapper"
+	"fmt"
 	rnd "github.com/sidav/golibrl/random"
 )
 
@@ -10,6 +11,11 @@ func main() {
 	rnd.Randomize()
 
 	generatedMap := layout_generation.Generate()
+
+	if generatedMap == nil {
+		fmt.Printf("Failed.\n")
+		return
+	}
 
 	cw.Init_console()
 	defer cw.Close_console()
