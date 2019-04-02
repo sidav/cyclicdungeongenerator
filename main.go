@@ -33,23 +33,17 @@ func main() {
 	cw.ReadKey()
 }
 
-func putCharArray(x, y int, c [][]rune) {
-	for i := 0; i < len(c); i++ {
-		for j := 0; j < len(c[0]); j++ {
-			setcolorForRune(c[i][j])
-			cw.PutChar(c[i][j], x+i, y+j)
+func putCharArray(x, y int, c *[][]rune) {
+	for i := 0; i < len(*c); i++ {
+		for j := 0; j < len((*c)[0]); j++ {
+			setcolorForRune((*c)[i][j])
+			cw.PutChar((*c)[i][j], x+i, y+j)
 		}
 	}
 }
 
 func putMap(a *layout_generation.LayoutMap) {
-	sx, sy := a.GetSize()
-	for y := 0; y < sy; y++ {
-		for x := 0; x < sx; x++ {
-			ca := a.CellToCharArray(x, y)
-			putCharArray(x*5, y*5, ca)
-		}
-	}
+	putCharArray(0, 0, a.WholeMapToCharArray())
 }
 
 

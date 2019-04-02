@@ -196,3 +196,22 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 	}
 	return ca
 }
+
+func (r *LayoutMap) WholeMapToCharArray() *[][]rune {
+	sx, sy := r.GetSize()
+	ca := make([][]rune, 5*sx)
+	for i := range (ca) {
+		ca[i] = make([]rune, 5*sy)
+	}
+	for x := 0; x < len(r.elements); x++ {
+		for y := 0; y < len(r.elements[0]); y++ {
+			cellArr := r.CellToCharArray(x, y)
+			for i:=0;i<5;i++{
+				for j:=0;j<5;j++{
+					ca[5*x+i][5*y+j] = cellArr[i][j]
+				}
+			}
+		}
+	}
+	return &ca
+}
