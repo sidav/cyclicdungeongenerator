@@ -12,7 +12,8 @@ func main() {
 
 	// layout_generation.Benchmark(-1)
 
-	generatedMap := layout_generation.Generate(-1)
+	pattNum := rnd.Random(layout_generation.GetTotalPatternsNumber())
+	generatedMap := layout_generation.Generate(pattNum)
 
 	if generatedMap == nil {
 		fmt.Printf("Failed.\n")
@@ -23,7 +24,7 @@ func main() {
 	defer cw.Close_console()
 
 	putMap(generatedMap)
-	putMiniMap(generatedMap)
+	putMiniMapAndPatternNumber(generatedMap, pattNum)
 	cw.Flush_console()
 	cw.ReadKey()
 }
@@ -42,7 +43,7 @@ func putMap(a *layout_generation.LayoutMap) {
 }
 
 
-func putMiniMap(a *layout_generation.LayoutMap) {
+func putMiniMapAndPatternNumber(a *layout_generation.LayoutMap, pattNum int) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -51,6 +52,8 @@ func putMiniMap(a *layout_generation.LayoutMap) {
 			cw.PutChar(chr, x+sx*5 + 2, y)
 		}
 	}
+	cw.SetFgColor(cw.BEIGE)
+	cw.PutString(fmt.Sprintf("PATTERN #%d", pattNum), sx*5+2, sy+2)
 }
 
 func setcolorForRune(chr rune) {

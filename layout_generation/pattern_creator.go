@@ -72,6 +72,6 @@ func getRandomPatternNumber() int {
 	return patternNumber
 }
 
-func getTotalPatternsNumber() int {
+func GetTotalPatternsNumber() int {
 	return len(patterns_array)
 }

@@ -10,7 +10,7 @@ const benchLoopsForPattern = 10000
 func Benchmark(patternNum int) {
 	if patternNum == -1 {
 		fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
-		for i := 0; i < getTotalPatternsNumber(); i++ {
+		for i := 0; i < GetTotalPatternsNumber(); i++ {
 			benchmarkPattern(i)
 		}
 	} else {
