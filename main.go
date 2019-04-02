@@ -46,7 +46,7 @@ func putMiniMap(a *layout_generation.LayoutMap) {
 		for x := 0; x < sx; x++ {
 			chr := a.GetCharOfElementAtCoords(x, y)
 			setcolorForRune(chr)
-			cw.PutChar(chr, x+30, y)
+			cw.PutChar(chr, x+sx*5 + 2, y)
 		}
 	}
 }

@@ -6,12 +6,9 @@ import (
 )
 
 var (
-	size        = 5
-	divisor  = 3
-	layout = LayoutMap{}
-)
-
-const (
+	size    = 5
+	divisor = 3
+	layout  = LayoutMap{}
 )
 
 func Generate() *LayoutMap {
@@ -20,12 +17,12 @@ func Generate() *LayoutMap {
 
 	try := 0
 
-	generationStart:
+generationStart:
 	for {
 		try++
 		layout.init(size, size)
 
-		patternNumber = getRandomPatternNumber ()
+		patternNumber = getRandomPatternNumber()
 		pattern := getPattern(patternNumber) // getPattern(1)
 
 		for i := range pattern {
