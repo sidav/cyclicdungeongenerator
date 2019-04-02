@@ -8,12 +8,6 @@ import (
 
 func main() {
 	rnd.Randomize()
-	//for i:=0;i<10000;i++ {
-	//	x, y := rnd.RandomCoordsInRangeFrom(40, 12, 10)
-	//	cw.PutChar('#', x, y)
-	//}
-	//cw.Flush_console()
-	//cw.ReadKey()
 
 	generatedMap := layout_generation.Generate()
 
