@@ -43,7 +43,7 @@ func execPlaceNodeNearPath(step *patternStep) bool {
 	num := step.pathNumber
 	px, py, x, y :=  layout.getRandomPathCoordsAndRandomCellNearPath(num, step.allowPlaceNearNode)
 	if px == -1 || py == -1 || x == -1 || y == -1 {
-		return false 
+		return false // no cell was returned, step failed...
 	}
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
 	layout.elements[x][y].setConnectionByCoords(&connection{pathNum:num},px-x, py-y)
