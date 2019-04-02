@@ -17,5 +17,6 @@ type patternStep struct {
 	countFrom, countTo           int    // for random ranges
 	nameOfNode, nameFrom, nameTo string // for node names
 	obstacleRadius               int    // for centered non-random obstacle
-	pathNumber                   int	// for... path numbering, I guess o_O
+	pathNumber                   int    // for... path numbering, I guess o_O
+	allowPlaceNearNode           bool   // for ACTION_PLACE_NODE_NEAR_PATH
 }

@@ -42,21 +42,21 @@ func (r *LayoutMap) removeAllObstacles() {
 	}
 }
 
-func (r *LayoutMap) getRandomPathCell(desiredPathNum int) (int, int) { // desiredPathNum -1 means any path
+func (r *LayoutMap) getRandomPathCell(desiredPathNum int, nodesAllowed bool) (int, int) { // desiredPathNum -1 means any path
 	x, y := rnd.Random(size), rnd.Random(size)
-	const tries = 40
+	const tries = 50
 	try := 0
-	for try < tries && (!r.elements[x][y].isPartOfAPath() || (desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber)) {
+	for try < tries && (!r.elements[x][y].isPartOfAPath() || (!nodesAllowed && r.elements[x][y].nodeInfo != nil) || (desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber)) {
 		try++
 		x, y = rnd.Random(size), rnd.Random(size)
 	}
 	return x, y
 }
 
-func (r *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int) (int, int, int, int) {
+func (r *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int, allowNearNode bool) (int, int, int, int) {
 	const tries = 10
 	for try := 0; try < tries; try++ {
-		px, py := r.getRandomPathCell(pathNum)
+		px, py := r.getRandomPathCell(pathNum, allowNearNode)
 		for try2 := 0; try2 < tries; try2++ {
 			x, y := rnd.RandInRange(px-1, px+1), rnd.RandInRange(py-1, py+1)
 			if x >= 0 && y >= 0 && x < len(r.elements) && y < len(r.elements[0]) && r.elements[x][y].isEmpty() {
