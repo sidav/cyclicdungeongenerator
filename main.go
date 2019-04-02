@@ -10,7 +10,7 @@ import (
 func main() {
 	rnd.Randomize()
 
-	layout_generation.Benchmark(-1)
+	// layout_generation.Benchmark(-1)
 
 	generatedMap := layout_generation.Generate(-1)
 
