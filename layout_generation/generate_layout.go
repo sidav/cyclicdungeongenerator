@@ -3,6 +3,7 @@ package layout_generation
 import (
 	"fmt"
 	rnd "github.com/sidav/golibrl/random"
+	"strings"
 )
 
 var (
@@ -73,6 +74,7 @@ func Benchmark(patternNum int) {
 	stepsSum := 0
 	fails := 0
 	for loopNum := 0; loopNum < benchLoopsForPattern; loopNum++ {
+		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, benchLoopsForPattern, 20)
 		tries , success := getTriesAndSuccessForGeneration(patternNum)
 		stepsSum += tries
 		if maxSteps < tries {
@@ -88,4 +90,19 @@ func Benchmark(patternNum int) {
 
 	fmt.Printf("Pattern #%d, min tries %d, max tries %d, mean tries number %f, %d failed attempts\n", patternNum,
 		minSteps, maxSteps, float64(stepsSum)/float64(benchLoopsForPattern), fails)
+}
+
+func progressBarCLI(title string, value, endvalue, bar_length int) { // because I can
+	endvalue -= 1
+	percent := float64(value) / float64(endvalue)
+	arrow := ">"
+	for i:=0; i < int(percent * float64(bar_length)); i++ {
+		arrow = "-" + arrow
+	}
+	spaces := strings.Repeat(" ", bar_length - len(arrow) + 1)
+	percent_with_dec := fmt.Sprintf("%.2f", percent*100.0)
+	fmt.Printf("\r%s [%s%s]%s%% (%d out of %d)", title, arrow, spaces, percent_with_dec, value, endvalue)
+	if value == endvalue {
+		fmt.Printf("\n")
+	}
 }
