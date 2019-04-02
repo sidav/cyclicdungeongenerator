@@ -43,7 +43,8 @@ func execPlaceNodeNearPath(step *patternStep) bool {
 	num := step.pathNumber
 	px, py, x, y :=  layout.getRandomPathCoordsAndRandomCellNearPath(num)
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
-	layout.elements[x][y].setConnectionByCoords(&connection{pathNum:num},x-px, y-py)
+	layout.elements[x][y].setConnectionByCoords(&connection{pathNum:num},px-x, py-y)
+	layout.elements[px][py].setConnectionByCoords(&connection{pathNum:num},x-px, y-py)
 	return true
 }
 
@@ -84,9 +85,13 @@ func execPlacePathFromTo(step *patternStep) bool {
 		return false
 	}
 	for path.Child != nil {
-		path = path.Child
 		x, y := path.GetCoords()
+		vx, vy := path.GetNextStepVector()
+		layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, vx, vy)// place connection
+		path = path.Child
+		x, y = path.GetCoords()
 		layout.placePathAtCoords(x, y, step.pathNumber)
+		layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, -vx, -vy)// place reverse connection
 	}
 	return true
 }

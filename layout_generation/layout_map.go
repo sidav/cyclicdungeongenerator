@@ -146,10 +146,6 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 		ca[i] = make([]rune, 5)
 	}
 
-	if e.isEmpty() {
-		return ca
-	}
-
 	for x := 0; x < 5; x++ {
 		for y := 0; y < 5; y++ {
 			ca[x][y] = '#'
@@ -161,19 +157,27 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 				ca[x][y] = ' '
 			}
 		}
-	}
-	if e.pathInfo != nil {
-		for x := 0; x < 5; x++ {
-			for y := 0; y < 5; y++ {
-				ca[x][y] = '.'
+		for x := -1; x <= 1; x++ {
+			for y := -1; y <= 2; y++ {
+				if e.getConnectionByCoords(x, y) != nil {
+					ca[2+x*2][2+y*2] = '+'
+				}
 			}
 		}
-		ca[2][2] = rune(e.pathInfo.pathNumber - '0')
-	}
-	for x := -1; x <= 1; x++ {
-		for y := -1; y <= 2; y++ {
-			if e.getConnectionByCoords(x, y) != nil {
-				ca[2+x*2][2+y*2] = '+'
+		ca[1][2] = rune(e.nodeInfo.nodeName[0])
+		ca[2][2] = rune(e.nodeInfo.nodeName[1])
+		ca[3][2] = rune(e.nodeInfo.nodeName[2])
+		if e.pathInfo != nil {
+			ca[2][1] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
+		}
+	} else if e.pathInfo != nil {
+		ca[2][2] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
+		for x := -1; x <= 1; x++ {
+			for y := -1; y <= 1; y++ {
+				if e.getConnectionByCoords(x, y) != nil {
+					ca[2+x*2][2+y*2] = ' '
+					ca[2+x][2+y] = ' '
+				}
 			}
 		}
 	}
