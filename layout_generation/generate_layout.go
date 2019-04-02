@@ -2,7 +2,6 @@ package layout_generation
 
 import (
 	"fmt"
-	rnd "github.com/sidav/golibrl/random"
 	"strings"
 )
 
@@ -13,8 +12,6 @@ var (
 )
 
 func Generate(patternNumber int) *LayoutMap {
-	rnd.Randomize()
-
 	const triesForPattern = 10
 
 	if patternNumber == -1 {
@@ -57,7 +54,6 @@ func Benchmark(patternNum int) {
 }
 
 func getCharmapAndTriesAndSuccessForGeneration(patternNumber int) (*[][]rune, int, bool) {
-	rnd.Randomize()
 	const triesForPattern = 1000
 
 	if patternNumber == -1 {
