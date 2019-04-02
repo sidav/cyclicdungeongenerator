@@ -41,8 +41,9 @@ func execPlaceNodeAtEmpty(step *patternStep) bool {
 
 func execPlaceNodeNearPath(step *patternStep) bool {
 	num := step.pathNumber
-	x, y :=  layout.getRandomCellNearPath(num)
+	px, py, x, y :=  layout.getRandomPathCoordsAndRandomCellNearPath(num)
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
+	layout.elements[x][y].setConnectionByCoords(&connection{pathNum:num},x-px, y-py)
 	return true
 }
 

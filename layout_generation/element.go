@@ -4,7 +4,8 @@ type element struct {
 	// it's a room or a tile occupied with interconnection.
 	pathInfo    *path_cell
 	nodeInfo    *node_cell
-	isObstacle bool // for temp obstacles
+	isObstacle  bool // for temp obstacles
+	connections map[string]*connection
 }
 
 func (e *element) isPartOfAPath() bool {
@@ -17,4 +18,21 @@ func (e *element) isNode() bool {
 
 func (e *element) isEmpty() bool {
 	return e.pathInfo == nil && e.nodeInfo == nil && !e.isObstacle
+}
+
+func (e *element) setConnectionByCoords(c *connection, x, y int) {
+	direction := "wat?"
+	if x == 0 && y == 1 {
+		direction = "south"
+	}
+	if x == 0 && y == -1 {
+		direction = "north"
+	}
+	if x == 1 && y == 0 {
+		direction = "east"
+	}
+	if x == -1 && y == 0 {
+		direction = "west"
+	}
+	e.connections[direction] = c
 }
