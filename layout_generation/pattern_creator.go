@@ -61,6 +61,22 @@ var patterns_array = [][]*patternStep{
 		// place garbage nodes
 		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 7},
 	},
+	// pattern 3, by Quosteeque too.
+	{
+
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 2},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 3},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND2", pathNumber: 4},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "FIN", pathNumber: 5},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "FIN", pathNumber: 6},
+		// place garbage nodes
+		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 7},
+	},
 }
 
 func getPattern(patternNumber int) []*patternStep {
