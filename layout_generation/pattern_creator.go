@@ -22,9 +22,7 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: 1, nameOfNode: "NDE"},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "NDE", nameTo: "FIN", pathNumber: 3},
 		// place garbage node
-		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: -1, nameOfNode: "   ", allowPlaceNearNode: true},
-		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: -1, nameOfNode: "   ", allowPlaceNearNode: true},
-		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: -1, nameOfNode: "   ", allowPlaceNearNode: true},
+		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 6},
 	},
 	// Second, more complicated pattern.
 	{
@@ -45,9 +43,7 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND2", pathNumber: 2},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "FIN", pathNumber: 3},
 		// place garbage node
-		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: -1, nameOfNode: "   ", allowPlaceNearNode: true},
-		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: -1, nameOfNode: "   ", allowPlaceNearNode: true},
-		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: -1, nameOfNode: "   ", allowPlaceNearNode: true},
+		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 5},
 	},
 }
 

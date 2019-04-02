@@ -80,11 +80,43 @@ func (r *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int, allowN
 	return -1, -1, -1, -1
 }
 
-func (r *LayoutMap) getRandomEmptyCellCoords() (int, int) { // desiredPathNum -1 means any path
+func (r *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int, int) {
+	const tries = 10
+	for try := 0; try < tries; try++ {
+		px, py := r.getRandomNonEmptyCellCoords()
+		if px == -1 && py == -1 {
+			continue
+		}
+		for try2 := 0; try2 < tries; try2++ {
+			x, y := rnd.RandInRange(px-1, px+1), rnd.RandInRange(py-1, py+1)
+			if (px - x)*(py - y) != 0 { // diagonal direction is restricted
+				continue
+			}
+			if x >= 0 && y >= 0 && x < len(r.elements) && y < len(r.elements[0]) && r.elements[x][y].isEmpty() {
+				return px, py, x, y
+			}
+		}
+	}
+	return -1, -1, -1, -1
+}
+
+func (r *LayoutMap) getRandomEmptyCellCoords() (int, int) {
 	const tries = 25
 	for i := 0; i < tries; i++ {
 		x, y := rnd.Random(size), rnd.Random(size)
 		if r.elements[x][y].isEmpty() {
+			return x, y
+		}
+	}
+	return -1, -1
+}
+
+
+func (r *LayoutMap) getRandomNonEmptyCellCoords() (int, int) {
+	const tries = 25
+	for i := 0; i < tries; i++ {
+		x, y := rnd.Random(size), rnd.Random(size)
+		if !r.elements[x][y].isEmpty() {
 			return x, y
 		}
 	}

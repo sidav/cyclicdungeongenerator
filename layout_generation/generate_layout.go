@@ -12,7 +12,7 @@ var (
 )
 
 func Generate(patternNumber int) *LayoutMap {
-	const triesForPattern = 10
+	const triesForPattern = 25
 
 	if patternNumber == -1 {
 		patternNumber = getRandomPatternNumber()

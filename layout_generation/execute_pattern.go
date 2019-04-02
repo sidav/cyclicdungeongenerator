@@ -22,6 +22,8 @@ func execPatternStep(step *patternStep) bool {
 		return execClearObstacles()
 	case ACTION_PLACE_NODE_NEAR_PATH:
 		return execPlaceNodeNearPath(step)
+	case ACTION_PLACE_RANDOM_CONNECTED_NODES:
+		return execPlaceRandomConnectedNodes(step)
 	}
 	return true
 }
@@ -48,6 +50,20 @@ func execPlaceNodeNearPath(step *patternStep) bool {
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
 	layout.elements[x][y].setConnectionByCoords(&connection{pathNum:num},px-x, py-y)
 	layout.elements[px][py].setConnectionByCoords(&connection{pathNum:num},x-px, y-py)
+	return true
+}
+
+func execPlaceRandomConnectedNodes(step *patternStep) bool {
+	nodesToAdd := rnd.RandInRange(step.countFrom, step.countTo)
+	for currNodeNum:=0;currNodeNum<nodesToAdd;currNodeNum++ {
+		px, py, x, y := layout.getRandomNonEmptyCoordsAndRandomCellNearIt()
+		if px == -1 || py == -1 || x == -1 || y == -1 {
+			return false // no cell was returned, step failed...
+		}
+		layout.placeNodeAtCoords(x, y, step.nameOfNode)
+		layout.elements[x][y].setConnectionByCoords(&connection{}, px-x, py-y)
+		layout.elements[px][py].setConnectionByCoords(&connection{}, x-px, y-py)
+	}
 	return true
 }
 

@@ -1,14 +1,15 @@
 package layout_generation
 
 const (
-	ACTION_NONE                     = iota
-	ACTION_PLACE_NODE_AT_EMPTY      = iota
-	ACTION_PLACE_NODE_AT_PATH       = iota
-	ACTION_PLACE_NODE_NEAR_PATH     = iota
-	ACTION_PLACE_PATH_FROM_TO       = iota
-	ACTION_PLACE_OBSTACLE_IN_CENTER = iota
-	ACTION_PLACE_RANDOM_OBSTACLES   = iota
-	ACTION_CLEAR_OBSTACLES          = iota
+	ACTION_NONE                         = iota
+	ACTION_PLACE_NODE_AT_EMPTY          = iota
+	ACTION_PLACE_NODE_AT_PATH           = iota
+	ACTION_PLACE_NODE_NEAR_PATH         = iota
+	ACTION_PLACE_RANDOM_CONNECTED_NODES = iota // For additional "garbage" dead end nodes. Can be placed connected to anything: a node, a path...
+	ACTION_PLACE_PATH_FROM_TO           = iota
+	ACTION_PLACE_OBSTACLE_IN_CENTER     = iota
+	ACTION_PLACE_RANDOM_OBSTACLES       = iota
+	ACTION_CLEAR_OBSTACLES              = iota
 )
 
 type patternStep struct {
