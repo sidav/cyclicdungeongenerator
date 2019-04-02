@@ -10,7 +10,14 @@ import (
 func main() {
 	rnd.Randomize()
 
-	generatedMap := layout_generation.Generate()
+	fmt.Printf("BENCHMARK:\n")
+	layout_generation.Benchmark(0)
+	layout_generation.Benchmark(1)
+	fmt.Printf("Benchmark finished. Press Enter. \n")
+	var input string
+	fmt.Scanln(&input)
+
+	generatedMap := layout_generation.Generate(-1)
 
 	if generatedMap == nil {
 		fmt.Printf("Failed.\n")
