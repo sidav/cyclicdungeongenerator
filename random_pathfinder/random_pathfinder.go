@@ -2,16 +2,12 @@ package random_pathfinder
 
 import "github.com/sidav/golibrl/random"
 
-const (
-	DIAGONAL_COST = 14
-	STRAIGHT_COST = 10
-	HEURISTIC_MULTIPLIER = 10
-	MAX_PATHFINDING_STEPS = 175 // Increase in case of stupid pathfinding. Decrease in case of lag.
-)
+// Random pathfinder.
+// It is effectively lobotomized A* (heuristics removed, selecting next path cell mechanism changed to random instead of cost-based)
+// Still (almost) guarantees to find path if it does exist.
 
 type Cell struct {
 	X, Y            int
-	g            int
 	costToMoveThere int
 	parent          *Cell
 	Child           *Cell
@@ -19,12 +15,6 @@ type Cell struct {
 
 func (c *Cell) GetCoords() (int, int) {
 	return c.X, c.Y
-}
-
-func (c *Cell) setG(inc int) {
-	if c.parent != nil {
-		c.g = c.parent.g + inc
-	}
 }
 
 func (c *Cell) GetNextStepVector() (int, int) {
@@ -62,6 +52,7 @@ func FindPath(costMap *[][]int, fromx, fromy, tox, toy int, diagonalMoveAllowed,
 	openList := make([]*Cell, 0)
 	closedList := make([]*Cell, 0)
 	var currentCell *Cell
+	maxPathfindingSteps := len(*costMap) * len((*costMap)[0]) * 4
 	total_steps := 0
 	targetReached := false
 
@@ -86,7 +77,7 @@ func FindPath(costMap *[][]int, fromx, fromy, tox, toy int, diagonalMoveAllowed,
 			currentCell.setChildsForPath()
 			return origin
 		}
-		if len(openList) == 0 || total_steps > MAX_PATHFINDING_STEPS {
+		if len(openList) == 0 || total_steps > maxPathfindingSteps {
 			if forceGetPath { // makes the routine always return path to the closest possible cell to (tox, toy) even if the precise path does not exist.
 				currentCell = closedList[getIndexOfRandomCellFromList(&closedList)]
 				currentCell.setChildsForPath()
@@ -100,7 +91,6 @@ func FindPath(costMap *[][]int, fromx, fromy, tox, toy int, diagonalMoveAllowed,
 }
 
 func analyzeNeighbors(curCell *Cell, openlist *[]*Cell, closedlist *[]*Cell, costMap *[][]int, targetX, targetY int, diagAllowed, forceIncludeFinish bool) {
-	cost := 0
 	cx, cy := curCell.X, curCell.Y
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
@@ -115,21 +105,12 @@ func analyzeNeighbors(curCell *Cell, openlist *[]*Cell, closedlist *[]*Cell, cos
 						continue // ignore it
 					}
 				}
-				// TODO: add actual "cost to move there" from costMap
-				if (i * j) != 0 { // the Cell under consideration is lying diagonally
-					cost = DIAGONAL_COST
-				} else {
-					cost = STRAIGHT_COST
-				}
+
 				curNeighbor := getCellWithCoordsFromList(openlist, x, y)
 				if curNeighbor != nil {
-					if curNeighbor.g > curCell.g+cost {
 						curNeighbor.parent = curCell
-						curNeighbor.setG(cost)
-					}
 				} else {
 					curNeighbor = &Cell{X: x, Y: y, parent: curCell}
-					curNeighbor.setG(cost)
 					*openlist = append(*openlist, curNeighbor)
 				}
 			}
