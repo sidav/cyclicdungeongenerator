@@ -3,7 +3,7 @@ package layout_generation
 import (
 	rnd "github.com/sidav/golibrl/random"
 )
-import "github.com/sidav/golibrl/astar"
+import rpath "CyclicDungeonGenerator/random_pathfinder"
 
 //ACTION_PLACE_NODE_AT_PATH     = iota
 //ACTION_PLACE_NODE_NEAR_PATH   = iota
@@ -99,7 +99,7 @@ func execPlacePathFromTo(step *patternStep) bool {
 	pmap := layout.getPassabilityMapForPathfinder()
 	fx, fy := layout.getCoordsOfNode(step.nameFrom)
 	tx, ty := layout.getCoordsOfNode(step.nameTo)
-	path := astar.FindPath(pmap, fx, fy, tx, ty, false, false, true)
+	path := rpath.FindPath(pmap, fx, fy, tx, ty, false, false, true)
 	if path == nil {
 		return false
 	}
