@@ -12,21 +12,48 @@ func main() {
 
 	// layout_generation.Benchmark(-1)
 
-	pattNum := rnd.Random(layout_generation.GetTotalPatternsNumber())
-	generatedMap := layout_generation.Generate(pattNum)
-
-	if generatedMap == nil {
-		fmt.Printf("Failed.\n")
-		return
-	}
-
 	cw.Init_console()
 	defer cw.Close_console()
 
-	putMap(generatedMap)
-	putMiniMapAndPatternNumber(generatedMap, pattNum)
-	cw.Flush_console()
-	cw.ReadKey()
+	key := "none"
+	desiredPatternNum := 0
+
+	for key != "ESCAPE" {
+		pattNum := rnd.Random(layout_generation.GetTotalPatternsNumber())
+		if desiredPatternNum != -1 {
+			pattNum = desiredPatternNum
+		}
+		generatedMap := layout_generation.Generate(pattNum)
+
+		if generatedMap == nil {
+			fmt.Printf("Failed.\n")
+			return
+		}
+
+		putMap(generatedMap)
+		putMiniMapAndPatternNumber(generatedMap, pattNum, desiredPatternNum)
+		cw.Flush_console()
+keyread:
+		for {
+			key = cw.ReadKey()
+			cw.PutString(key, 0, 0)
+			cw.Flush_console()
+			switch key {
+			case "=":
+				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {
+					desiredPatternNum++
+				}
+			break keyread
+			case "-":
+				if desiredPatternNum > -1 {
+					desiredPatternNum--
+				}
+			break keyread
+			case " ", "ESCAPE":
+				break keyread
+			}
+		}
+	}
 }
 
 func putCharArray(x, y int, c *[][]rune) {
@@ -43,7 +70,7 @@ func putMap(a *layout_generation.LayoutMap) {
 }
 
 
-func putMiniMapAndPatternNumber(a *layout_generation.LayoutMap, pattNum int) {
+func putMiniMapAndPatternNumber(a *layout_generation.LayoutMap, pattNum, desiredPNum int) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -53,7 +80,9 @@ func putMiniMapAndPatternNumber(a *layout_generation.LayoutMap, pattNum int) {
 		}
 	}
 	cw.SetFgColor(cw.BEIGE)
-	cw.PutString(fmt.Sprintf("PATTERN #%d", pattNum), sx*5+2, sy+2)
+	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*5+2, sy+2)
+	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*5+2, sy+3)
+
 }
 
 func setcolorForRune(chr rune) {
