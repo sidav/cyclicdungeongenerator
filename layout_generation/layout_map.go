@@ -101,26 +101,40 @@ func (r *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int,
 }
 
 func (r *LayoutMap) getRandomEmptyCellCoords() (int, int) {
-	const tries = 25
-	for i := 0; i < tries; i++ {
-		x, y := rnd.Random(size), rnd.Random(size)
-		if r.elements[x][y].isEmpty() {
-			return x, y
+	emptiesX := make([]int, 0)
+	emptiesY := make([]int, 0)
+	for x := 0; x < len(r.elements); x++ {
+		for y := 0; y < len(r.elements[0]); y++ {
+			if r.elements[x][y].isEmpty() {
+				emptiesX = append(emptiesX, x)
+				emptiesY = append(emptiesY, y)
+			}
 		}
 	}
-	return -1, -1
+	if len(emptiesX) == 0 {
+		return -1, -1
+	}
+	index := rnd.Random(len(emptiesX))
+	return emptiesX[index], emptiesY[index]
 }
 
 
 func (r *LayoutMap) getRandomNonEmptyCellCoords() (int, int) {
-	const tries = 25
-	for i := 0; i < tries; i++ {
-		x, y := rnd.Random(size), rnd.Random(size)
-		if !r.elements[x][y].isEmpty() {
-			return x, y
+	nonEmptiesX := make([]int, 0)
+	nonEmptiesY := make([]int, 0)
+	for x := 0; x < len(r.elements); x++ {
+		for y := 0; y < len(r.elements[0]); y++ {
+			if !r.elements[x][y].isEmpty() {
+				nonEmptiesX = append(nonEmptiesX, x)
+				nonEmptiesY = append(nonEmptiesY, y)
+			}
 		}
 	}
-	return -1, -1
+	if len(nonEmptiesX) == 0 {
+		return -1, -1
+	}
+	index := rnd.Random(len(nonEmptiesX))
+	return nonEmptiesX[index], nonEmptiesY[index]
 }
 
 func (r *LayoutMap) areCoordsEmpty(x, y int) bool {
