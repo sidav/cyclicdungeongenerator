@@ -7,15 +7,15 @@ import (
 
 const benchLoopsForPattern = 10000
 
-func Benchmark(patternNum int) {
+func Benchmark(patternNum int, testUniquity bool) {
 	if patternNum == -1 {
 		fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
 		for i := 0; i < GetTotalPatternsNumber(); i++ {
-			benchmarkPattern(i)
+			benchmarkPattern(i, testUniquity)
 		}
 	} else {
 		fmt.Printf("\rBENCHMARKING PATTERN %d:\n", patternNum)
-		benchmarkPattern(patternNum)
+		benchmarkPattern(patternNum, testUniquity)
 	}
 	fmt.Printf("Benchmark finished. Press Enter. \n")
 	var input string
@@ -45,7 +45,7 @@ generationStart:
 	return nil, triesForPattern, false
 }
 
-func benchmarkPattern(patternNum int) {
+func benchmarkPattern(patternNum int, testUniquity bool) {
 	generatedMaps := make([]*[][]rune, 0)
 	maxSteps := 0
 	minSteps := 99999999
@@ -55,10 +55,12 @@ func benchmarkPattern(patternNum int) {
 	for loopNum := 0; loopNum < benchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, benchLoopsForPattern, 20)
 		cMap, tries , success := getCharmapAndTriesAndSuccessForGeneration(patternNum)
-		if !isCharmapAlreadyInArray(cMap, &generatedMaps) {
-			generatedMaps = append(generatedMaps, cMap)
-		} else {
-			repeats ++
+		if testUniquity {
+			if !isCharmapAlreadyInArray(cMap, &generatedMaps) {
+				generatedMaps = append(generatedMaps, cMap)
+			} else {
+				repeats ++
+			}
 		}
 		stepsSum += tries
 		if maxSteps < tries {
@@ -74,8 +76,12 @@ func benchmarkPattern(patternNum int) {
 
 	fmt.Printf("Pattern #%d, min tries %d, max tries %d, mean tries number %f, %d failed attempts\n", patternNum,
 		minSteps, maxSteps, float64(stepsSum)/float64(benchLoopsForPattern), fails)
-	fmt.Printf("There was %d unique maps and %d repeats, repeats consist %.2f%% of total maps generated).\n\n",
-		len(generatedMaps), repeats, 100.0*float64(repeats)/float64(repeats+len(generatedMaps)))
+	if testUniquity {
+		fmt.Printf("There was %d unique maps and %d repeats, repeats consist %.2f%% of total maps generated).\n\n",
+			len(generatedMaps), repeats, 100.0*float64(repeats)/float64(repeats+len(generatedMaps)))
+	} else {
+		fmt.Printf("Uniquity test was not performed as set by testUniquity flag. \n")
+	}
 }
 
 func isCharmapAlreadyInArray(c *[][]rune, arr *[]*[][]rune) bool {

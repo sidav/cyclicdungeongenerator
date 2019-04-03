@@ -10,7 +10,7 @@ import (
 func main() {
 	rnd.Randomize()
 
-	// layout_generation.Benchmark(-1)
+	// layout_generation.Benchmark(-1, false)
 
 	cw.Init_console()
 	defer cw.Close_console()
