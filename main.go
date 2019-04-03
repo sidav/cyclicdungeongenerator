@@ -94,6 +94,8 @@ func setcolorForRune(chr rune) {
 		cw.SetFgColor(cw.DARK_MAGENTA)
 	case '#':
 		cw.SetFgColor(cw.DARK_GRAY)
+	case '%':
+		cw.SetFgColor(cw.RED)
 	default:
 		cw.SetFgColor(cw.DARK_GREEN)
 	}

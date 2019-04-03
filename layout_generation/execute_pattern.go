@@ -26,6 +26,8 @@ func execPatternStep(step *patternStep) bool {
 		return execPlaceRandomConnectedNodes(step)
 	case ACTION_SET_NODE_STATUS:
 		return execSetNodeStatus(step)
+	case ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH:
+		return execSetNodeConnectionsLockedFromPath(step)
 	}
 	return true
 }
@@ -130,6 +132,16 @@ func execSetNodeStatus(step *patternStep) bool {
 		return false
 	}
 	layout.elements[nx][ny].nodeInfo.AddStatus(status)
+	return true
+}
+
+func execSetNodeConnectionsLockedFromPath(step *patternStep) bool {
+	nname := step.nameOfNode
+	nx, ny := layout.getCoordsOfNode(nname)
+	if nx == -1 && ny == -1 {
+		return false
+	}
+	layout.elements[nx][ny].setAllConnectionsLockedForPath(step.pathNumber, step.lockNumber)
 	return true
 }
 
