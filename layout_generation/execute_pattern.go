@@ -24,6 +24,8 @@ func execPatternStep(step *patternStep) bool {
 		return execPlaceNodeNearPath(step)
 	case ACTION_PLACE_RANDOM_CONNECTED_NODES:
 		return execPlaceRandomConnectedNodes(step)
+	case ACTION_SET_NODE_STATUS:
+		return execSetNodeStatus(step)
 	}
 	return true
 }
@@ -117,6 +119,17 @@ func execPlacePathFromTo(step *patternStep) bool {
 
 func execClearObstacles() bool {
 	layout.removeAllObstacles()
+	return true
+}
+
+func execSetNodeStatus(step *patternStep) bool {
+	nname := step.nameOfNode
+	status := step.status
+	nx, ny := layout.getCoordsOfNode(nname)
+	if nx == -1 && ny == -1 {
+		return false
+	}
+	layout.elements[nx][ny].nodeInfo.AddStatus(status)
 	return true
 }
 

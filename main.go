@@ -16,7 +16,7 @@ func main() {
 	defer cw.Close_console()
 
 	key := "none"
-	desiredPatternNum := 0
+	desiredPatternNum := -1
 
 	for key != "ESCAPE" {
 		pattNum := rnd.Random(layout_generation.GetTotalPatternsNumber())
@@ -30,14 +30,13 @@ func main() {
 			return
 		}
 
+		cw.Clear_console()
 		putMap(generatedMap)
 		putMiniMapAndPatternNumber(generatedMap, pattNum, desiredPatternNum)
 		cw.Flush_console()
 keyread:
 		for {
 			key = cw.ReadKey()
-			cw.PutString(key, 0, 0)
-			cw.Flush_console()
 			switch key {
 			case "=":
 				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {

@@ -11,18 +11,19 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2},
 		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2},
 		// place big obstacle in center and some random obstacles for path to be less straight
-		&patternStep{actionType: ACTION_PLACE_OBSTACLE_IN_CENTER, obstacleRadius: 1},
-		&patternStep{actionType: ACTION_PLACE_RANDOM_OBSTACLES, countFrom: 2, countTo: 3},
+		// &patternStep{actionType: ACTION_PLACE_OBSTACLE_IN_CENTER, obstacleRadius: 1},
+		// &patternStep{actionType: ACTION_PLACE_RANDOM_OBSTACLES, countFrom: 2, countTo: 3},
 		// draw two paths
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 2},
 		// clear temp obstacles
-		&patternStep{actionType: ACTION_CLEAR_OBSTACLES},
+		// &patternStep{actionType: ACTION_CLEAR_OBSTACLES},
 		//place new node and a path to the FIN
 		&patternStep{actionType: ACTION_PLACE_NODE_NEAR_PATH, pathNumber: 1, nameOfNode: "NDE"},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "NDE", nameTo: "FIN", pathNumber: 3},
 		// place garbage nodes
 		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 6},
+		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "NDE", status: "KEY"},
 	},
 	// pattern 1, more complicated pattern.
 	{

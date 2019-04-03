@@ -196,6 +196,7 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 			ca[x][y] = '#'
 		}
 	}
+	// draw node
 	if e.nodeInfo != nil {
 		for x := 1; x < 4; x++ {
 			for y := 1; y < 4; y++ {
@@ -215,6 +216,12 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 		if e.pathInfo != nil {
 			ca[2][1] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
 		}
+		if len(e.nodeInfo.nodeStatus) >= 3 {
+			ca[1][3] = rune(e.nodeInfo.nodeStatus[0])
+			ca[2][3] = rune(e.nodeInfo.nodeStatus[1])
+			ca[3][3] = rune(e.nodeInfo.nodeStatus[2])
+		}
+	// draw path cell
 	} else if e.pathInfo != nil {
 		ca[2][2] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
 		for x := -1; x <= 1; x++ {
