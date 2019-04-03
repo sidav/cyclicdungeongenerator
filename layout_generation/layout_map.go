@@ -42,28 +42,10 @@ func (r *LayoutMap) removeAllObstacles() {
 	}
 }
 
-func (r *LayoutMap) getRandomPathCell(desiredPathNum int, nodesAllowed bool) (int, int) { // desiredPathNum -1 means any path
-	const tries = 50
-	for try := 0; try < tries; try++ {
-		x, y := rnd.Random(size), rnd.Random(size)
-		if !r.elements[x][y].isPartOfAPath() {
-			continue
-		}
-		if !nodesAllowed && r.elements[x][y].nodeInfo != nil { // don't take nodes unless allowed
-			continue
-		}
-		if desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber { // don't take cells of non-desired path numbers
-			continue
-		}
-		return x, y
-	}
-	return -1, -1
-}
-
 func (r *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int, allowNearNode bool) (int, int, int, int) {
 	const tries = 10
 	for try := 0; try < tries; try++ {
-		px, py := r.getRandomPathCell(pathNum, allowNearNode)
+		px, py := r.getRandomPathCellCoords(pathNum, allowNearNode)
 		if px == -1 && py == -1 {
 			continue
 		}
@@ -84,9 +66,6 @@ func (r *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int,
 	const tries = 10
 	for try := 0; try < tries; try++ {
 		px, py := r.getRandomNonEmptyCellCoords()
-		if px == -1 && py == -1 {
-			continue
-		}
 		for try2 := 0; try2 < tries; try2++ {
 			x, y := rnd.RandInRange(px-1, px+1), rnd.RandInRange(py-1, py+1)
 			if (px - x)*(py - y) != 0 { // diagonal direction is restricted
@@ -135,6 +114,31 @@ func (r *LayoutMap) getRandomNonEmptyCellCoords() (int, int) {
 	}
 	index := rnd.Random(len(nonEmptiesX))
 	return nonEmptiesX[index], nonEmptiesY[index]
+}
+
+func (r *LayoutMap) getRandomPathCellCoords(desiredPathNum int, nodesAllowed bool) (int, int) { // desiredPathNum -1 means any path
+	pathsX := make([]int, 0)
+	pathsY := make([]int, 0)
+	for x := 0; x < len(r.elements); x++ {
+		for y := 0; y < len(r.elements[0]); y++ {
+			if !r.elements[x][y].isPartOfAPath() {
+				continue
+			}
+			if !nodesAllowed && r.elements[x][y].nodeInfo != nil { // don't take nodes unless allowed
+				continue
+			}
+			if desiredPathNum > -1 && desiredPathNum != r.elements[x][y].pathInfo.pathNumber { // don't take cells of non-desired path numbers
+				continue
+			}
+			pathsX = append(pathsX, x)
+			pathsY = append(pathsY, y)
+		}
+	}
+	if len(pathsX) == 0 {
+		return -1, -1
+	}
+	index := rnd.Random(len(pathsX))
+	return pathsX[index], pathsY[index]
 }
 
 func (r *LayoutMap) areCoordsEmpty(x, y int) bool {
