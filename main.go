@@ -19,20 +19,26 @@ func main() {
 	desiredPatternNum := -1
 
 	for key != "ESCAPE" {
+		cw.Clear_console()
 		pattNum := rnd.Random(layout_generation.GetTotalPatternsNumber())
 		if desiredPatternNum != -1 {
 			pattNum = desiredPatternNum
 		}
-		generatedMap := layout_generation.Generate(pattNum)
+		generatedMap, genRestarts := layout_generation.Generate(pattNum)
 
 		if generatedMap == nil {
-			fmt.Printf("Failed.\n")
-			return
+			cw.PutString(":(", 0, 0)
+			cw.PutString(fmt.Sprintf("Generation failed even after %d restarts, pattern #%d", genRestarts, pattNum), 0, 1)
+			cw.PutString("Press ENTER to generate again or ESCAPE to exit.", 0, 2)
+			cw.Flush_console()
+			for key != "ESCAPE" && key != "ENTER" {
+				key = cw.ReadKey()
+			}
+			continue
+		} else {
+			putMap(generatedMap)
+			putMiniMapAndPatternNumberAndNumberOfTries(generatedMap, pattNum, desiredPatternNum, genRestarts)
 		}
-
-		cw.Clear_console()
-		putMap(generatedMap)
-		putMiniMapAndPatternNumber(generatedMap, pattNum, desiredPatternNum)
 		cw.Flush_console()
 keyread:
 		for {
@@ -69,7 +75,7 @@ func putMap(a *layout_generation.LayoutMap) {
 }
 
 
-func putMiniMapAndPatternNumber(a *layout_generation.LayoutMap, pattNum, desiredPNum int) {
+func putMiniMapAndPatternNumberAndNumberOfTries(a *layout_generation.LayoutMap, pattNum, desiredPNum, restarts int) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -81,6 +87,7 @@ func putMiniMapAndPatternNumber(a *layout_generation.LayoutMap, pattNum, desired
 	cw.SetFgColor(cw.BEIGE)
 	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*5+2, sy+2)
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*5+2, sy+3)
+	cw.PutString(fmt.Sprintf("Generation finised with %d restarts", restarts), sx*5+2, sy+4)
 
 }
 

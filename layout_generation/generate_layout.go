@@ -1,16 +1,12 @@
 package layout_generation
 
-import (
-	"fmt"
-)
-
 var (
 	size    = 5
 	divisor = 3
 	layout  = LayoutMap{}
 )
 
-func Generate(patternNumber int) *LayoutMap {
+func Generate(patternNumber int) (*LayoutMap, int) {
 	const triesForPattern = 25
 
 	if patternNumber == -1 {
@@ -19,7 +15,7 @@ func Generate(patternNumber int) *LayoutMap {
 	pattern := getPattern(patternNumber)
 
 generationStart:
-	for	patternTry:=1;patternTry<=triesForPattern; patternTry++ {
+	for	generatorRestarts :=0; generatorRestarts <=triesForPattern; generatorRestarts++ {
 		layout.init(size, size)
 
 		for i := range pattern {
@@ -28,9 +24,7 @@ generationStart:
 				continue generationStart
 			}
 		}
-		fmt.Printf("Generation finised, %d tries, final build pattern #%d \n", patternTry, patternNumber)
-		return &layout
+		return &layout, generatorRestarts
 	}
-	fmt.Printf("Generation failed for pattern #%d after %d tries\n", patternNumber, triesForPattern)
-	return nil
+	return nil, triesForPattern
 }
