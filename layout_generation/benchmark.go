@@ -7,22 +7,22 @@ import (
 
 const benchLoopsForPattern = 10000
 
-func Benchmark(patternNum int, testUniquity bool) {
+func Benchmark(patternNum int, testUniquity bool, countGarbageNodes bool) {
 	if patternNum == -1 {
 		fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
 		for i := 0; i < GetTotalPatternsNumber(); i++ {
-			benchmarkPattern(i, testUniquity)
+			benchmarkPattern(i, testUniquity, countGarbageNodes)
 		}
 	} else {
 		fmt.Printf("\rBENCHMARKING PATTERN %d:\n", patternNum)
-		benchmarkPattern(patternNum, testUniquity)
+		benchmarkPattern(patternNum, testUniquity, countGarbageNodes)
 	}
 	fmt.Printf("Benchmark finished. Press Enter. \n")
 	var input string
 	fmt.Scanln(&input)
 }
 
-func getCharmapAndTriesAndSuccessForGeneration(patternNumber int) (*[][]rune, int, bool, *[]int) {
+func getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
 	const triesForPattern = 1000
 
 	if patternNumber == -1 {
@@ -36,6 +36,9 @@ generationStart:
 		layout.init(size, size)
 
 		for i := range pattern {
+			if !countGarbageNodes && pattern[i].actionType == ACTION_PLACE_RANDOM_CONNECTED_NODES {
+				continue // don't count those random unneccessary nodes.
+			}
 			success := execPatternStep(pattern[i])
 			if !success {
 				flawsPerStep[i]++
@@ -47,7 +50,7 @@ generationStart:
 	return nil, triesForPattern, false, &flawsPerStep
 }
 
-func benchmarkPattern(patternNum int, testUniquity bool) {
+func benchmarkPattern(patternNum int, testUniquity bool, countGarbageNodes bool) {
 	generatedMaps := make([]*[][]rune, 0)
 	maxSteps := 0
 	minSteps := 99999999
@@ -57,8 +60,8 @@ func benchmarkPattern(patternNum int, testUniquity bool) {
 	flawsPerStep := make([]int, len(getPattern(patternNum)))
 	for loopNum := 0; loopNum < benchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, benchLoopsForPattern, 20)
-		cMap, tries , success, flawsPerGeneration := getCharmapAndTriesAndSuccessForGeneration(patternNum)
-		if testUniquity {
+		cMap, tries , success, flawsPerGeneration := getCharmapAndTriesAndSuccessForGeneration(patternNum, countGarbageNodes)
+		if testUniquity && cMap != nil {
 			if !isCharmapAlreadyInArray(cMap, &generatedMaps) {
 				generatedMaps = append(generatedMaps, cMap)
 			} else {
