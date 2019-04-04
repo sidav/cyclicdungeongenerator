@@ -54,7 +54,7 @@ func (r *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int, allowN
 			if (px - x)*(py - y) != 0 { // diagonal direction is restricted
 				continue
 			}
-			if x >= 0 && y >= 0 && x < len(r.elements) && y < len(r.elements[0]) && r.elements[x][y].isEmpty() {
+			if r.areCoordsValid(x, y) && r.elements[x][y].isEmpty() {
 				return px, py, x, y
 			}
 		}
@@ -66,15 +66,11 @@ func (r *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int,
 	const tries = 10
 	for try := 0; try < tries; try++ {
 		px, py := r.getRandomNonEmptyCellCoords()
-		for try2 := 0; try2 < tries; try2++ {
-			x, y := rnd.RandInRange(px-1, px+1), rnd.RandInRange(py-1, py+1)
-			if (px - x)*(py - y) != 0 { // diagonal direction is restricted
-				continue
-			}
-			if x >= 0 && y >= 0 && x < len(r.elements) && y < len(r.elements[0]) && r.elements[x][y].isEmpty() {
-				return px, py, x, y
-			}
+		x, y := r.getRandomEmptyCellNearCoords(px, py)
+		if x == -1 && y == -1 {
+			continue
 		}
+		return px, py, x, y
 	}
 	return -1, -1, -1, -1
 }
@@ -97,6 +93,26 @@ func (r *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int) (int, int) {
 	return emptiesX[index], emptiesY[index]
 }
 
+func (r *LayoutMap) getRandomEmptyCellNearCoords(nx, ny int) (int, int) {
+	emptiesX := make([]int, 0)
+	emptiesY := make([]int, 0)
+	for x := nx-1; x <= nx+1; x++ {
+		for y := ny-1; y <= ny+1; y++ {
+			if (nx-x) * (ny-y) != 0 { // restrict diagonals
+				continue
+			}
+			if (x != nx || y != ny) && r.areCoordsValid(x, y) && r.elements[x][y].isEmpty() {
+				emptiesX = append(emptiesX, x)
+				emptiesY = append(emptiesY, y)
+			}
+		}
+	}
+	if len(emptiesX) == 0 {
+		return -1, -1
+	}
+	index := rnd.Random(len(emptiesX))
+	return emptiesX[index], emptiesY[index]
+}
 
 func (r *LayoutMap) getRandomNonEmptyCellCoords() (int, int) {
 	nonEmptiesX := make([]int, 0)
@@ -174,6 +190,11 @@ func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
 	}
 	panic("getCoordsOfNode failed with node "+nodeName)
 	return -1, -1
+}
+
+func (r *LayoutMap) areCoordsValid(x, y int) bool {
+	w, h := r.GetSize()
+	return x >= 0 && x < w && y >= 0 && y < h
 }
 
 // exported
