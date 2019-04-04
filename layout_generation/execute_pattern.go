@@ -153,6 +153,13 @@ func execSetNodeConnectionsLockedFromPath(step *patternStep) bool {
 
 func getRandomCoordsForStep(step *patternStep) (int, int) {
 	fx, fy, tx, ty := getAbsoluteCoordsForStep(step)
+	if fx == 0 && fy == 0 && tx == 0 && ty == 0 { // the coords were not set, so we can use absolutely any ones
+	// WARNING: may (and will) cause problems if you specially want a cell to be placed at (0,0) and manually set the coords range in step accordingly!
+	// TODO: think about tle previous line.
+		w, h := layout.GetSize()
+		tx = w-1
+		ty = h-1
+	}
 	x, y :=  rnd.RandInRange(fx, tx), rnd.RandInRange(fy, ty)
 	return x, y
 }

@@ -119,12 +119,12 @@ var patterns_array = [][]*patternStep{
 	},
 	// pattern 6, two-keyed
 	{
-		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", minEmptyCellsNear: 4},
 		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
 		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
 		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND3", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
-		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND4", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND4", minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", minEmptyCellsNear: 0},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 1},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 2},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND3", pathNumber: 3},
