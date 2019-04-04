@@ -22,27 +22,29 @@ func Benchmark(patternNum int, testUniquity bool) {
 	fmt.Scanln(&input)
 }
 
-func getCharmapAndTriesAndSuccessForGeneration(patternNumber int) (*[][]rune, int, bool) {
+func getCharmapAndTriesAndSuccessForGeneration(patternNumber int) (*[][]rune, int, bool, *[]int) {
 	const triesForPattern = 1000
 
 	if patternNumber == -1 {
 		patternNumber = getRandomPatternNumber()
 	}
 	pattern := getPattern(patternNumber)
+	flawsPerStep := make([]int, len(pattern))
 
 generationStart:
-	for	patternTry:=1;patternTry<=triesForPattern; patternTry++ {
+	for	patternTry:=0;patternTry<=triesForPattern; patternTry++ {
 		layout.init(size, size)
 
 		for i := range pattern {
 			success := execPatternStep(pattern[i])
 			if !success {
+				flawsPerStep[i]++
 				continue generationStart
 			}
 		}
-		return layout.WholeMapToCharArray(), patternTry, true
+		return layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep
 	}
-	return nil, triesForPattern, false
+	return nil, triesForPattern, false, &flawsPerStep
 }
 
 func benchmarkPattern(patternNum int, testUniquity bool) {
@@ -52,9 +54,10 @@ func benchmarkPattern(patternNum int, testUniquity bool) {
 	stepsSum := 0
 	fails := 0
 	repeats := 0
+	flawsPerStep := make([]int, len(getPattern(patternNum)))
 	for loopNum := 0; loopNum < benchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, benchLoopsForPattern, 20)
-		cMap, tries , success := getCharmapAndTriesAndSuccessForGeneration(patternNum)
+		cMap, tries , success, flawsPerGeneration := getCharmapAndTriesAndSuccessForGeneration(patternNum)
 		if testUniquity {
 			if !isCharmapAlreadyInArray(cMap, &generatedMaps) {
 				generatedMaps = append(generatedMaps, cMap)
@@ -72,16 +75,27 @@ func benchmarkPattern(patternNum int, testUniquity bool) {
 		if !success {
 			fails++
 		}
+		for i:=0;i<len(flawsPerStep);i++{
+			flawsPerStep[i] += (*flawsPerGeneration)[i]
+		}
 	}
 
-	fmt.Printf("Pattern #%d, min tries %d, max tries %d, mean tries number %f, %d failed attempts\n", patternNum,
+	fmt.Printf("Pattern #%d, min flaws %d, max flaws %d, mean flaws count %f, %d failed attempts\n", patternNum,
 		minSteps, maxSteps, float64(stepsSum)/float64(benchLoopsForPattern), fails)
+	fmt.Print("Flaws per step: \n")
+	flawsArrString := ""
+	for i:=0;i<len(flawsPerStep);i++{
+		flawsArrString += fmt.Sprintf("%d: %d;  ", i, flawsPerStep[i])
+	}
+	fmt.Print(flawsArrString + "\n")
+
 	if testUniquity {
 		fmt.Printf("There was %d unique maps and %d repeats, repeats consist %.2f%% of total maps generated).\n\n",
 			len(generatedMaps), repeats, 100.0*float64(repeats)/float64(repeats+len(generatedMaps)))
 	} else {
 		fmt.Printf("Uniquity test was not performed as set by testUniquity flag. \n")
 	}
+	fmt.Print("\n")
 }
 
 func isCharmapAlreadyInArray(c *[][]rune, arr *[]*[][]rune) bool {
