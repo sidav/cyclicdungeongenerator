@@ -63,6 +63,9 @@ func execPlaceRandomConnectedNodes(step *patternStep) bool {
 	for currNodeNum:=0;currNodeNum<nodesToAdd;currNodeNum++ {
 		px, py, x, y := layout.getRandomNonEmptyCoordsAndRandomCellNearIt()
 		if px == -1 || py == -1 || x == -1 || y == -1 {
+			if currNodeNum > step.countFrom {
+				return true // minimum number of nodes was added anyway, return true.
+			}
 			return false // no cell was returned, step failed...
 		}
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
