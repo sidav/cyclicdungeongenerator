@@ -33,14 +33,17 @@ func execPatternStep(step *patternStep) bool {
 }
 
 func execPlaceNodeAtEmpty(step *patternStep) bool {
-	const tries = 25
 	minEmpties := step.minEmptyCellsNear
-	for try := 0; try < tries; try++ {
-		x, y := getRandomCoordsForStep(step)
-		if layout.areCoordsEmpty(x, y) && layout.countEmptyCellsNear(x, y) >= minEmpties {
-			layout.placeNodeAtCoords(x, y, step.nameOfNode)
-			return true
-		}
+	var x, y int
+	fx, fy, tx, ty := getAbsoluteCoordsForStep(step)
+	if fx == 0 && fy == 0 && tx == 0 && ty == 0 { // the coords were not set, so we can use absolutely any ones
+		x, y = layout.getRandomEmptyCellCoords(minEmpties)
+	} else {
+		x, y = layout.getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmpties)
+	}
+	if x != -1 && y != -1 {
+		layout.placeNodeAtCoords(x, y, step.nameOfNode)
+		return true
 	}
 	return false
 	panic("execPlaceNodeAtEmpty: Node " + step.nameOfNode + " refuses to be placed!")
@@ -48,19 +51,19 @@ func execPlaceNodeAtEmpty(step *patternStep) bool {
 
 func execPlaceNodeNearPath(step *patternStep) bool {
 	num := step.pathNumber
-	px, py, x, y :=  layout.getRandomPathCoordsAndRandomCellNearPath(num, step.allowPlaceNearNode)
+	px, py, x, y := layout.getRandomPathCoordsAndRandomCellNearPath(num, step.allowPlaceNearNode)
 	if px == -1 || py == -1 || x == -1 || y == -1 {
 		return false // no cell was returned, step failed...
 	}
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
-	layout.elements[x][y].setConnectionByCoords(&connection{pathNum:num},px-x, py-y)
-	layout.elements[px][py].setConnectionByCoords(&connection{pathNum:num},x-px, y-py)
+	layout.elements[x][y].setConnectionByCoords(&connection{pathNum: num}, px-x, py-y)
+	layout.elements[px][py].setConnectionByCoords(&connection{pathNum: num}, x-px, y-py)
 	return true
 }
 
 func execPlaceRandomConnectedNodes(step *patternStep) bool {
 	nodesToAdd := rnd.RandInRange(step.countFrom, step.countTo)
-	for currNodeNum := 1 ;currNodeNum <= nodesToAdd; currNodeNum++ {
+	for currNodeNum := 1; currNodeNum <= nodesToAdd; currNodeNum++ {
 		px, py, x, y := layout.getRandomNonEmptyCoordsAndRandomCellNearIt()
 		if px == -1 || py == -1 || x == -1 || y == -1 {
 			if currNodeNum > step.countFrom {
@@ -84,7 +87,7 @@ func execPlaceObstacleInCenter(step *patternStep) bool {
 	//}
 	for i := -obstSize; i < obstSize+1; i++ {
 		for j := -obstSize; j < obstSize+1; j++ {
-			if i*i + j*j <= obstSize*obstSize {
+			if i*i+j*j <= obstSize*obstSize {
 				layout.placeObstacleAtCoords(cx+i, cy+j)
 			}
 		}
@@ -114,11 +117,11 @@ func execPlacePathFromTo(step *patternStep) bool {
 	for path.Child != nil {
 		x, y := path.GetCoords()
 		vx, vy := path.GetNextStepVector()
-		layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, vx, vy)// place connection
+		layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, vx, vy) // place connection
 		path = path.Child
 		x, y = path.GetCoords()
 		layout.placePathAtCoords(x, y, step.pathNumber)
-		layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, -vx, -vy)// place reverse connection
+		layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, -vx, -vy) // place reverse connection
 	}
 	return true
 }
@@ -154,13 +157,13 @@ func execSetNodeConnectionsLockedFromPath(step *patternStep) bool {
 func getRandomCoordsForStep(step *patternStep) (int, int) {
 	fx, fy, tx, ty := getAbsoluteCoordsForStep(step)
 	if fx == 0 && fy == 0 && tx == 0 && ty == 0 { // the coords were not set, so we can use absolutely any ones
-	// WARNING: may (and will) cause problems if you specially want a cell to be placed at (0,0) and manually set the coords range in step accordingly!
-	// TODO: think about tle previous line.
+		// WARNING: may (and will) cause problems if you specially want a cell to be placed at (0,0) and manually set the coords range in step accordingly!
+		// TODO: think about tle previous line.
 		w, h := layout.GetSize()
-		tx = w-1
-		ty = h-1
+		tx = w - 1
+		ty = h - 1
 	}
-	x, y :=  rnd.RandInRange(fx, tx), rnd.RandInRange(fy, ty)
+	x, y := rnd.RandInRange(fx, tx), rnd.RandInRange(fy, ty)
 	return x, y
 }
 
@@ -184,4 +187,3 @@ func getAbsoluteCoordsForStep(step *patternStep) (int, int, int, int) {
 	}
 	return fx, fy, tx, ty
 }
-
