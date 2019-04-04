@@ -60,7 +60,7 @@ func execPlaceNodeNearPath(step *patternStep) bool {
 
 func execPlaceRandomConnectedNodes(step *patternStep) bool {
 	nodesToAdd := rnd.RandInRange(step.countFrom, step.countTo)
-	for currNodeNum:=0;currNodeNum<nodesToAdd;currNodeNum++ {
+	for currNodeNum := 1 ;currNodeNum <= nodesToAdd; currNodeNum++ {
 		px, py, x, y := layout.getRandomNonEmptyCoordsAndRandomCellNearIt()
 		if px == -1 || py == -1 || x == -1 || y == -1 {
 			if currNodeNum > step.countFrom {
