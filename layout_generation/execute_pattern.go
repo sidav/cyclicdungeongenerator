@@ -34,9 +34,10 @@ func execPatternStep(step *patternStep) bool {
 
 func execPlaceNodeAtEmpty(step *patternStep) bool {
 	const tries = 25
+	minEmpties := step.minEmptyCellsNear
 	for try := 0; try < tries; try++ {
 		x, y := getRandomCoordsForStep(step)
-		if layout.areCoordsEmpty(x, y) {
+		if layout.areCoordsEmpty(x, y) && layout.countEmptyCellsNear(x, y) >= minEmpties {
 			layout.placeNodeAtCoords(x, y, step.nameOfNode)
 			return true
 		}
@@ -91,7 +92,7 @@ func execPlaceObstacleInCenter(step *patternStep) bool {
 func execPlaceRandomObstacles(step *patternStep) bool {
 	count := getRandomCountForStep(step)
 	for i := 0; i < count; i++ {
-		x, y := layout.getRandomEmptyCellCoords()
+		x, y := layout.getRandomEmptyCellCoords(0)
 		if !(x*y == 0 || x == size-1 || y == size-1) {
 			layout.placeObstacleAtCoords(x, y)
 		}

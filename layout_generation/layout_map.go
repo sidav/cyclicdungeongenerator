@@ -79,12 +79,12 @@ func (r *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int,
 	return -1, -1, -1, -1
 }
 
-func (r *LayoutMap) getRandomEmptyCellCoords() (int, int) {
+func (r *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int) (int, int) {
 	emptiesX := make([]int, 0)
 	emptiesY := make([]int, 0)
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
-			if r.elements[x][y].isEmpty() {
+			if r.elements[x][y].isEmpty() && (r.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
 				emptiesX = append(emptiesX, x)
 				emptiesY = append(emptiesY, y)
 			}
@@ -143,6 +143,25 @@ func (r *LayoutMap) getRandomPathCellCoords(desiredPathNum int, nodesAllowed boo
 
 func (r *LayoutMap) areCoordsEmpty(x, y int) bool {
 	return r.elements[x][y].isEmpty()
+}
+
+func (r *LayoutMap) countEmptyCellsNear(x, y int) int {
+	count := 0
+	w, h := r.GetSize()
+	for i := -1; i <= 1; i++ {
+		for j := -1; j <= 1; j++ {
+			if i*j != 0 || i ==0 && j == 0 {
+				continue
+			}
+			if x+i < 0 || x+i >= w || y+j < 0 || y+j >= h {
+				continue
+			}
+			if r.elements[x+i][y+j].isEmpty() {
+				count++
+			}
+		}
+	}
+	return count
 }
 
 func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
