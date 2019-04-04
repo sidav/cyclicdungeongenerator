@@ -74,10 +74,69 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 2},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 3},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND2", pathNumber: 4},
-		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "FIN", pathNumber: 5},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "FIN", pathNumber: 5},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "FIN", pathNumber: 6},
 		// place garbage nodes
 		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 7},
+	},
+	// pattern 4, mine.
+	{
+
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 2},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 3},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND2", pathNumber: 4},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "FIN", pathNumber: 5},
+		// place garbage nodes
+		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 7},
+		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND2", status: "KEY"},
+		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 1, lockNumber: 0},
+		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 5, lockNumber: 0},
+	},
+	// pattern 5.
+	{
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND3", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 1},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 2},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND3", pathNumber: 3},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND2", pathNumber: 4},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND3", pathNumber: 5},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND3", nameTo: "FIN", pathNumber: 6},
+		// place garbage nodes
+		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 7},
+		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND2", status: "KEY"},
+		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 1, lockNumber: 0},
+		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "ND3", pathNumber: 3, lockNumber: 0},
+		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "ND3", pathNumber: 5, lockNumber: 0},
+	},
+	// pattern 6, two-keyed
+	{
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND3", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND4", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 1},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 2},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND3", pathNumber: 3},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "ND3", pathNumber: 4},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND3", nameTo: "ND4", pathNumber: 5},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND4", nameTo: "FIN", pathNumber: 6},
+		// place garbage nodes
+		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, nameOfNode: "   ", countFrom: 2, countTo: 7},
+		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND1", status: "KY1"},
+		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND2", status: "KY2"},
+		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "ND4", pathNumber: 5, lockNumber: 0},
+		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 6, lockNumber: 1},
 	},
 }
 

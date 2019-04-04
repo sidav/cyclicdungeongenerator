@@ -242,9 +242,14 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 		}
 		for x := -1; x <= 1; x++ {
 			for y := -1; y <= 2; y++ {
-				if e.getConnectionByCoords(x, y) != nil {
-					if e.getConnectionByCoords(x, y).isLocked {
-						ca[2+x*2][2+y*2] = '%'
+				conn := e.getConnectionByCoords(x, y)
+				if conn != nil {
+					if conn.isLocked {
+						if conn.lockNum == 0 {
+							ca[2+x*2][2+y*2] = '%'
+						} else {
+							ca[2+x*2][2+y*2] = '='
+						}
 					} else {
 						ca[2+x*2][2+y*2] = '+'
 					}
