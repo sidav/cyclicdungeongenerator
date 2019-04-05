@@ -28,6 +28,8 @@ func execPatternStep(step *patternStep) bool {
 		return execSetNodeStatus(step)
 	case ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH:
 		return execSetNodeConnectionsLockedFromPath(step)
+	case ACTION_PLACE_NODE_AT_PATH:
+		return execPlaceNodeAtPath(step)
 	}
 	return true
 }
@@ -59,6 +61,16 @@ func execPlaceNodeNearPath(step *patternStep) bool {
 	layout.elements[x][y].setConnectionByCoords(&connection{pathNum: num}, px-x, py-y)
 	layout.elements[px][py].setConnectionByCoords(&connection{pathNum: num}, x-px, y-py)
 	return true
+}
+
+func execPlaceNodeAtPath(step *patternStep) bool {
+	num := step.pathNumber
+	x, y := layout.getRandomPathCellCoords(num, false)
+	if x != -1 && y != -1 {
+		layout.placeNodeAtCoords(x, y, step.nameOfNode)
+		return true
+	}
+	return false
 }
 
 func execPlaceRandomConnectedNodes(step *patternStep) bool {
