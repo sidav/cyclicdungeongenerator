@@ -71,3 +71,22 @@ func (e *element) setAllConnectionsLockedForPath(pathNum int, lockNum int) {
 		}
 	}
 }
+
+// exported
+
+func (e *element) GetAllConnectionsCoords() [][]int {
+	arr := make([][]int, 0)
+	if e.connections["north"] != nil {
+		arr = append(arr, []int{0, -1})
+	}
+	if e.connections["south"] != nil {
+		arr = append(arr, []int{0, 1})
+	}
+	if e.connections["west"] != nil {
+		arr = append(arr, []int{-1, 0})
+	}
+	if e.connections["east"] != nil {
+		arr = append(arr, []int{1, 0})
+	}
+	return arr
+}

@@ -231,6 +231,10 @@ func (r *LayoutMap) GetSize() (int, int) {
 	return len(r.elements), len(r.elements[0])
 }
 
+func (r *LayoutMap) GetElement(x, y int) *element {
+	return r.elements[x][y]
+}
+
 func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
 	pmap := make([][]int, size)
 	for i := range pmap {
