@@ -6,6 +6,29 @@ func getRandomRoomFromArray(arr *[][]string) *[]string {
 	return &((*arr)[routines.Random(len(*arr))]) // ow that's quite of some pointer magic!
 }
 
+func getDirectionsByConnsArray(conns *[][]int) (n, e, s, w bool) {
+	for i := 0; i < len(*conns); i++ {
+		con := (*conns)[i]
+		if con[0] == 0 {
+			if con[1] == 1 {
+				s = true
+			}
+			if con[1] == -1 {
+				n = true
+			}
+		}
+		if con[1] == 0 {
+			if con[0] == 1 {
+				e = true
+			}
+			if con[0] == -1 {
+				w = true
+			}
+		}
+	}
+	return
+}
+
 func reverseString(s string) (result string) {
 	for _, v := range s {
 		result = string(v) + result
@@ -13,7 +36,7 @@ func reverseString(s string) (result string) {
 	return
 }
 
-func getRotatedStringArray(arr *[]string) *[]string { // rotates 90 degrees (counter)clockwise TODO: find it out
+func getRotatedStringArray(arr *[]string) *[]string { // rotates 90 degrees clockwise
 	newArr := make([]string, 0)
 	for i:=0; i < len((*arr)[0]);i++ {
 		str := ""
@@ -66,27 +89,28 @@ func getSingleConnRoom(conn []int) *[]string {
 }
 
 func getTwoConnRoom(conn[][]int) *[]string {
+	north, east, south, west := getDirectionsByConnsArray(&conn)
 	// first, determine whether the connections are symmetric
-	if conn[0][0] == 0 && conn[1][0] == 0 || conn[0][1] == 0 && conn[1][1] == 0 {
+	if north && south || east && west {
 		// they are symmetric, well yeah
 		room := getRandomRoomFromArray(&ns_entrance_rooms)
-		if conn[0][0] == 0 && conn[1][0] == 0 { // north and south
+		if north && south { // north and south
 			return room
 		} else { // west-east connection
 			return getRotatedStringArray(room)
 		}
 	} else {
 		room := getRandomRoomFromArray(&se_entrance_rooms)
-		if conn[0][1] == 1 && conn[1][0] == 1 { // south-east
+		if south && east { // south-east
 			return room
 		}
-		if conn[0][1] == -1 && conn[1][0] == 1 { // north-east
+		if north && east { // north-east
 			return getMirroredStringArray(room, true, false)
 		}
-		if conn[0][1] == -1 && conn[1][0] == -1 { // south-east
-			return getRotatedStringArray(getMirroredStringArray(room, true, false))
+		if north && west { // north-west
+			return getMirroredStringArray(getRotatedStringArray(room), true, false)
 		}
-		if conn[0][1] == 1 && conn[1][0] == -1 { // south-east
+		if south && west { // south-west
 			return getMirroredStringArray(room, false, true)
 		}
 	}
