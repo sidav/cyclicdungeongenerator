@@ -5,6 +5,12 @@ import (
 )
 
 var patterns_array = [][]*patternStep{
+	// test pattern, TODO: remove
+	{
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", minEmptyCellsNear: 0},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", minEmptyCellsNear: 0},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
+	},
 	// pattern 0
 	{
 		// randomly place beginning and end

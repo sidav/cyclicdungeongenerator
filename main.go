@@ -14,5 +14,6 @@ func main() {
 	cw.Init_console()
 	defer cw.Close_console()
 
-	doLayoutVisualization()
+	// doLayoutVisualization()
+	doTilemapVisualization()
 }
