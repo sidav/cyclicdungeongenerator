@@ -1,6 +1,9 @@
 package layout_to_tiled
 
-import "DoomSlayeRL/routines"
+import (
+	"DoomSlayeRL/routines"
+	"strings"
+)
 
 func getRandomRoomFromArray(arr *[][]string) *[]string {
 	return &((*arr)[routines.Random(len(*arr))]) // ow that's quite of some pointer magic!
@@ -38,9 +41,9 @@ func reverseString(s string) (result string) {
 
 func getRotatedStringArray(arr *[]string) *[]string { // rotates 90 degrees clockwise
 	newArr := make([]string, 0)
-	for i:=0; i < len((*arr)[0]);i++ {
+	for i := 0; i < len((*arr)[0]); i++ {
 		str := ""
-		for j:=0; j < len(*arr); j++ {
+		for j := 0; j < len(*arr); j++ {
 			str += string((*arr)[j][i])
 		}
 		newArr = append(newArr, str)
@@ -51,19 +54,19 @@ func getRotatedStringArray(arr *[]string) *[]string { // rotates 90 degrees cloc
 func getMirroredStringArray(arr *[]string, v, h bool) *[]string {
 	newArr := make([]string, 0)
 	if v && h {
-		for i := len(*arr) - 1; i >= 0; i--{
+		for i := len(*arr) - 1; i >= 0; i-- {
 			newArr = append(newArr, reverseString((*arr)[i]))
 		}
 		return &newArr
 	}
 	if v {
-		for i := len(*arr) - 1; i >= 0; i--{
+		for i := len(*arr) - 1; i >= 0; i-- {
 			newArr = append(newArr, (*arr)[i])
 		}
 		return &newArr
 	}
 	if h {
-		for i := 0; i < len(*arr) ; i++{
+		for i := 0; i < len(*arr); i++ {
 			newArr = append(newArr, reverseString((*arr)[i]))
 		}
 		return &newArr
@@ -88,7 +91,7 @@ func getSingleConnRoom(conn []int) *[]string {
 	return nil
 }
 
-func getTwoConnRoom(conn[][]int) *[]string {
+func getTwoConnRoom(conn [][]int) *[]string {
 	north, east, south, west := getDirectionsByConnsArray(&conn)
 	// first, determine whether the connections are symmetric
 	if north && south || east && west {
@@ -117,13 +120,42 @@ func getTwoConnRoom(conn[][]int) *[]string {
 	return nil
 }
 
-func GetRoomByNodeConnections(conns *[][]int) *[]string {
-	switch len(*conns) {
-	case 1:
-		return getSingleConnRoom((*conns)[0])
-	case 2:
-		return getTwoConnRoom(*conns)
+func placeDoorsToRoomByConnection(room *[]string, conns *[][]int) {
+	w, h := len(*room), len((*room)[0])
+	for _, con := range *conns {
+		cy, cx := con[0], con[1]
+		doorx, doory := w/2+cx*w/2, h/2+cy*h/2
+		if doorx == w {
+			doorx--
+		}
+		if doory == h {
+			doory--
+		}
+		newStr := (*room)[doorx]
+		newStr = newStr[:doory] + "+" + newStr[doory+1:]
+		(*room)[doorx] = newStr
 	}
-	return getRandomRoomFromArray(&no_entrance_rooms)
 }
 
+func GetRoomByNodeConnections(conns *[][]int) *[]string {
+	var room []string
+	switch len(*conns) {
+	case 0:
+		room = *getRandomRoomFromArray(&no_entrance_rooms)
+	case 1:
+		room = *getSingleConnRoom((*conns)[0])
+	case 2:
+		room = *getTwoConnRoom(*conns)
+	}
+	// now we should outline the room with walls
+	h := len((room)[0])
+	wall_row := strings.Repeat("#", h+2)
+	var outlined_room []string
+	outlined_room = append(outlined_room, wall_row)
+	for i := range room {
+		outlined_room = append(outlined_room, "#"+room[i]+"#")
+	}
+	outlined_room = append(outlined_room, wall_row)
+	placeDoorsToRoomByConnection(&outlined_room, conns)
+	return &outlined_room
+}

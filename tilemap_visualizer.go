@@ -31,7 +31,7 @@ func doTilemapVisualization() {
 			continue
 		} else {
 			putTileMap(generatedMap)
-			putMiniMapAndPatternNumberAndNumberOfTries(generatedMap, pattNum, desiredPatternNum, genRestarts)
+			// putMiniMapAndPatternNumberAndNumberOfTries(generatedMap, pattNum, desiredPatternNum, genRestarts)
 		}
 		cw.Flush_console()
 	keyread:
@@ -62,7 +62,8 @@ func putTileMap(a *layout_generation.LayoutMap) {
 			node := a.GetElement(rx, ry)
 			conns := node.GetAllConnectionsCoords()
 			roomStrs := layout_to_tiled.GetRoomByNodeConnections(&conns)
-			putStringArray(roomStrs, ry*10, rx*10)
+			roomSize := len(*roomStrs) - 1
+			putStringArray(roomStrs, ry*roomSize, rx*roomSize)
 		}
 	}
 }
