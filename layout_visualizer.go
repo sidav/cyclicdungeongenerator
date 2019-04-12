@@ -17,7 +17,7 @@ func doLayoutVisualization() {
 		if desiredPatternNum != -1 {
 			pattNum = desiredPatternNum
 		}
-		generatedMap, genRestarts := layout_generation.Generate(pattNum)
+		generatedMap, genRestarts := layout_generation.Generate(pattNum, W, H)
 
 		if generatedMap == nil {
 			cw.PutString(":(", 0, 0)

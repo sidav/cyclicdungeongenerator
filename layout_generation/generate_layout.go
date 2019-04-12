@@ -1,13 +1,15 @@
 package layout_generation
 
 var (
-	layoutWidth  = 5
+	layoutWidth  = 10
 	layoutHeight = 5
 	layout       = LayoutMap{}
 )
 
-func Generate(patternNumber int) (*LayoutMap, int) {
+func Generate(patternNumber int, width, height int) (*LayoutMap, int) {
 	const triesForPattern = 25
+	layoutWidth = width
+	layoutHeight = height
 
 	if patternNumber == -1 {
 		patternNumber = getRandomPatternNumber()

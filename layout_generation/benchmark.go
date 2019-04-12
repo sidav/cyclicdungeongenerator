@@ -6,7 +6,7 @@ import (
 )
 
 const benchLoopsForPattern = 10000
-const triesForPattern = 100
+const triesForPattern = 250
 
 func Benchmark(patternNum int, testUniquity bool, countGarbageNodes bool) {
 	if patternNum == -1 {

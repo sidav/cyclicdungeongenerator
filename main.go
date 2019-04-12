@@ -5,6 +5,11 @@ import (
 	cw "github.com/sidav/golibrl/console/tcell_console"
 )
 
+const (
+	W = 10
+	H = 5
+)
+
 func main() {
 	rnd.Randomize()
 
