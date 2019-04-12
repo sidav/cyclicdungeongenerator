@@ -141,29 +141,34 @@ func placePassagesIntoRoomByConnection(room *[]string, conns *[][]int, placeDoor
 	}
 }
 
-func GetRoomByNodeConnections(conns *[][]int, placeDoors bool) *[]string {
-	var room []string
-	switch len(*conns) {
-	case 0:
-		room = *getRandomRoomFromArray(&no_entrance_rooms)
-	case 1:
-		room = *getSingleConnRoom((*conns)[0])
-	case 2:
-		room = *getTwoConnRoom(*conns)
-	case 3:
-		room = *getRandomRoomFromArray(&all_entrance_rooms) // temp
-	case 4:
-		room = *getRandomRoomFromArray(&all_entrance_rooms)
-	}
-	// now we should outline the room with walls
-	h := len((room)[0])
+func createOutlinedRoomFromRoom(room *[]string) *[]string {
+	h := len((*room)[0])
 	wall_row := strings.Repeat("#", h+2)
 	var outlined_room []string
 	outlined_room = append(outlined_room, wall_row)
-	for i := range room {
-		outlined_room = append(outlined_room, "#"+room[i]+"#")
+	for i := range *room {
+		outlined_room = append(outlined_room, "#"+(*room)[i]+"#")
 	}
 	outlined_room = append(outlined_room, wall_row)
-	placePassagesIntoRoomByConnection(&outlined_room, conns, placeDoors)
 	return &outlined_room
+}
+
+func GetRoomByNodeConnections(conns *[][]int, placeDoors bool) *[]string {
+	var roomTemplate []string
+	switch len(*conns) {
+	case 0:
+		roomTemplate = *getRandomRoomFromArray(&no_entrance_rooms)
+	case 1:
+		roomTemplate = *getSingleConnRoom((*conns)[0])
+	case 2:
+		roomTemplate = *getTwoConnRoom(*conns)
+	case 3:
+		roomTemplate = *getRandomRoomFromArray(&all_entrance_rooms) // temp
+	case 4:
+		roomTemplate = *getRandomRoomFromArray(&all_entrance_rooms)
+	}
+	// now we should outline the room with walls
+	outlinedRoom := createOutlinedRoomFromRoom(&roomTemplate)
+	placePassagesIntoRoomByConnection(outlinedRoom, conns, placeDoors)
+	return outlinedRoom
 }
