@@ -111,7 +111,7 @@ func getTwoConnRoom(conn [][]int) *[]string {
 			return getMirroredStringArray(room, true, false)
 		}
 		if north && west { // north-west
-			return getMirroredStringArray(getRotatedStringArray(room), true, false)
+			return getMirroredStringArray(getRotatedStringArray(room), false, true)
 		}
 		if south && west { // south-west
 			return getMirroredStringArray(room, false, true)
@@ -146,6 +146,8 @@ func GetRoomByNodeConnections(conns *[][]int) *[]string {
 		room = *getSingleConnRoom((*conns)[0])
 	case 2:
 		room = *getTwoConnRoom(*conns)
+	case 4:
+		room = *getRandomRoomFromArray(&all_entrance_rooms)
 	}
 	// now we should outline the room with walls
 	h := len((room)[0])
