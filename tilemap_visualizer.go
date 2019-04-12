@@ -66,6 +66,13 @@ func putTileMap(a *layout_generation.LayoutMap) {
 				roomStrs := layout_to_tiled.GetTilemapByNodeConnections(&conns, placeDoors)
 				roomSize := len(*roomStrs) - 1
 				putStringArray(roomStrs, ry*roomSize, rx*roomSize)
+				cw.SetFgColor(cw.GREEN)
+				if node.IsNode() {
+					name := node.GetName()
+					namelen := len(name)
+					offset := roomSize / 2 - namelen / 2
+					cw.PutString(name, rx*roomSize + offset, ry*roomSize+roomSize/2)
+				}
 			}
 		}
 	}

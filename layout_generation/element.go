@@ -74,6 +74,10 @@ func (e *element) IsNode() bool {
 	return e.nodeInfo != nil
 }
 
+func (e *element) GetName() string {
+	return e.nodeInfo.nodeName
+}
+
 func (e *element) GetAllConnectionsCoords() [][]int {
 	arr := make([][]int, 0)
 	if e.connections["north"] != nil {

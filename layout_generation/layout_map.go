@@ -265,6 +265,9 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 		return '#'
 	}
 	if elem.IsNode() {
+		if elem.GetName() == "" {
+			return 'R'
+		}
 		return rune(elem.nodeInfo.nodeName[0])
 	}
 	if elem.isPartOfAPath() {
@@ -309,9 +312,11 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 				}
 			}
 		}
-		ca[1][2] = rune(e.nodeInfo.nodeName[0])
-		ca[2][2] = rune(e.nodeInfo.nodeName[1])
-		ca[3][2] = rune(e.nodeInfo.nodeName[2])
+		if e.GetName() != "" {
+			ca[1][2] = rune(e.nodeInfo.nodeName[0])
+			ca[2][2] = rune(e.nodeInfo.nodeName[1])
+			ca[3][2] = rune(e.nodeInfo.nodeName[2])
+		}
 		if e.pathInfo != nil {
 			ca[2][1] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
 		}
