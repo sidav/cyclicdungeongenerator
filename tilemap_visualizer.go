@@ -63,7 +63,7 @@ func putTileMap(a *layout_generation.LayoutMap) {
 			conns := node.GetAllConnectionsCoords()
 			if len(conns) > 0 {
 				placeDoors := node.IsNode()
-				roomStrs := layout_to_tiled.GetRoomByNodeConnections(&conns, placeDoors)
+				roomStrs := layout_to_tiled.GetTilemapByNodeConnections(&conns, placeDoors)
 				roomSize := len(*roomStrs) - 1
 				putStringArray(roomStrs, ry*roomSize, rx*roomSize)
 			}

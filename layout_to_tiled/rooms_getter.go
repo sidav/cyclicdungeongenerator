@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func getRandomRoomFromArray(arr *[][]string) *[]string {
+func getRandomTilemapFromArray(arr *[][]string) *[]string {
 	return &((*arr)[routines.Random(len(*arr))]) // ow that's quite of some pointer magic!
 }
 
@@ -74,36 +74,43 @@ func getMirroredStringArray(arr *[]string, v, h bool) *[]string {
 	return nil
 }
 
-func getSingleConnRoom(conn []int) *[]string {
-	var room = getRandomRoomFromArray(&single_entrance_rooms)
+func getSingleConnTilemap(conn []int) *[]string {
+	var tilemap = getRandomTilemapFromArray(&single_entrance_rooms)
 	if conn[0] == 0 && conn[1] == 1 { // south-faced door
-		return room
+		return tilemap
 	}
 	if conn[0] == 0 && conn[1] == -1 { // north-faced door
-		return getMirroredStringArray(room, true, false)
+		return getMirroredStringArray(tilemap, true, false)
 	}
 	if conn[0] == 1 && conn[1] == 0 { // east-faced door
-		return getRotatedStringArray(room)
+		return getRotatedStringArray(tilemap)
 	}
 	if conn[0] == -1 && conn[1] == 0 { // west-faced door
-		return getMirroredStringArray(getRotatedStringArray(room), false, true)
+		return getMirroredStringArray(getRotatedStringArray(tilemap), false, true)
 	}
 	return nil
 }
 
-func getTwoConnRoom(conn [][]int) *[]string {
+func getTwoConnTilemap(conn [][]int, isRoom bool) *[]string {
 	north, east, south, west := getDirectionsByConnsArray(&conn)
 	// first, determine whether the connections are symmetric
 	if north && south || east && west {
 		// they are symmetric, well yeah
-		room := getRandomRoomFromArray(&ns_entrance_rooms)
+		tilemap := getRandomTilemapFromArray(&ns_entrance_corrs)
+		if isRoom {
+			tilemap = getRandomTilemapFromArray(&ns_entrance_rooms)
+		}
+
 		if north && south { // north and south
-			return room
+			return tilemap
 		} else { // west-east connection
-			return getRotatedStringArray(room)
+			return getRotatedStringArray(tilemap)
 		}
 	} else {
-		room := getRandomRoomFromArray(&se_entrance_rooms)
+		room := getRandomTilemapFromArray(&se_entrance_corrs)
+		if isRoom {
+			room = getRandomTilemapFromArray(&se_entrance_rooms)
+		}
 		if south && east { // south-east
 			return room
 		}
@@ -111,11 +118,32 @@ func getTwoConnRoom(conn [][]int) *[]string {
 			return getMirroredStringArray(room, true, false)
 		}
 		if north && west { // north-west
-			return getMirroredStringArray(getRotatedStringArray(room), false, true)
+			return getMirroredStringArray(room, true, true)
 		}
 		if south && west { // south-west
 			return getMirroredStringArray(room, false, true)
 		}
+	}
+	return nil
+}
+
+func getThreeConnTilemap(conn [][]int, isRoom bool) *[]string {
+	tilemap := getRandomTilemapFromArray(&nes_entrance_corrs)
+	if isRoom {
+		tilemap = getRandomTilemapFromArray(&nes_entrance_rooms)
+	}
+	north, east, south, west := getDirectionsByConnsArray(&conn)
+	if !west {
+		return tilemap
+	}
+	if !east {
+		return getMirroredStringArray(tilemap, false, true)
+	}
+	if !north {
+		return getRotatedStringArray(tilemap)
+	}
+	if !south {
+		return getRotatedStringArray(getMirroredStringArray(tilemap, false, true))
 	}
 	return nil
 }
@@ -153,22 +181,47 @@ func createOutlinedRoomFromRoom(room *[]string) *[]string {
 	return &outlined_room
 }
 
-func GetRoomByNodeConnections(conns *[][]int, placeDoors bool) *[]string {
+func getRoomByNodeConnections(conns *[][]int) *[]string {
 	var roomTemplate []string
 	switch len(*conns) {
 	case 0:
-		roomTemplate = *getRandomRoomFromArray(&no_entrance_rooms)
+		roomTemplate = *getRandomTilemapFromArray(&no_entrance_rooms)
 	case 1:
-		roomTemplate = *getSingleConnRoom((*conns)[0])
+		roomTemplate = *getSingleConnTilemap((*conns)[0])
 	case 2:
-		roomTemplate = *getTwoConnRoom(*conns)
+		roomTemplate = *getTwoConnTilemap(*conns, true)
 	case 3:
-		roomTemplate = *getRandomRoomFromArray(&all_entrance_rooms) // temp
+		roomTemplate = *getThreeConnTilemap(*conns, true)
 	case 4:
-		roomTemplate = *getRandomRoomFromArray(&all_entrance_rooms)
+		roomTemplate = *getRandomTilemapFromArray(&all_entrance_rooms)
 	}
 	// now we should outline the room with walls
 	outlinedRoom := createOutlinedRoomFromRoom(&roomTemplate)
-	placePassagesIntoRoomByConnection(outlinedRoom, conns, placeDoors)
+	placePassagesIntoRoomByConnection(outlinedRoom, conns, true)
 	return outlinedRoom
+}
+
+func getCorridorByNodeConnections(conns *[][]int) *[]string {
+	var corrTemplate []string
+	switch len(*conns) {
+	case 0:
+		corrTemplate = *getRandomTilemapFromArray(&no_entrance_corrs)
+	case 1:
+		corrTemplate = *getSingleConnTilemap((*conns)[0])
+	case 2:
+		corrTemplate = *getTwoConnTilemap(*conns, false)
+	case 3:
+		corrTemplate = *getThreeConnTilemap(*conns, false)
+	case 4:
+		corrTemplate = *getRandomTilemapFromArray(&all_entrance_corrs)
+	}
+	return &corrTemplate
+}
+
+
+func GetTilemapByNodeConnections(conns *[][]int, isRoom bool) *[]string {
+	if isRoom {
+		return getRoomByNodeConnections(conns)
+	}
+	return getCorridorByNodeConnections(conns)
 }
