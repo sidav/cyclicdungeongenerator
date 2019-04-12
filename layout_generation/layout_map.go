@@ -11,9 +11,9 @@ type LayoutMap struct {
 }
 
 func (r *LayoutMap) init(sizex, sizey int) {
-	r.elements = make([][]*element, size)
+	r.elements = make([][]*element, layoutWidth)
 	for i := range r.elements {
-		r.elements[i] = make([]*element, size)
+		r.elements[i] = make([]*element, layoutHeight)
 	}
 	for x := 0; x < sizex; x++ {
 		for y := 0; y < sizey; y++ {
@@ -236,13 +236,13 @@ func (r *LayoutMap) GetElement(x, y int) *element {
 }
 
 func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
-	pmap := make([][]int, size)
+	pmap := make([][]int, layoutWidth)
 	for i := range pmap {
-		pmap[i] = make([]int, size)
+		pmap[i] = make([]int, layoutHeight)
 	}
 
-	for x := 0; x < size; x++ {
-		for y := 0; y < size; y++ {
+	for x := 0; x < layoutWidth; x++ {
+		for y := 0; y < layoutHeight; y++ {
 			if layout.areCoordsEmpty(x, y) {
 				pmap[x][y] = 1
 			} else {

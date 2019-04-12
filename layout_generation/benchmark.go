@@ -6,6 +6,7 @@ import (
 )
 
 const benchLoopsForPattern = 10000
+const triesForPattern = 100
 
 func Benchmark(patternNum int, testUniquity bool, countGarbageNodes bool) {
 	if patternNum == -1 {
@@ -23,7 +24,6 @@ func Benchmark(patternNum int, testUniquity bool, countGarbageNodes bool) {
 }
 
 func getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
-	const triesForPattern = 1000
 
 	if patternNumber == -1 {
 		patternNumber = getRandomPatternNumber()
@@ -33,7 +33,7 @@ func getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNo
 
 generationStart:
 	for	patternTry:=0;patternTry<=triesForPattern; patternTry++ {
-		layout.init(size, size)
+		layout.init(layoutWidth, layoutHeight)
 
 		for i := range pattern {
 			if !countGarbageNodes && pattern[i].actionType == ACTION_PLACE_RANDOM_CONNECTED_NODES {

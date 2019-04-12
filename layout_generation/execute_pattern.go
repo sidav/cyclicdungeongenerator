@@ -92,7 +92,7 @@ func execPlaceRandomConnectedNodes(step *patternStep) bool {
 
 func execPlaceObstacleInCenter(step *patternStep) bool {
 	obstSize := step.obstacleRadius
-	cx, cy := size/2, size/2
+	cx, cy := layoutWidth/2, layoutHeight/2
 	//if size % 2 == 1 {
 	//	cx++
 	//	cy++
@@ -111,7 +111,7 @@ func execPlaceRandomObstacles(step *patternStep) bool {
 	count := getRandomCountForStep(step)
 	for i := 0; i < count; i++ {
 		x, y := layout.getRandomEmptyCellCoords(0)
-		if !(x*y == 0 || x == size-1 || y == size-1) {
+		if !(x*y == 0 || x == layoutWidth-1 || y == layoutHeight-1) {
 			layout.placeObstacleAtCoords(x, y)
 		}
 	}
@@ -186,16 +186,16 @@ func getRandomCountForStep(step *patternStep) (int) {
 func getAbsoluteCoordsForStep(step *patternStep) (int, int, int, int) {
 	fx, fy, tx, ty := step.fx, step.fy, step.tx, step.ty
 	if fx < 0 {
-		fx = size + fx
+		fx = layoutWidth + fx
 	}
 	if fy < 0 {
-		fy = size + fy
+		fy = layoutHeight + fy
 	}
 	if tx < 0 {
-		tx = size + tx
+		tx = layoutWidth + tx
 	}
 	if ty < 0 {
-		ty = size + ty
+		ty = layoutHeight + ty
 	}
 	return fx, fy, tx, ty
 }

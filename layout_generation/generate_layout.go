@@ -1,9 +1,9 @@
 package layout_generation
 
 var (
-	size    = 5
-	divisor = 3
-	layout  = LayoutMap{}
+	layoutWidth  = 5
+	layoutHeight = 5
+	layout       = LayoutMap{}
 )
 
 func Generate(patternNumber int) (*LayoutMap, int) {
@@ -15,8 +15,8 @@ func Generate(patternNumber int) (*LayoutMap, int) {
 	pattern := getPattern(patternNumber)
 
 generationStart:
-	for	generatorRestarts :=0; generatorRestarts <=triesForPattern; generatorRestarts++ {
-		layout.init(size, size)
+	for generatorRestarts := 0; generatorRestarts <= triesForPattern; generatorRestarts++ {
+		layout.init(layoutWidth, layoutHeight)
 
 		for i := range pattern {
 			success := execPatternStep(pattern[i])
