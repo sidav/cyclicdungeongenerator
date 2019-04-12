@@ -14,10 +14,6 @@ func (e *element) isPartOfAPath() bool {
 	return e.pathInfo != nil
 }
 
-func (e *element) isNode() bool {
-	return e.nodeInfo != nil
-}
-
 func (e *element) isEmpty() bool {
 	return e.pathInfo == nil && e.nodeInfo == nil && !e.isObstacle
 }
@@ -73,6 +69,10 @@ func (e *element) setAllConnectionsLockedForPath(pathNum int, lockNum int) {
 }
 
 // exported
+
+func (e *element) IsNode() bool {
+	return e.nodeInfo != nil
+}
 
 func (e *element) GetAllConnectionsCoords() [][]int {
 	arr := make([][]int, 0)

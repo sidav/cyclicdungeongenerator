@@ -120,7 +120,11 @@ func getTwoConnRoom(conn [][]int) *[]string {
 	return nil
 }
 
-func placeDoorsToRoomByConnection(room *[]string, conns *[][]int) {
+func placePassagesIntoRoomByConnection(room *[]string, conns *[][]int, placeDoors bool) {
+	doorChar := "."
+	if placeDoors {
+		doorChar = "+"
+	}
 	w, h := len(*room), len((*room)[0])
 	for _, con := range *conns {
 		cy, cx := con[0], con[1]
@@ -132,12 +136,12 @@ func placeDoorsToRoomByConnection(room *[]string, conns *[][]int) {
 			doory--
 		}
 		newStr := (*room)[doorx]
-		newStr = newStr[:doory] + "+" + newStr[doory+1:]
+		newStr = newStr[:doory] + doorChar + newStr[doory+1:]
 		(*room)[doorx] = newStr
 	}
 }
 
-func GetRoomByNodeConnections(conns *[][]int) *[]string {
+func GetRoomByNodeConnections(conns *[][]int, placeDoors bool) *[]string {
 	var room []string
 	switch len(*conns) {
 	case 0:
@@ -146,6 +150,8 @@ func GetRoomByNodeConnections(conns *[][]int) *[]string {
 		room = *getSingleConnRoom((*conns)[0])
 	case 2:
 		room = *getTwoConnRoom(*conns)
+	case 3:
+		room = *getRandomRoomFromArray(&all_entrance_rooms) // temp
 	case 4:
 		room = *getRandomRoomFromArray(&all_entrance_rooms)
 	}
@@ -158,6 +164,6 @@ func GetRoomByNodeConnections(conns *[][]int) *[]string {
 		outlined_room = append(outlined_room, "#"+room[i]+"#")
 	}
 	outlined_room = append(outlined_room, wall_row)
-	placeDoorsToRoomByConnection(&outlined_room, conns)
+	placePassagesIntoRoomByConnection(&outlined_room, conns, placeDoors)
 	return &outlined_room
 }

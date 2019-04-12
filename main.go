@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	W = 10
+	W = 5
 	H = 5
 )
 

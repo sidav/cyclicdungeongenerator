@@ -10,7 +10,7 @@ import (
 
 func doTilemapVisualization() {
 	key := "none"
-	desiredPatternNum := 0
+	desiredPatternNum := -1
 
 	for key != "ESCAPE" {
 		cw.Clear_console()
@@ -61,9 +61,12 @@ func putTileMap(a *layout_generation.LayoutMap) {
 		for ry := 0; ry < rh; ry++ {
 			node := a.GetElement(rx, ry)
 			conns := node.GetAllConnectionsCoords()
-			roomStrs := layout_to_tiled.GetRoomByNodeConnections(&conns)
-			roomSize := len(*roomStrs) - 1
-			putStringArray(roomStrs, ry*roomSize, rx*roomSize)
+			if len(conns) > 0 {
+				placeDoors := node.IsNode()
+				roomStrs := layout_to_tiled.GetRoomByNodeConnections(&conns, placeDoors)
+				roomSize := len(*roomStrs) - 1
+				putStringArray(roomStrs, ry*roomSize, rx*roomSize)
+			}
 		}
 	}
 }

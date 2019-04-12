@@ -211,7 +211,7 @@ func (r *LayoutMap) countEmptyCellsNear(x, y int) int {
 func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
-			if r.elements[x][y].isNode() && r.elements[x][y].nodeInfo.nodeName == nodeName {
+			if r.elements[x][y].IsNode() && r.elements[x][y].nodeInfo.nodeName == nodeName {
 				return x, y
 			}
 		}
@@ -264,7 +264,7 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 	if elem.isObstacle {
 		return '#'
 	}
-	if elem.isNode() {
+	if elem.IsNode() {
 		return rune(elem.nodeInfo.nodeName[0])
 	}
 	if elem.isPartOfAPath() {
