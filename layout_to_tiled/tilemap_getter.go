@@ -219,7 +219,7 @@ func getCorridorByNodeConnections(conns *[][]int) *[]string {
 }
 
 
-func GetTilemapByNodeConnections(conns *[][]int, isRoom bool) *[]string {
+func getTilemapByNodeConnections(conns *[][]int, isRoom bool) *[]string {
 	if isRoom {
 		return getRoomByNodeConnections(conns)
 	}

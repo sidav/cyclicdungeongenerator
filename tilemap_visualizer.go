@@ -56,16 +56,14 @@ func doTilemapVisualization() {
 }
 
 func putTileMap(a *layout_generation.LayoutMap) {
+	putTileArray(layout_to_tiled.GetTileMap(a), 0, 0)
 	rw, rh := a.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {
 			node := a.GetElement(rx, ry)
 			conns := node.GetAllConnectionsCoords()
 			if len(conns) > 0 {
-				placeDoors := node.IsNode()
-				roomStrs := layout_to_tiled.GetTilemapByNodeConnections(&conns, placeDoors)
-				roomSize := len(*roomStrs) - 1
-				putStringArray(roomStrs, ry*roomSize, rx*roomSize)
+				roomSize := 12 // temp
 				cw.SetFgColor(cw.GREEN)
 				if node.IsNode() {
 					name := node.GetName()
@@ -78,12 +76,12 @@ func putTileMap(a *layout_generation.LayoutMap) {
 	}
 }
 
-func putStringArray(arr *[]string, sx, sy int) {
+func putTileArray(arr *[][]layout_to_tiled.Tile, sx, sy int) {
 	for x :=0; x <len(*arr); x++{
 		for y :=0; y <len((*arr)[x]); y++ {
-			chr := rune((*arr)[x][y])
+			chr := (*arr)[x][y].Char
 			setcolorForRune(chr)
-			cw.PutChar(chr, sy+y, sx+x)
+			cw.PutChar(chr, sx+x, sy+y)
 		}
 	}
 }
