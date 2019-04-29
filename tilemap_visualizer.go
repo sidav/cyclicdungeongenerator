@@ -63,7 +63,7 @@ func putTileMap(a *layout_generation.LayoutMap) {
 			node := a.GetElement(rx, ry)
 			conns := node.GetAllConnectionsCoords()
 			if len(conns) > 0 {
-				roomSize := 12 // temp
+				roomSize := 11 // temp
 				cw.SetFgColor(cw.GREEN)
 				if node.IsNode() {
 					name := node.GetName()
