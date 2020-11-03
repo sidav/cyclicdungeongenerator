@@ -1,12 +1,12 @@
 package layout_to_tiled
 
 import (
-	"DoomSlayeRL/routines"
+	"github.com/sidav/golibrl/random"
 	"strings"
 )
 
 func getRandomTilemapFromArray(arr *[][]string) *[]string {
-	return &((*arr)[routines.Random(len(*arr))]) // ow that's quite of some pointer magic!
+	return &((*arr)[random.Random(len(*arr))]) // ow that's quite of some pointer magic!
 }
 
 func getDirectionsByConnsArray(conns *[][]int) (n, e, s, w bool) {
