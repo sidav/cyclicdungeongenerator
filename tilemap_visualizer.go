@@ -58,7 +58,7 @@ func (g *tmv) doTilemapVisualization() {
 }
 
 func (g *tmv) putTileMap(a *layout_generation.LayoutMap) {
-	g.putTileArray(layout_to_tiled.GetTileMap(a), 0, 0)
+	g.putTileArray(layout_to_tiled.TransformLayoutToTileMap(a), 0, 0)
 	rw, rh := a.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {

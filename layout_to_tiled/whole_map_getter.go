@@ -27,7 +27,7 @@ func selectTileForOverlap(c1, c2 rune) rune {
 	return c1
 }
 
-func GetTileMap(a *layout_generation.LayoutMap) *[][]Tile {
+func TransformLayoutToTileMap(a *layout_generation.LayoutMap) *[][]Tile {
 	layoutw, layouth := a.GetSize()
 
 	tilemap := make([][]Tile, layoutw*11+1)
