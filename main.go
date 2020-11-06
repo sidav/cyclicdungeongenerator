@@ -20,5 +20,8 @@ func main() {
 	defer cw.Close_console()
 
 	// doLayoutVisualization()
-	doTilemapVisualization()
+	//tmv := tmv{}
+	//tmv.doTilemapVisualization()
+	gen := generatedVisualizer{}
+	gen.doGeneratedVisualization()
 }
