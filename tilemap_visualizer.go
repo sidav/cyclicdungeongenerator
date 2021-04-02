@@ -4,8 +4,8 @@ import (
 	"CyclicDungeonGenerator/layout_generation"
 	"CyclicDungeonGenerator/layout_to_tiled"
 	"fmt"
-	cw "github.com/sidav/golibrl/console/tcell_console"
-	rnd "github.com/sidav/golibrl/random"
+	cw "CyclicDungeonGenerator/console_wrapper"
+	rnd "CyclicDungeonGenerator/random"
 )
 
 type tmv struct {}

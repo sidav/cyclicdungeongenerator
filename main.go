@@ -1,8 +1,8 @@
 package main
 
 import (
-	rnd "github.com/sidav/golibrl/random"
-	cw "github.com/sidav/golibrl/console/tcell_console"
+	rnd "CyclicDungeonGenerator/random"
+	cw "CyclicDungeonGenerator/console_wrapper"
 )
 
 const (
@@ -19,7 +19,7 @@ func main() {
 	cw.Init_console()
 	defer cw.Close_console()
 
-	// doLayoutVisualization()
+	doLayoutVisualization()
 	tmv := tmv{}
 	tmv.doTilemapVisualization()
 	//gen := generatedVisualizer{}

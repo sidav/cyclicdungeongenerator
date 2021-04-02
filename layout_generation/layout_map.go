@@ -1,7 +1,7 @@
 package layout_generation
 
 import (
-	rnd "github.com/sidav/golibrl/random"
+	rnd "CyclicDungeonGenerator/random"
 	"strconv"
 )
 
