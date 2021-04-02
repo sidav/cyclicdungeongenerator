@@ -79,7 +79,7 @@ func putMiniMapAndPatternNumberAndNumberOfTries(a *layout_generation.LayoutMap, 
 	cw.SetFgColor(cw.BEIGE)
 	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*5+2, sy+2)
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*5+2, sy+3)
-	cw.PutString(fmt.Sprintf("Generation finised with %d restarts", restarts), sx*5+2, sy+4)
+	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+4)
 
 }
 
