@@ -23,11 +23,11 @@ func (r *LayoutMap) init(sizex, sizey int) {
 }
 
 func (r *LayoutMap) placeNodeAtCoords(x, y int, nodeName string) {
-	r.elements[x][y].nodeInfo = &node_cell{nodeName: nodeName}
+	r.elements[x][y].nodeInfo = &nodeCell{nodeName: nodeName}
 }
 
 func (r *LayoutMap) placePathAtCoords(x, y int, pathNum int) {
-	r.elements[x][y].pathInfo = &path_cell{pathNum}
+	r.elements[x][y].pathInfo = &pathCell{pathNum}
 }
 
 func (r *LayoutMap) placeObstacleAtCoords(x, y int) {

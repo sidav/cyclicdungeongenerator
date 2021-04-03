@@ -4,8 +4,8 @@ import "fmt"
 
 type element struct {
 	// it's a room or a tile occupied with interconnection.
-	pathInfo    *path_cell
-	nodeInfo    *node_cell
+	pathInfo    *pathCell
+	nodeInfo    *nodeCell
 	isObstacle  bool // for temp obstacles
 	connections map[string]*connection
 }

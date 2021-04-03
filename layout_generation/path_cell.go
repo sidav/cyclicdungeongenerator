@@ -1,5 +1,5 @@
 package layout_generation
 
-type path_cell struct {
+type pathCell struct {
 	pathNumber int
 }
