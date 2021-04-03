@@ -1,9 +1,10 @@
 package layout_generation
 
 var (
-	layoutWidth  = 10
-	layoutHeight = 5
-	layout       = LayoutMap{}
+	RandomizePath = true
+	layoutWidth   = 10
+	layoutHeight  = 5
+	layout        = LayoutMap{}
 )
 
 func Generate(patternNumber int, width, height int) (*LayoutMap, int) {

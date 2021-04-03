@@ -245,6 +245,10 @@ func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
 		for y := 0; y < layoutHeight; y++ {
 			if layout.areCoordsEmpty(x, y) {
 				pmap[x][y] = 1
+				// TODO: think how to better randomize path costs
+				if RandomizePath {
+					pmap[x][y] += rnd.RandInRange(-100, 250)
+				}
 			} else {
 				pmap[x][y] = -1
 			}

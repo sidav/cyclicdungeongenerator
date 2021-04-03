@@ -1,6 +1,6 @@
-package random_pathfinder
+package deprecated
 
-import "github.com/sidav/golibrl/random"
+import "CyclicDungeonGenerator/random"
 
 // Random pathfinder.
 // It is effectively lobotomized A* (heuristics removed, selecting next path cell mechanism changed to random instead of cost-based)

@@ -30,13 +30,16 @@ func doLayoutVisualization() {
 			continue
 		} else {
 			putMap(generatedMap)
-			putMiniMapAndPatternNumberAndNumberOfTries(generatedMap, pattNum, desiredPatternNum, genRestarts)
+			putInfo(generatedMap, pattNum, desiredPatternNum, genRestarts, layout_generation.RandomizePath)
 		}
 		cw.Flush_console()
 	keyread:
 		for {
 			key = cw.ReadKey()
 			switch key {
+			case "r":
+				layout_generation.RandomizePath = !layout_generation.RandomizePath
+				break keyread
 			case "=":
 				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {
 					desiredPatternNum++
@@ -67,7 +70,7 @@ func putMap(a *layout_generation.LayoutMap) {
 	putCharArray(0, 0, a.WholeMapToCharArray())
 }
 
-func putMiniMapAndPatternNumberAndNumberOfTries(a *layout_generation.LayoutMap, pattNum, desiredPNum, restarts int) {
+func putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum, restarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -80,7 +83,11 @@ func putMiniMapAndPatternNumberAndNumberOfTries(a *layout_generation.LayoutMap, 
 	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*5+2, sy+2)
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*5+2, sy+3)
 	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+4)
-
+	if rand {
+		cw.PutString("Random paths", sx*5+2, sy+5)
+	} else {
+		cw.PutString("Shortest paths", sx*5+2, sy+5)
+	}
 }
 
 func setcolorForRune(chr rune) {
