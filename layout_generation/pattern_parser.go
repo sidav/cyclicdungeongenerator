@@ -23,7 +23,10 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 			pat.name = scanner.Text()
 		} else {
 			if scanner.Text() != "" {
-				pat.instructions = append(pat.instructions, *pp.parseLineToInstruction(scanner.Text()))
+				newInstr := pp.parseLineToInstruction(scanner.Text())
+				if newInstr != nil {
+					pat.instructions = append(pat.instructions, *newInstr)
+				}
 			}
 		}
 		currLine++
@@ -35,6 +38,9 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 	pp.currentSplitLine = strings.Split(line, " ")
 
 	action := strings.ToUpper(pp.currentSplitLine[0])
+	if action[0] == "#"[0] { // that's a comment
+		return nil
+	}
 	switch action {
 	case "ADDROOMATEMPTY": // ADDROOMATEMPTY ROOMNAME room_name FX fx FY fy TX tx TY ty MINEMPTYCELLSNEAR minemptycellsnear
 		return &patternStep{
