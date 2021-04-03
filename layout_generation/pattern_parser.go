@@ -42,16 +42,20 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 		return nil
 	}
 	switch action {
-	case "ADDROOMATEMPTY": // ADDROOMATEMPTY ROOMNAME room_name FX fx FY fy TX tx TY ty MINEMPTYCELLSNEAR minemptycellsnear
+	case "ADDROOMATEMPTY": // ADDROOMATEMPTY ROOMNAME room_name FX fromX FY fromY TX toX TY toY MINEMPTYNEAR minemptycellsnear
 		return &patternStep{
 			actionType:        ACTION_PLACE_NODE_AT_EMPTY,
-			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYCELLSNEAR"),
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
+			fromX:             pp.getIntAfterIdentifier("FX"),
+			fromY:             pp.getIntAfterIdentifier("FY"),
+			toX:               pp.getIntAfterIdentifier("TX"),
+			toY:               pp.getIntAfterIdentifier("TY"),
 		}
 	case "PLACEPATH": // PLACEPATH PATHID id FROM fromname TO toname
 		return &patternStep{
 			actionType:        ACTION_PLACE_PATH_FROM_TO,
-			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYCELLSNEAR"),
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),
 			nameTo:            pp.getStringAfterIdentifier("TO"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
@@ -59,7 +63,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 	case "PLACERANDOMROOMS": // PLACERANDOMROOMS MIN minrooms MAX maxrooms
 		return &patternStep{
 			actionType:        ACTION_PLACE_RANDOM_CONNECTED_NODES,
-			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYCELLSNEAR"),
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),
 			nameTo:            pp.getStringAfterIdentifier("TO"),
 			countFrom:         pp.getIntAfterIdentifier("MIN"),
@@ -69,7 +73,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 	case "PLACEROOMNEARPATH": // PLACEROOMNEARPATH PATHID id ROOMNAME newroomname
 		return &patternStep{
 			actionType:        ACTION_PLACE_NODE_NEAR_PATH,
-			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYCELLSNEAR"),
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),
 			nameTo:            pp.getStringAfterIdentifier("TO"),
@@ -80,7 +84,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 	case "LOCKROOMFROMPATH": // LOCKROOMFROMPATH PATHID id ROOMNAME roomname LOCKID lockid
 		return &patternStep{
 			actionType:        ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH,
-			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYCELLSNEAR"),
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),
 			nameTo:            pp.getStringAfterIdentifier("TO"),
@@ -92,7 +96,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 	case "ADDROOMSTATUS": // ADDROOMSTATUS ROOMNAME roomname STATUS status
 		return &patternStep{
 			actionType:        ACTION_SET_NODE_STATUS,
-			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYCELLSNEAR"),
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),
 			nameTo:            pp.getStringAfterIdentifier("TO"),

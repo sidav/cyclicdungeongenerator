@@ -36,8 +36,8 @@ var patternsArray = []pattern{
 		name: "No keys, one loop",
 		instructions: []patternStep{
 			// randomly place beginning and end
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
 			// place big obstacle in center and some random obstacles for path to be less straight
 			// {actionType: ACTION_PLACE_OBSTACLE_IN_CENTER, obstacleRadius: 1},
 			// {actionType: ACTION_PLACE_RANDOM_OBSTACLES, countFrom: 2, countTo: 3},
@@ -59,10 +59,10 @@ var patternsArray = []pattern{
 	{
 		name: "No keys, two loops",
 		instructions: []patternStep{
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 0},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 0},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 0},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 0},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 2},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 3},
@@ -77,10 +77,10 @@ var patternsArray = []pattern{
 	{
 		name: "No keys, four loops",
 		instructions: []patternStep{
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 0},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 0},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 0},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 0},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 2},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 3},
@@ -95,10 +95,10 @@ var patternsArray = []pattern{
 	{
 		name: "Red key required",
 		instructions: []patternStep{
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 2},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 3},
@@ -117,11 +117,11 @@ var patternsArray = []pattern{
 	{
 		name: "Red key required 2",
 		instructions: []patternStep{
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND3", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 4},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND3", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 1},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 2},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND3", pathNumber: 3},
@@ -143,9 +143,9 @@ var patternsArray = []pattern{
 		name: "Two keys",
 		instructions: []patternStep{
 			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", minEmptyCellsNear: 4},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
-			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND3", fx: 1, fy: 1, tx: -2, ty: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND1", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND2", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
+			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND3", fromX: 1, fromY: 1, toX: -2, toY: -2, minEmptyCellsNear: 1},
 			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "ND4", minEmptyCellsNear: 1},
 			{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", minEmptyCellsNear: 0},
 			{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND1", pathNumber: 1},

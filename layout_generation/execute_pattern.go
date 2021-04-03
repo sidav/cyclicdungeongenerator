@@ -201,7 +201,7 @@ func (step *patternStep)getRandomCountForStep(layout *LayoutMap) (int) {
 
 func (step *patternStep)getAbsoluteCoordsForStep(layout *LayoutMap) (int, int, int, int) {
 	layoutWidth, layoutHeight := layout.GetSize()
-	fx, fy, tx, ty := step.fx, step.fy, step.tx, step.ty
+	fx, fy, tx, ty := step.fromX, step.fromY, step.toX, step.toY
 	if fx < 0 {
 		fx = layoutWidth + fx
 	}
