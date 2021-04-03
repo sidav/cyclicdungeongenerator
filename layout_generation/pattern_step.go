@@ -1,7 +1,6 @@
 package layout_generation
 
 const (
-	ACTION_NONE                             = iota
 	ACTION_PLACE_NODE_AT_EMPTY              = iota
 	ACTION_PLACE_NODE_NEAR_PATH             = iota
 	ACTION_PLACE_RANDOM_CONNECTED_NODES     = iota // For additional "garbage" dead end nodes. Can be placed connected to anything: a node, a path...

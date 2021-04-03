@@ -31,6 +31,11 @@ func (cg *CyclicGenerator) GenerateLayout(patternNumber int) (*LayoutMap, int) {
 	}
 	pattern := getPattern(patternNumber)
 
+	// TODO: DELETE
+	pp := PatternParser{}
+	pattern = pp.ParsePatternFile("example_pattern.ptn")
+	// TODO: DELETE ABOVE THIS LINE
+
 generationStart:
 	for generatorRestarts := 0; generatorRestarts <= triesForPattern; generatorRestarts++ {
 		cg.layout.init(cg.layoutWidth, cg.layoutHeight, &cg.rnd, cg.RandomizePath)
