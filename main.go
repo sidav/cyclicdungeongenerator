@@ -12,7 +12,7 @@ var (
 
 func main() {
 
-	const bench = false 
+	const bench = false
 	if bench {
 		bnch := layout_generation.Benchmark{
 			LayoutWidth: 5,
@@ -33,6 +33,6 @@ func main() {
 	defer cw.Close_console()
 
 	doLayoutVisualization()
-	// tmv := tmv{}
-	// tmv.doTilemapVisualization()
+	//tmv := tmv{}
+	//tmv.doTilemapVisualization()
 }

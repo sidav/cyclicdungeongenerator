@@ -1,12 +1,16 @@
 package layout_to_tiled
 
 import (
-	"CyclicDungeonGenerator/random"
+	rand2 "CyclicDungeonGenerator/random"
 	"strings"
 )
 
+var (
+	Random *rand2.FibRandom
+)
+
 func getRandomTilemapFromArray(arr *[][]string) *[]string {
-	return &((*arr)[random.Random(len(*arr))]) // ow that's quite of some pointer magic!
+	return &((*arr)[Random.Rand(len(*arr))]) // ow that's quite of some pointer magic!
 }
 
 func getDirectionsByConnsArray(conns *[][]int) (n, e, s, w bool) {
