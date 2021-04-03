@@ -58,20 +58,20 @@ func (b *Benchmark) getCharmapAndTriesAndSuccessForGeneration(patternNumber int,
 		patternNumber = getRandomPatternNumber()
 	}
 	pattern := getPattern(patternNumber)
-	flawsPerStep := make([]int, len(pattern))
+	flawsPerStep := make([]int, len(pattern.instructions))
 
 generationStart:
 	for patternTry := 0; patternTry <= b.TriesForPattern; patternTry++ {
 		layout.init(layoutWidth, layoutHeight)
 
-		for i := range pattern {
+		for i := range pattern.instructions {
 			if !countGarbageNodes {
-				if pattern[i].actionType == ACTION_PLACE_RANDOM_CONNECTED_NODES ||
-					pattern[i].actionType == ACTION_FILL_WITH_RANDOM_CONNECTED_NODES {
+				if pattern.instructions[i].actionType == ACTION_PLACE_RANDOM_CONNECTED_NODES ||
+					pattern.instructions[i].actionType == ACTION_FILL_WITH_RANDOM_CONNECTED_NODES {
 					continue // don't count those random unneccessary nodes.
 				}
 			}
-			success := execPatternStep(pattern[i])
+			success := execPatternStep(&pattern.instructions[i])
 			if !success {
 				flawsPerStep[i]++
 				continue generationStart
@@ -89,7 +89,7 @@ func (b *Benchmark) benchmarkPattern(patternNum int, testUniquity bool, countGar
 	stepsSum := 0
 	fails := 0
 	repeats := 0
-	flawsPerStep := make([]int, len(getPattern(patternNum)))
+	flawsPerStep := make([]int, len(getPattern(patternNum).instructions))
 	for loopNum := 0; loopNum < b.BenchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Progress "), loopNum+1, b.BenchLoopsForPattern+1, 15)
 		cMap, tries, success, flawsPerGeneration := b.getCharmapAndTriesAndSuccessForGeneration(patternNum, countGarbageNodes)

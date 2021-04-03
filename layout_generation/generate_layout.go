@@ -21,8 +21,8 @@ generationStart:
 	for generatorRestarts := 0; generatorRestarts <= triesForPattern; generatorRestarts++ {
 		layout.init(layoutWidth, layoutHeight)
 
-		for i := range pattern {
-			success := execPatternStep(pattern[i])
+		for i := range pattern.instructions {
+			success := execPatternStep(&pattern.instructions[i])
 			if !success {
 				continue generationStart
 			}
