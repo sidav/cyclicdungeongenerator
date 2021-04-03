@@ -6,16 +6,26 @@ import (
 )
 
 const benchLoopsForPattern = 10000
-const triesForPattern = 250
+const triesForPattern = 25
 
 func Benchmark(patternNum int, testUniquity bool, countGarbageNodes bool) {
 	if patternNum == -1 {
 		fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
 		for i := 0; i < GetTotalPatternsNumber(); i++ {
+			fmt.Print("WITH RANDOM PATHS: \n")
+			RandomizePath = true
+			benchmarkPattern(i, testUniquity, countGarbageNodes)
+			fmt.Print("WITH SHORTEST PATHS: \n")
+			RandomizePath = false
 			benchmarkPattern(i, testUniquity, countGarbageNodes)
 		}
 	} else {
 		fmt.Printf("\rBENCHMARKING PATTERN %d:\n", patternNum)
+		fmt.Print("WITH RANDOM PATHS: \n")
+		RandomizePath = true
+		benchmarkPattern(patternNum, testUniquity, countGarbageNodes)
+		fmt.Print("WITH SHORTEST PATHS: \n")
+		RandomizePath = false
 		benchmarkPattern(patternNum, testUniquity, countGarbageNodes)
 	}
 	fmt.Printf("Benchmark finished. Press Enter. \n")

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"CyclicDungeonGenerator/layout_generation"
 	rnd "CyclicDungeonGenerator/random"
 	cw "CyclicDungeonGenerator/console_wrapper"
 )
@@ -13,7 +14,7 @@ const (
 func main() {
 	rnd.Randomize()
 
-	// layout_generation.Benchmark(-1, false, true)
+	layout_generation.Benchmark(-1, false, true)
 
 	// cw.Init_console("CDG", cw.TCellRenderer)
 	cw.Init_console()
