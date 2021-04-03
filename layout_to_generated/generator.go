@@ -3,7 +3,7 @@ package layout_to_generated
 import (
 	"CyclicDungeonGenerator/layout_generation"
 	"fmt"
-	"github.com/sidav/golibrl/random/additive_random"
+	"CyclicDungeonGenerator/random/additive_random"
 )
 
 type Generator struct {

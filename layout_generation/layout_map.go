@@ -1,7 +1,7 @@
 package layout_generation
 
 import (
-	rnd "CyclicDungeonGenerator/random"
+	rnd "CyclicDungeonGenerator/random" // TODO: use generator's random struct! 
 	"strconv"
 )
 

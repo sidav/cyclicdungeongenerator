@@ -1,7 +1,7 @@
 package layout_to_tiled
 
 import (
-	"github.com/sidav/golibrl/random"
+	"CyclicDungeonGenerator/random"
 	"strings"
 )
 
