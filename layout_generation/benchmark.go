@@ -5,35 +5,54 @@ import (
 	"strings"
 )
 
-const benchLoopsForPattern = 10000
-const triesForPattern = 25
+type Benchmark struct {
+	BenchLoopsForPattern            int
+	TriesForPattern                 int
+	CheckRandomPaths                bool
+	CheckShortestPaths              bool
+	TestUniquity                    bool
+	GenerateAndConsiderGarbageNodes bool
+}
 
-func Benchmark(patternNum int, testUniquity bool, countGarbageNodes bool) {
-	if patternNum == -1 {
-		fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
-		for i := 0; i < GetTotalPatternsNumber(); i++ {
-			fmt.Print("WITH RANDOM PATHS: \n")
-			RandomizePath = true
-			benchmarkPattern(i, testUniquity, countGarbageNodes)
-			fmt.Print("WITH SHORTEST PATHS: \n")
-			RandomizePath = false
-			benchmarkPattern(i, testUniquity, countGarbageNodes)
-		}
-	} else {
-		fmt.Printf("\rBENCHMARKING PATTERN %d:\n", patternNum)
-		fmt.Print("WITH RANDOM PATHS: \n")
-		RandomizePath = true
-		benchmarkPattern(patternNum, testUniquity, countGarbageNodes)
-		fmt.Print("WITH SHORTEST PATHS: \n")
-		RandomizePath = false
-		benchmarkPattern(patternNum, testUniquity, countGarbageNodes)
+func (b *Benchmark) Benchmark(patternNum int) {
+	if !b.CheckRandomPaths {
+		fmt.Println("Not testing random paths.")
 	}
-	fmt.Printf("Benchmark finished. Press Enter. \n")
+	if !b.CheckShortestPaths {
+		fmt.Println("Not testing shortest paths.")
+	}
+	if b.CheckRandomPaths || b.CheckShortestPaths {
+		if patternNum == -1 {
+			fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
+			for i := 0; i < GetTotalPatternsNumber(); i++ {
+				b.startBench(i)
+			}
+		} else {
+			fmt.Printf("\rBENCHMARKING PATTERN %d:\n", patternNum)
+			b.startBench(patternNum)
+		}
+		fmt.Printf("Benchmark finished. Press Enter. \n")
+	} else {
+		fmt.Printf("Nothing to benchmark. Press Enter. \n")
+	}
 	var input string
 	fmt.Scanln(&input)
 }
 
-func getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
+func (b *Benchmark) startBench(patternNum int) {
+	if b.CheckRandomPaths {
+		fmt.Print("WITH RANDOM PATHS: \n")
+		RandomizePath = true
+		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
+	}
+	if b.CheckShortestPaths {
+		fmt.Print("WITH SHORTEST PATHS: \n")
+		RandomizePath = false
+		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
+	}
+}
+
+func (b *Benchmark) getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
 
 	if patternNumber == -1 {
 		patternNumber = getRandomPatternNumber()
@@ -42,7 +61,7 @@ func getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNo
 	flawsPerStep := make([]int, len(pattern))
 
 generationStart:
-	for	patternTry:=0;patternTry<=triesForPattern; patternTry++ {
+	for patternTry := 0; patternTry <= b.TriesForPattern; patternTry++ {
 		layout.init(layoutWidth, layoutHeight)
 
 		for i := range pattern {
@@ -57,10 +76,10 @@ generationStart:
 		}
 		return layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep
 	}
-	return nil, triesForPattern, false, &flawsPerStep
+	return nil, b.TriesForPattern, false, &flawsPerStep
 }
 
-func benchmarkPattern(patternNum int, testUniquity bool, countGarbageNodes bool) {
+func (b *Benchmark) benchmarkPattern(patternNum int, testUniquity bool, countGarbageNodes bool) {
 	generatedMaps := make([]*[][]rune, 0)
 	maxSteps := 0
 	minSteps := 99999999
@@ -68,14 +87,14 @@ func benchmarkPattern(patternNum int, testUniquity bool, countGarbageNodes bool)
 	fails := 0
 	repeats := 0
 	flawsPerStep := make([]int, len(getPattern(patternNum)))
-	for loopNum := 0; loopNum < benchLoopsForPattern; loopNum++ {
-		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, benchLoopsForPattern, 20)
-		cMap, tries , success, flawsPerGeneration := getCharmapAndTriesAndSuccessForGeneration(patternNum, countGarbageNodes)
+	for loopNum := 0; loopNum < b.BenchLoopsForPattern; loopNum++ {
+		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, b.BenchLoopsForPattern, 20)
+		cMap, tries, success, flawsPerGeneration := b.getCharmapAndTriesAndSuccessForGeneration(patternNum, countGarbageNodes)
 		if testUniquity && cMap != nil {
-			if !isCharmapAlreadyInArray(cMap, &generatedMaps) {
+			if !b.isCharmapAlreadyInArray(cMap, &generatedMaps) {
 				generatedMaps = append(generatedMaps, cMap)
 			} else {
-				repeats ++
+				repeats++
 			}
 		}
 		stepsSum += tries
@@ -88,16 +107,17 @@ func benchmarkPattern(patternNum int, testUniquity bool, countGarbageNodes bool)
 		if !success {
 			fails++
 		}
-		for i:=0;i<len(flawsPerStep);i++{
+		for i := 0; i < len(flawsPerStep); i++ {
 			flawsPerStep[i] += (*flawsPerGeneration)[i]
 		}
 	}
 
-	fmt.Printf("Pattern #%d, min flaws %d, max flaws %d, mean flaws count %f, %d failed attempts\n", patternNum,
-		minSteps, maxSteps, float64(stepsSum)/float64(benchLoopsForPattern), fails)
+	fmt.Printf("Pattern #%d, min flaws %d, max flaws %d, mean flaws count %.2f, %d failed attempts (%.2f%%)\n", patternNum,
+		minSteps, maxSteps, float64(stepsSum)/float64(b.BenchLoopsForPattern), fails,
+		100.0*float64(fails)/(float64(b.BenchLoopsForPattern)))
 	fmt.Print("Flaws per step: \n")
 	flawsArrString := ""
-	for i:=0;i<len(flawsPerStep);i++{
+	for i := 0; i < len(flawsPerStep); i++ {
 		flawsArrString += fmt.Sprintf("%d: %d;  ", i, flawsPerStep[i])
 	}
 	fmt.Print(flawsArrString + "\n")
@@ -106,26 +126,26 @@ func benchmarkPattern(patternNum int, testUniquity bool, countGarbageNodes bool)
 		fmt.Printf("There was %d unique maps and %d repeats, repeats consist %.2f%% of total maps generated).\n\n",
 			len(generatedMaps), repeats, 100.0*float64(repeats)/float64(repeats+len(generatedMaps)))
 	} else {
-		fmt.Printf("Uniquity test was not performed as set by testUniquity flag. \n")
+		fmt.Printf("Uniquity test was not performed as set by TestUniquity flag. \n")
 	}
 	fmt.Print("\n")
 }
 
-func isCharmapAlreadyInArray(c *[][]rune, arr *[]*[][]rune) bool {
-	for i := 0;i<len(*arr);i++{
-		if areTwoCharArraysEqual(c, (*arr)[i]) {
+func (b *Benchmark) isCharmapAlreadyInArray(c *[][]rune, arr *[]*[][]rune) bool {
+	for i := 0; i < len(*arr); i++ {
+		if b.areTwoCharArraysEqual(c, (*arr)[i]) {
 			return true
 		}
 	}
 	return false
 }
 
-func areTwoCharArraysEqual(c1, c2 *[][]rune) bool {
+func (b *Benchmark) areTwoCharArraysEqual(c1, c2 *[][]rune) bool {
 	if len(*c1) != len(*c2) {
 		return false
 	}
-	for i:=0;i<len(*c1);i++{
-		for j:=0;j<len((*c1)[0]);j++ {
+	for i := 0; i < len(*c1); i++ {
+		for j := 0; j < len((*c1)[0]); j++ {
 			if (*c1)[i][j] != (*c2)[i][j] {
 				return false
 			}
@@ -138,10 +158,10 @@ func progressBarCLI(title string, value, endvalue, bar_length int) { // because 
 	endvalue -= 1
 	percent := float64(value) / float64(endvalue)
 	arrow := ">"
-	for i:=0; i < int(percent * float64(bar_length)); i++ {
+	for i := 0; i < int(percent*float64(bar_length)); i++ {
 		arrow = "-" + arrow
 	}
-	spaces := strings.Repeat(" ", bar_length - len(arrow) + 1)
+	spaces := strings.Repeat(" ", bar_length-len(arrow)+1)
 	percent_with_dec := fmt.Sprintf("%.2f", percent*100.0)
 	fmt.Printf("\r%s [%s%s]%s%% (%d out of %d)", title, arrow, spaces, percent_with_dec, value, endvalue)
 	if value == endvalue {

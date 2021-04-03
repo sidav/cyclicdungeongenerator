@@ -40,7 +40,7 @@ func doLayoutVisualization() {
 			case "r":
 				layout_generation.RandomizePath = !layout_generation.RandomizePath
 				break keyread
-			case "=":
+			case "=", "+":
 				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {
 					desiredPatternNum++
 				}

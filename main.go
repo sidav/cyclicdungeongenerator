@@ -14,7 +14,15 @@ const (
 func main() {
 	rnd.Randomize()
 
-	layout_generation.Benchmark(-1, false, true)
+	bnch := layout_generation.Benchmark{
+		BenchLoopsForPattern:            1000,
+		TriesForPattern:                 25,
+		CheckRandomPaths:                true,
+		CheckShortestPaths:              false,
+		TestUniquity:                    false,
+		GenerateAndConsiderGarbageNodes: false,
+	}
+	bnch.Benchmark(-1)
 
 	// cw.Init_console("CDG", cw.TCellRenderer)
 	cw.Init_console()
