@@ -2,6 +2,8 @@ package layout_generation
 
 import (
 	"bufio"
+	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -11,16 +13,32 @@ type PatternParser struct {
 	currentSplitLine []string
 }
 
+func (pp *PatternParser) ListPatternFilenamesInPath(path string) []string {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var names []string
+	for _, f := range files {
+		if strings.Contains(f.Name(), ".ptn") {
+			name := strings.Replace(path+"/"+f.Name(), "//", "/", -1)
+			names = append(names, name)
+		}
+	}
+	return names
+}
+
 func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 	file, _ := os.Open(filename)
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
-	pat := pattern{}
+
+	pat := pattern{Filename: filename}
 
 	currLine := 1
 	for scanner.Scan() {
 		if currLine == 1 {
-			pat.name = scanner.Text()
+			pat.Name = scanner.Text()
 		} else {
 			if scanner.Text() != "" {
 				newInstr := pp.parseLineToInstruction(scanner.Text())

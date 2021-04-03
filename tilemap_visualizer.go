@@ -16,15 +16,17 @@ func (g *tmv) doTilemapVisualization() {
 	rnd := random.FibRandom{}
 	rnd.InitDefault()
 	layout_to_tilemap.Random = &rnd
+	parser := layout_generation.PatternParser{}
+	filenames := parser.ListPatternFilenamesInPath("patterns/")
 
 	for key != "ESCAPE" {
 		cw.Clear_console()
-		pattNum := rnd.Rand(layout_generation.GetTotalPatternsNumber())
+		pattNum := rnd.Rand(len(filenames))
 		if desiredPatternNum != -1 {
 			pattNum = desiredPatternNum
 		}
 		gen := layout_generation.InitCyclicGenerator(true, W, H, -1)
-		generatedMap, genRestarts := gen.GenerateLayout(pattNum)
+		generatedMap, genRestarts := gen.GenerateLayout(parser.ParsePatternFile(filenames[pattNum]))
 
 		if generatedMap == nil {
 			cw.PutString(":(", 0, 0)
@@ -45,7 +47,7 @@ func (g *tmv) doTilemapVisualization() {
 			key = cw.ReadKey()
 			switch key {
 			case "=":
-				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {
+				if desiredPatternNum < len(filenames)-1 {
 					desiredPatternNum++
 				}
 				break keyread

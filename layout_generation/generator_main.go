@@ -23,18 +23,8 @@ func InitCyclicGenerator(randomizePath bool, layoutWidth, layoutHeight int, seed
 	return gen
 }
 
-func (cg *CyclicGenerator) GenerateLayout(patternNumber int) (*LayoutMap, int) {
+func (cg *CyclicGenerator) GenerateLayout(pattern *pattern) (*LayoutMap, int) {
 	const triesForPattern = 25
-
-	if patternNumber == -1 {
-		patternNumber = getRandomPatternNumber(&cg.rnd)
-	}
-	pattern := getPattern(patternNumber)
-
-	// TODO: DELETE
-	pp := PatternParser{}
-	pattern = pp.ParsePatternFile("example_pattern.ptn")
-	// TODO: DELETE ABOVE THIS LINE
 
 generationStart:
 	for generatorRestarts := 0; generatorRestarts <= triesForPattern; generatorRestarts++ {

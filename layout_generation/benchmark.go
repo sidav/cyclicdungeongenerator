@@ -17,10 +17,11 @@ type Benchmark struct {
 	layout                    LayoutMap
 	randomizePaths            bool
 	LayoutWidth, LayoutHeight int
-	rnd                      random.FibRandom
+	rnd                       random.FibRandom
+	parser                    PatternParser
 }
 
-func (b *Benchmark) Benchmark(patternNum int) {
+func (b *Benchmark) Benchmark(patternFilename string) {
 	b.rnd = random.FibRandom{}
 	b.rnd.InitBySeed(-1)
 	if !b.CheckRandomPaths {
@@ -30,14 +31,15 @@ func (b *Benchmark) Benchmark(patternNum int) {
 		fmt.Println("Not testing shortest paths.")
 	}
 	if b.CheckRandomPaths || b.CheckShortestPaths {
-		if patternNum == -1 {
+		if !strings.Contains(patternFilename, ".ptn") {
 			fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
-			for i := 0; i < GetTotalPatternsNumber(); i++ {
-				b.startBench(i)
+			filenames := b.parser.ListPatternFilenamesInPath(patternFilename)
+			for i := range filenames {
+					b.startBench(filenames[i])
 			}
 		} else {
-			fmt.Printf("\rBENCHMARKING PATTERN %d:\n", patternNum)
-			b.startBench(patternNum)
+			fmt.Printf("\rBENCHMARKING PATTERN %s:\n", patternFilename)
+			b.startBench(patternFilename)
 		}
 		fmt.Printf("Benchmark finished. Press Enter. \n")
 	} else {
@@ -47,25 +49,21 @@ func (b *Benchmark) Benchmark(patternNum int) {
 	fmt.Scanln(&input)
 }
 
-func (b *Benchmark) startBench(patternNum int) {
+func (b *Benchmark) startBench(patternFilename string) {
+	pattern := b.parser.ParsePatternFile(patternFilename)
 	if b.CheckRandomPaths {
-		fmt.Printf("BENCHMARKING #%d, RANDOM PATHS: \n", patternNum)
+		fmt.Printf("BENCHMARKING %s, RANDOM PATHS: \n", pattern.Filename)
 		b.randomizePaths = true
-		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
+		b.benchmarkPattern(pattern, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
 	}
 	if b.CheckShortestPaths {
-		fmt.Printf("BENCHMARKING #%d, SHORTEST PATHS: \n", patternNum)
+		fmt.Printf("BENCHMARKING %s, SHORTEST PATHS: \n", pattern.Filename)
 		b.randomizePaths = false
-		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
+		b.benchmarkPattern(pattern, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
 	}
 }
 
-func (b *Benchmark) getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
-
-	if patternNumber == -1 {
-		patternNumber = getRandomPatternNumber(&b.rnd)
-	}
-	pattern := getPattern(patternNumber)
+func (b *Benchmark) getCharmapAndTriesAndSuccessForGeneration(pattern *pattern, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
 	flawsPerStep := make([]int, len(pattern.instructions))
 
 generationStart:
@@ -90,17 +88,17 @@ generationStart:
 	return nil, b.TriesForPattern, false, &flawsPerStep
 }
 
-func (b *Benchmark) benchmarkPattern(patternNum int, testUniquity bool, countGarbageNodes bool) {
+func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countGarbageNodes bool) {
 	generatedMaps := make([]*[][]rune, 0)
 	maxSteps := 0
 	minSteps := 99999999
 	stepsSum := 0
 	fails := 0
 	repeats := 0
-	flawsPerStep := make([]int, len(getPattern(patternNum).instructions))
+	flawsPerStep := make([]int, len(pattern.instructions))
 	for loopNum := 0; loopNum < b.BenchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Progress "), loopNum+1, b.BenchLoopsForPattern+1, 15)
-		cMap, tries, success, flawsPerGeneration := b.getCharmapAndTriesAndSuccessForGeneration(patternNum, countGarbageNodes)
+		cMap, tries, success, flawsPerGeneration := b.getCharmapAndTriesAndSuccessForGeneration(pattern, countGarbageNodes)
 		if testUniquity && cMap != nil {
 			if !b.isCharmapAlreadyInArray(cMap, &generatedMaps) {
 				generatedMaps = append(generatedMaps, cMap)
@@ -123,7 +121,7 @@ func (b *Benchmark) benchmarkPattern(patternNum int, testUniquity bool, countGar
 		}
 	}
 
-	fmt.Printf("Pattern #%d, min flaws %d, max flaws %d, mean flaws count %.2f, %d failed attempts (%.2f%%)\n", patternNum,
+	fmt.Printf("Pattern #%s, min flaws %d, max flaws %d, mean flaws count %.2f, %d failed attempts (%.2f%%)\n", pattern.Name,
 		minSteps, maxSteps, float64(stepsSum)/float64(b.BenchLoopsForPattern), fails,
 		100.0*float64(fails)/(float64(b.BenchLoopsForPattern)))
 	fmt.Print("Flaws per step: \n")

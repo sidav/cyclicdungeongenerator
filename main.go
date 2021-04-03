@@ -25,7 +25,7 @@ func main() {
 			TestUniquity:                    true,
 			GenerateAndConsiderGarbageNodes: false,
 		}
-		bnch.Benchmark(-1)
+		bnch.Benchmark("patterns/")
 	}
 
 	// cw.Init_console("CDG", cw.TCellRenderer)

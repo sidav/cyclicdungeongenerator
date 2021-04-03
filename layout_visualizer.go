@@ -13,15 +13,18 @@ func doLayoutVisualization() {
 	key := "none"
 	desiredPatternNum := -1
 	randomPaths := true
+	parser := layout_generation.PatternParser{}
+	filenames := parser.ListPatternFilenamesInPath("patterns/")
 
 	for key != "ESCAPE" {
 		cw.Clear_console()
-		pattNum := rnd.Rand(layout_generation.GetTotalPatternsNumber())
+		pattNum := rnd.Rand(len(filenames))
 		if desiredPatternNum != -1 {
 			pattNum = desiredPatternNum
 		}
 		gen := layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
-		generatedMap, genRestarts := gen.GenerateLayout(pattNum)
+		pattern := parser.ParsePatternFile(filenames[pattNum])
+		generatedMap, genRestarts := gen.GenerateLayout(pattern)
 
 		if generatedMap == nil {
 			cw.PutString(":(", 0, 0)
@@ -34,7 +37,7 @@ func doLayoutVisualization() {
 			continue
 		} else {
 			putMap(generatedMap)
-			putInfo(generatedMap, pattNum, desiredPatternNum, genRestarts, randomPaths)
+			putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name, genRestarts, randomPaths)
 		}
 		cw.Flush_console()
 	keyread:
@@ -45,7 +48,7 @@ func doLayoutVisualization() {
 				randomPaths = !randomPaths
 				break keyread
 			case "=", "+", "RIGHT":
-				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {
+				if desiredPatternNum < len(filenames)-1 {
 					desiredPatternNum++
 				}
 				break keyread
@@ -74,7 +77,7 @@ func putMap(a *layout_generation.LayoutMap) {
 	putCharArray(0, 0, a.WholeMapToCharArray())
 }
 
-func putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum, restarts int, rand bool) {
+func putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -86,11 +89,13 @@ func putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum, restarts int,
 	cw.SetFgColor(cw.BEIGE)
 	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*5+2, sy+2)
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*5+2, sy+3)
-	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+4)
+	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*5+2, sy+4)
+	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*5+2, sy+5)
+	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+6)
 	if rand {
-		cw.PutString("Random paths", sx*5+2, sy+5)
+		cw.PutString("Random paths", sx*5+2, sy+7)
 	} else {
-		cw.PutString("Shortest paths", sx*5+2, sy+5)
+		cw.PutString("Shortest paths", sx*5+2, sy+7)
 	}
 }
 
