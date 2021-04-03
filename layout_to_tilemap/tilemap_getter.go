@@ -1,4 +1,4 @@
-package layout_to_tiled
+package layout_to_tilemap
 
 import (
 	rand2 "CyclicDungeonGenerator/random"

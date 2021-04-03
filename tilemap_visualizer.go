@@ -2,7 +2,7 @@ package main
 
 import (
 	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/layout_to_tiled"
+	"CyclicDungeonGenerator/layout_to_tilemap"
 	"fmt"
 	cw "CyclicDungeonGenerator/console_wrapper"
 	"CyclicDungeonGenerator/random"
@@ -15,7 +15,7 @@ func (g *tmv) doTilemapVisualization() {
 	desiredPatternNum := -1
 	rnd := random.FibRandom{}
 	rnd.InitDefault()
-	layout_to_tiled.Random = &rnd
+	layout_to_tilemap.Random = &rnd
 
 	for key != "ESCAPE" {
 		cw.Clear_console()
@@ -62,7 +62,7 @@ func (g *tmv) doTilemapVisualization() {
 }
 
 func (g *tmv) putTileMap(a *layout_generation.LayoutMap) {
-	g.putTileArray(layout_to_tiled.TransformLayoutToTileMap(a), 0, 0)
+	g.putTileArray(layout_to_tilemap.TransformLayoutToTileMap(a), 0, 0)
 	rw, rh := a.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {
@@ -82,7 +82,7 @@ func (g *tmv) putTileMap(a *layout_generation.LayoutMap) {
 	}
 }
 
-func (g *tmv) putTileArray(arr *[][]layout_to_tiled.Tile, sx, sy int) {
+func (g *tmv) putTileArray(arr *[][]layout_to_tilemap.Tile, sx, sy int) {
 	for x :=0; x <len(*arr); x++{
 		for y :=0; y <len((*arr)[x]); y++ {
 			chr := (*arr)[x][y].Char

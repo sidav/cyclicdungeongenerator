@@ -1,4 +1,4 @@
-package layout_to_tiled
+package layout_to_tilemap
 
 // This contains rooms maps for the CDG's nodes to be translated into tiled rooms.
 
