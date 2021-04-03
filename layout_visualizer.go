@@ -84,6 +84,7 @@ func putMiniMapAndPatternNumberAndNumberOfTries(a *layout_generation.LayoutMap, 
 }
 
 func setcolorForRune(chr rune) {
+	cw.SetBgColor(cw.BLACK)
 	switch chr {
 	case '1', '2', '3', '4', '5', '6':
 		cw.SetFgColor(cw.DARK_CYAN)
@@ -92,11 +93,11 @@ func setcolorForRune(chr rune) {
 	case '+':
 		cw.SetFgColor(cw.DARK_MAGENTA)
 	case '#':
-		cw.SetFgColor(cw.DARK_GRAY)
+		cw.SetColor(cw.DARK_GRAY, cw.DARK_GRAY)
 	case '%':
-		cw.SetFgColor(cw.RED)
+		cw.SetColor(cw.BLACK, cw.RED)
 	case '=':
-		cw.SetFgColor(cw.DARK_BLUE)
+		cw.SetColor(cw.BLACK, cw.DARK_BLUE)
 	default:
 		cw.SetFgColor(cw.DARK_GREEN)
 	}
