@@ -41,12 +41,12 @@ func (b *Benchmark) Benchmark(patternNum int) {
 
 func (b *Benchmark) startBench(patternNum int) {
 	if b.CheckRandomPaths {
-		fmt.Print("WITH RANDOM PATHS: \n")
+		fmt.Printf("BENCHMARKING #%d, RANDOM PATHS: \n", patternNum)
 		RandomizePath = true
 		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
 	}
 	if b.CheckShortestPaths {
-		fmt.Print("WITH SHORTEST PATHS: \n")
+		fmt.Printf("BENCHMARKING #%d, SHORTEST PATHS: \n", patternNum)
 		RandomizePath = false
 		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
 	}
@@ -65,8 +65,11 @@ generationStart:
 		layout.init(layoutWidth, layoutHeight)
 
 		for i := range pattern {
-			if !countGarbageNodes && pattern[i].actionType == ACTION_PLACE_RANDOM_CONNECTED_NODES {
-				continue // don't count those random unneccessary nodes.
+			if !countGarbageNodes {
+				if pattern[i].actionType == ACTION_PLACE_RANDOM_CONNECTED_NODES ||
+					pattern[i].actionType == ACTION_FILL_WITH_RANDOM_CONNECTED_NODES {
+					continue // don't count those random unneccessary nodes.
+				}
 			}
 			success := execPatternStep(pattern[i])
 			if !success {
@@ -88,7 +91,7 @@ func (b *Benchmark) benchmarkPattern(patternNum int, testUniquity bool, countGar
 	repeats := 0
 	flawsPerStep := make([]int, len(getPattern(patternNum)))
 	for loopNum := 0; loopNum < b.BenchLoopsForPattern; loopNum++ {
-		progressBarCLI(fmt.Sprintf("Benchmarking pattern #%d", patternNum), loopNum, b.BenchLoopsForPattern, 20)
+		progressBarCLI(fmt.Sprintf("Progress "), loopNum+1, b.BenchLoopsForPattern+1, 15)
 		cMap, tries, success, flawsPerGeneration := b.getCharmapAndTriesAndSuccessForGeneration(patternNum, countGarbageNodes)
 		if testUniquity && cMap != nil {
 			if !b.isCharmapAlreadyInArray(cMap, &generatedMaps) {
@@ -162,7 +165,7 @@ func progressBarCLI(title string, value, endvalue, bar_length int) { // because 
 		arrow = "-" + arrow
 	}
 	spaces := strings.Repeat(" ", bar_length-len(arrow)+1)
-	percent_with_dec := fmt.Sprintf("%.2f", percent*100.0)
+	percent_with_dec := fmt.Sprintf("%.1f", percent*100.0)
 	fmt.Printf("\r%s [%s%s]%s%% (%d out of %d)", title, arrow, spaces, percent_with_dec, value, endvalue)
 	if value == endvalue {
 		fmt.Printf("\n")
