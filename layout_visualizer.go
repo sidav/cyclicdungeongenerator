@@ -2,22 +2,26 @@ package main
 
 import (
 	"CyclicDungeonGenerator/layout_generation"
+	"CyclicDungeonGenerator/random"
 	"fmt"
 	cw "CyclicDungeonGenerator/console_wrapper"
-	rnd "CyclicDungeonGenerator/random"
 )
 
 func doLayoutVisualization() {
+	rnd := random.FibRandom{}
+	rnd.InitBySeed(-1)
 	key := "none"
 	desiredPatternNum := -1
+	randomPaths := true
 
 	for key != "ESCAPE" {
 		cw.Clear_console()
-		pattNum := rnd.Random(layout_generation.GetTotalPatternsNumber())
+		pattNum := rnd.Rand(layout_generation.GetTotalPatternsNumber())
 		if desiredPatternNum != -1 {
 			pattNum = desiredPatternNum
 		}
-		generatedMap, genRestarts := layout_generation.Generate(pattNum, W, H)
+		gen := layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
+		generatedMap, genRestarts := gen.GenerateLayout(pattNum)
 
 		if generatedMap == nil {
 			cw.PutString(":(", 0, 0)
@@ -30,7 +34,7 @@ func doLayoutVisualization() {
 			continue
 		} else {
 			putMap(generatedMap)
-			putInfo(generatedMap, pattNum, desiredPatternNum, genRestarts, layout_generation.RandomizePath)
+			putInfo(generatedMap, pattNum, desiredPatternNum, genRestarts, randomPaths)
 		}
 		cw.Flush_console()
 	keyread:
@@ -38,7 +42,7 @@ func doLayoutVisualization() {
 			key = cw.ReadKey()
 			switch key {
 			case "r", "UP":
-				layout_generation.RandomizePath = !layout_generation.RandomizePath
+				randomPaths = !randomPaths
 				break keyread
 			case "=", "+", "RIGHT":
 				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {

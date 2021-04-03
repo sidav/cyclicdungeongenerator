@@ -1,23 +1,24 @@
 package main
 
 import (
-	"CyclicDungeonGenerator/layout_generation"
-	rnd "CyclicDungeonGenerator/random"
 	cw "CyclicDungeonGenerator/console_wrapper"
+	"CyclicDungeonGenerator/layout_generation"
 )
 
-const (
+var (
 	W = 5
 	H = 5
 )
 
 func main() {
-	const bench = false
-	rnd.Randomize()
 
+	const bench = false 
 	if bench {
 		bnch := layout_generation.Benchmark{
-			BenchLoopsForPattern:            100000,
+			LayoutWidth: 5,
+			LayoutHeight: 5,
+
+			BenchLoopsForPattern:            10000,
 			TriesForPattern:                 25,
 			CheckRandomPaths:                true,
 			CheckShortestPaths:              true,

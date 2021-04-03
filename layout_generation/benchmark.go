@@ -1,6 +1,7 @@
 package layout_generation
 
 import (
+	"CyclicDungeonGenerator/random"
 	"fmt"
 	"strings"
 )
@@ -12,9 +13,16 @@ type Benchmark struct {
 	CheckShortestPaths              bool
 	TestUniquity                    bool
 	GenerateAndConsiderGarbageNodes bool
+
+	layout                    LayoutMap
+	randomizePaths            bool
+	LayoutWidth, LayoutHeight int
+	rnd                      random.FibRandom
 }
 
 func (b *Benchmark) Benchmark(patternNum int) {
+	b.rnd = random.FibRandom{}
+	b.rnd.InitBySeed(-1)
 	if !b.CheckRandomPaths {
 		fmt.Println("Not testing random paths.")
 	}
@@ -42,12 +50,12 @@ func (b *Benchmark) Benchmark(patternNum int) {
 func (b *Benchmark) startBench(patternNum int) {
 	if b.CheckRandomPaths {
 		fmt.Printf("BENCHMARKING #%d, RANDOM PATHS: \n", patternNum)
-		RandomizePath = true
+		b.randomizePaths = true
 		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
 	}
 	if b.CheckShortestPaths {
 		fmt.Printf("BENCHMARKING #%d, SHORTEST PATHS: \n", patternNum)
-		RandomizePath = false
+		b.randomizePaths = false
 		b.benchmarkPattern(patternNum, b.TestUniquity, b.GenerateAndConsiderGarbageNodes)
 	}
 }
@@ -55,14 +63,14 @@ func (b *Benchmark) startBench(patternNum int) {
 func (b *Benchmark) getCharmapAndTriesAndSuccessForGeneration(patternNumber int, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
 
 	if patternNumber == -1 {
-		patternNumber = getRandomPatternNumber()
+		patternNumber = getRandomPatternNumber(&b.rnd)
 	}
 	pattern := getPattern(patternNumber)
 	flawsPerStep := make([]int, len(pattern.instructions))
 
 generationStart:
 	for patternTry := 0; patternTry <= b.TriesForPattern; patternTry++ {
-		layout.init(layoutWidth, layoutHeight)
+		b.layout.init(b.LayoutWidth, b.LayoutHeight, &b.rnd, b.randomizePaths)
 
 		for i := range pattern.instructions {
 			if !countGarbageNodes {
@@ -71,13 +79,13 @@ generationStart:
 					continue // don't count those random unneccessary nodes.
 				}
 			}
-			success := execPatternStep(&pattern.instructions[i])
+			success := pattern.instructions[i].execPatternStep(&b.layout)
 			if !success {
 				flawsPerStep[i]++
 				continue generationStart
 			}
 		}
-		return layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep
+		return b.layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep
 	}
 	return nil, b.TriesForPattern, false, &flawsPerStep
 }

@@ -1,8 +1,6 @@
 package layout_generation
 
-import (
-	rnd "CyclicDungeonGenerator/random"
-)
+import "CyclicDungeonGenerator/random"
 
 type pattern struct {
 	name string
@@ -172,8 +170,8 @@ func getPattern(patternNumber int) *pattern {
 	return &patternsArray[patternNumber%len(patternsArray)]
 }
 
-func getRandomPatternNumber() int {
-	patternNumber := rnd.Random(len(patternsArray))
+func getRandomPatternNumber(rnd *random.FibRandom) int {
+	patternNumber := rnd.Rand(len(patternsArray))
 	return patternNumber
 }
 

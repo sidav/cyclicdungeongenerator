@@ -1,47 +1,46 @@
 package layout_generation
 
 import (
-	rnd "CyclicDungeonGenerator/random"
+	rpath "CyclicDungeonGenerator/layout_generation/pathfinder"
 )
-import rpath "CyclicDungeonGenerator/layout_generation/pathfinder"
 
 //ACTION_PLACE_NODE_AT_PATH     = iota
 //ACTION_PLACE_NODE_NEAR_PATH   = iota
 
-func execPatternStep(step *patternStep) bool {
+func (step *patternStep)execPatternStep(layout *LayoutMap) bool {
 	switch step.actionType {
 	case ACTION_PLACE_NODE_AT_EMPTY:
-		return execPlaceNodeAtEmpty(step)
+		return step.execPlaceNodeAtEmpty(layout)
 	case ACTION_PLACE_OBSTACLE_IN_CENTER:
-		return execPlaceObstacleInCenter(step)
+		return step.execPlaceObstacleInCenter(layout)
 	//case ACTION_PLACE_RANDOM_OBSTACLES:
-	//	return execPlaceRandomObstacles(step)
+	//	return execPlaceRandomObstacles(layout)
 	case ACTION_PLACE_PATH_FROM_TO:
-		return execPlacePathFromTo(step)
+		return step.execPlacePathFromTo(layout)
 	case ACTION_CLEAR_OBSTACLES:
-		return execClearObstacles()
+		return step.execClearObstacles(layout)
 	case ACTION_PLACE_NODE_NEAR_PATH:
-		return execPlaceNodeNearPath(step)
+		return step.execPlaceNodeNearPath(layout)
 	case ACTION_PLACE_RANDOM_CONNECTED_NODES:
-		return execPlaceRandomConnectedNodes(step)
+		return step.execPlaceRandomConnectedNodes(layout)
 	case ACTION_FILL_WITH_RANDOM_CONNECTED_NODES:
-		return execFillWithRandomConnectedNodes(step)
+		return step.execFillWithRandomConnectedNodes(layout)
 	case ACTION_SET_NODE_STATUS:
-		return execSetNodeStatus(step)
+		return step.execSetNodeStatus(layout)
 	case ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH:
-		return execSetNodeConnectionsLockedFromPath(step)
+		return step.execSetNodeConnectionsLockedFromPath(layout)
 	case ACTION_PLACE_NODE_AT_PATH:
-		return execPlaceNodeAtPath(step)
+		return step.execPlaceNodeAtPath(layout)
 	default:
 		panic("No implementation for action!")
 	}
 	return true
 }
 
-func execPlaceNodeAtEmpty(step *patternStep) bool {
+func (step *patternStep)execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 	minEmpties := step.minEmptyCellsNear
 	var x, y int
-	fx, fy, tx, ty := getAbsoluteCoordsForStep(step)
+	fx, fy, tx, ty := step.getAbsoluteCoordsForStep(layout)
 	if fx == 0 && fy == 0 && tx == 0 && ty == 0 { // the coords were not set, so we can use absolutely any ones
 		x, y = layout.getRandomEmptyCellCoords(minEmpties)
 	} else {
@@ -55,7 +54,7 @@ func execPlaceNodeAtEmpty(step *patternStep) bool {
 	panic("execPlaceNodeAtEmpty: Node " + step.nameOfNode + " refuses to be placed!")
 }
 
-func execPlaceNodeNearPath(step *patternStep) bool {
+func (step *patternStep)execPlaceNodeNearPath(layout *LayoutMap) bool {
 	num := step.pathNumber
 	px, py, x, y := layout.getRandomPathCoordsAndRandomCellNearPath(num, step.allowPlaceNearNode)
 	if px == -1 || py == -1 || x == -1 || y == -1 {
@@ -67,7 +66,7 @@ func execPlaceNodeNearPath(step *patternStep) bool {
 	return true
 }
 
-func execPlaceNodeAtPath(step *patternStep) bool {
+func (step *patternStep)execPlaceNodeAtPath(layout *LayoutMap) bool {
 	num := step.pathNumber
 	x, y := layout.getRandomPathCellCoords(num, false)
 	if x != -1 && y != -1 {
@@ -77,8 +76,8 @@ func execPlaceNodeAtPath(step *patternStep) bool {
 	return false
 }
 
-func execPlaceRandomConnectedNodes(step *patternStep) bool {
-	nodesToAdd := rnd.RandInRange(step.countFrom, step.countTo)
+func (step *patternStep)execPlaceRandomConnectedNodes(layout *LayoutMap) bool {
+	nodesToAdd := layout.rnd.RandInRange(step.countFrom, step.countTo)
 	for currNodeNum := 1; currNodeNum <= nodesToAdd; currNodeNum++ {
 		px, py, x, y := layout.getRandomNonEmptyCoordsAndRandomCellNearIt()
 		if px == -1 || py == -1 || x == -1 || y == -1 {
@@ -94,7 +93,7 @@ func execPlaceRandomConnectedNodes(step *patternStep) bool {
 	return true
 }
 
-func execFillWithRandomConnectedNodes(step *patternStep) bool {
+func (step *patternStep)execFillWithRandomConnectedNodes(layout *LayoutMap) bool {
 	for {
 		px, py, x, y := layout.getRandomNonEmptyCoordsAndRandomCellNearIt()
 		if px == -1 || py == -1 || x == -1 || y == -1 {
@@ -106,8 +105,9 @@ func execFillWithRandomConnectedNodes(step *patternStep) bool {
 	}
 }
 
-func execPlaceObstacleInCenter(step *patternStep) bool {
+func (step *patternStep)execPlaceObstacleInCenter(layout *LayoutMap) bool {
 	obstSize := step.obstacleRadius
+	layoutWidth, layoutHeight := layout.GetSize()
 	cx, cy := layoutWidth/2, layoutHeight/2
 	//if size % 2 == 1 {
 	//	cx++
@@ -123,18 +123,18 @@ func execPlaceObstacleInCenter(step *patternStep) bool {
 	return true
 }
 
-//func execPlaceRandomObstacles(step *patternStep) bool {
+//func (step *patternStep)execPlaceRandomObstacles(layout *LayoutMap) bool {
 //	count := getRandomCountForStep(step)
 //	for i := 0; i < count; i++ {
 //		x, y := layout.getRandomEmptyCellCoords(0)
-//		if !(x*y == 0 || x == layoutWidth-1 || y == layoutHeight-1) {
+//		if !(x*y == 0 || x == LayoutWidth-1 || y == LayoutHeight-1) {
 //			layout.placeObstacleAtCoords(x, y)
 //		}
 //	}
 //	return true
 //}
 
-func execPlacePathFromTo(step *patternStep) bool {
+func (step *patternStep)execPlacePathFromTo(layout *LayoutMap) bool {
 	pmap := layout.getPassabilityMapForPathfinder()
 	fx, fy := layout.getCoordsOfNode(step.nameFrom)
 	tx, ty := layout.getCoordsOfNode(step.nameTo)
@@ -154,12 +154,12 @@ func execPlacePathFromTo(step *patternStep) bool {
 	return true
 }
 
-func execClearObstacles() bool {
+func (step *patternStep) execClearObstacles(layout *LayoutMap) bool {
 	layout.removeAllObstacles()
 	return true
 }
 
-func execSetNodeStatus(step *patternStep) bool {
+func (step *patternStep)execSetNodeStatus(layout *LayoutMap) bool {
 	nname := step.nameOfNode
 	status := step.status
 	nx, ny := layout.getCoordsOfNode(nname)
@@ -170,7 +170,7 @@ func execSetNodeStatus(step *patternStep) bool {
 	return true
 }
 
-func execSetNodeConnectionsLockedFromPath(step *patternStep) bool {
+func (step *patternStep)execSetNodeConnectionsLockedFromPath(layout *LayoutMap) bool {
 	nname := step.nameOfNode
 	nx, ny := layout.getCoordsOfNode(nname)
 	if nx == -1 && ny == -1 {
@@ -182,8 +182,8 @@ func execSetNodeConnectionsLockedFromPath(step *patternStep) bool {
 
 // technical shit below
 
-func getRandomCoordsForStep(step *patternStep) (int, int) {
-	fx, fy, tx, ty := getAbsoluteCoordsForStep(step)
+func (step *patternStep)getRandomCoordsForStep(layout *LayoutMap) (int, int) {
+	fx, fy, tx, ty := step.getAbsoluteCoordsForStep(layout)
 	if fx == 0 && fy == 0 && tx == 0 && ty == 0 { // the coords were not set, so we can use absolutely any ones
 		// WARNING: may (and will) cause problems if you specially want a cell to be placed at (0,0) and manually set the coords range in step accordingly!
 		// TODO: think about tle previous line.
@@ -191,15 +191,16 @@ func getRandomCoordsForStep(step *patternStep) (int, int) {
 		tx = w - 1
 		ty = h - 1
 	}
-	x, y := rnd.RandInRange(fx, tx), rnd.RandInRange(fy, ty)
+	x, y := layout.rnd.RandInRange(fx, tx), layout.rnd.RandInRange(fy, ty)
 	return x, y
 }
 
-func getRandomCountForStep(step *patternStep) (int) {
-	return rnd.RandInRange(step.countFrom, step.countTo)
+func (step *patternStep)getRandomCountForStep(layout *LayoutMap) (int) {
+	return layout.rnd.RandInRange(step.countFrom, step.countTo)
 }
 
-func getAbsoluteCoordsForStep(step *patternStep) (int, int, int, int) {
+func (step *patternStep)getAbsoluteCoordsForStep(layout *LayoutMap) (int, int, int, int) {
+	layoutWidth, layoutHeight := layout.GetSize()
 	fx, fy, tx, ty := step.fx, step.fy, step.tx, step.ty
 	if fx < 0 {
 		fx = layoutWidth + fx

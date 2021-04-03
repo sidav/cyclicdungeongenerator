@@ -1,25 +1,29 @@
 package layout_generation
 
 import (
-	rnd "CyclicDungeonGenerator/random" // TODO: use generator's random struct! 
+	"CyclicDungeonGenerator/random"
 	"strconv"
 )
 
 type LayoutMap struct {
 	// room map with connections or smth
-	elements [][] *element
+	elements       [][]*element
+	rnd            *random.FibRandom
+	randomizePaths bool
 }
 
-func (r *LayoutMap) init(sizex, sizey int) {
-	r.elements = make([][]*element, layoutWidth)
+func (r *LayoutMap) init(sizex, sizey int, rnd *random.FibRandom, randomizePaths bool) {
+	r.elements = make([][]*element, sizex)
 	for i := range r.elements {
-		r.elements[i] = make([]*element, layoutHeight)
+		r.elements[i] = make([]*element, sizey)
 	}
 	for x := 0; x < sizex; x++ {
 		for y := 0; y < sizey; y++ {
-			r.elements[x][y] = &element{connections: map[string]*connection {"north": nil, "east": nil, "south": nil, "west": nil}}
+			r.elements[x][y] = &element{connections: map[string]*connection{"north": nil, "east": nil, "south": nil, "west": nil}}
 		}
 	}
+	r.rnd = rnd
+	r.randomizePaths = randomizePaths
 }
 
 func (r *LayoutMap) placeNodeAtCoords(x, y int, nodeName string) {
@@ -50,8 +54,8 @@ func (r *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int, allowN
 			continue
 		}
 		for try2 := 0; try2 < tries; try2++ {
-			x, y := rnd.RandInRange(px-1, px+1), rnd.RandInRange(py-1, py+1)
-			if (px - x)*(py - y) != 0 { // diagonal direction is restricted
+			x, y := r.rnd.RandInRange(px-1, px+1), r.rnd.RandInRange(py-1, py+1)
+			if (px-x)*(py-y) != 0 { // diagonal direction is restricted
 				continue
 			}
 			if r.areCoordsValid(x, y) && r.elements[x][y].isEmpty() {
@@ -88,7 +92,7 @@ func (r *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int) (int, int) {
 	if len(emptiesX) == 0 {
 		return -1, -1
 	}
-	index := rnd.Random(len(emptiesX))
+	index := r.rnd.Rand(len(emptiesX))
 	return emptiesX[index], emptiesY[index]
 }
 
@@ -116,16 +120,16 @@ func (r *LayoutMap) getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmptyCell
 	if len(emptiesX) == 0 {
 		return -1, -1
 	}
-	index := rnd.Random(len(emptiesX))
+	index := r.rnd.Rand(len(emptiesX))
 	return emptiesX[index], emptiesY[index]
 }
 
 func (r *LayoutMap) getRandomEmptyCellNearCoords(nx, ny int) (int, int) {
 	emptiesX := make([]int, 0)
 	emptiesY := make([]int, 0)
-	for x := nx-1; x <= nx+1; x++ {
-		for y := ny-1; y <= ny+1; y++ {
-			if (nx-x) * (ny-y) != 0 { // restrict diagonals
+	for x := nx - 1; x <= nx+1; x++ {
+		for y := ny - 1; y <= ny+1; y++ {
+			if (nx-x)*(ny-y) != 0 { // restrict diagonals
 				continue
 			}
 			if (x != nx || y != ny) && r.areCoordsValid(x, y) && r.elements[x][y].isEmpty() {
@@ -137,7 +141,7 @@ func (r *LayoutMap) getRandomEmptyCellNearCoords(nx, ny int) (int, int) {
 	if len(emptiesX) == 0 {
 		return -1, -1
 	}
-	index := rnd.Random(len(emptiesX))
+	index := r.rnd.Rand(len(emptiesX))
 	return emptiesX[index], emptiesY[index]
 }
 
@@ -146,7 +150,7 @@ func (r *LayoutMap) getRandomNonEmptyCellCoords(minEmptyCellsNear int) (int, int
 	nonEmptiesY := make([]int, 0)
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
-			if !r.elements[x][y].isEmpty() && layout.countEmptyCellsNear(x, y) >= minEmptyCellsNear {
+			if !r.elements[x][y].isEmpty() && r.countEmptyCellsNear(x, y) >= minEmptyCellsNear {
 				nonEmptiesX = append(nonEmptiesX, x)
 				nonEmptiesY = append(nonEmptiesY, y)
 			}
@@ -155,7 +159,7 @@ func (r *LayoutMap) getRandomNonEmptyCellCoords(minEmptyCellsNear int) (int, int
 	if len(nonEmptiesX) == 0 {
 		return -1, -1
 	}
-	index := rnd.Random(len(nonEmptiesX))
+	index := r.rnd.Rand(len(nonEmptiesX))
 	return nonEmptiesX[index], nonEmptiesY[index]
 }
 
@@ -180,7 +184,7 @@ func (r *LayoutMap) getRandomPathCellCoords(desiredPathNum int, nodesAllowed boo
 	if len(pathsX) == 0 {
 		return -1, -1
 	}
-	index := rnd.Random(len(pathsX))
+	index := r.rnd.Rand(len(pathsX))
 	return pathsX[index], pathsY[index]
 }
 
@@ -193,7 +197,7 @@ func (r *LayoutMap) countEmptyCellsNear(x, y int) int {
 	w, h := r.GetSize()
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
-			if i*j != 0 || i ==0 && j == 0 {
+			if i*j != 0 || i == 0 && j == 0 {
 				continue
 			}
 			if x+i < 0 || x+i >= w || y+j < 0 || y+j >= h {
@@ -215,7 +219,7 @@ func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
 			}
 		}
 	}
-	panic("getCoordsOfNode failed with node "+nodeName)
+	panic("getCoordsOfNode failed with node " + nodeName)
 	return -1, -1
 }
 
@@ -235,6 +239,7 @@ func (r *LayoutMap) GetElement(x, y int) *element {
 }
 
 func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
+	layoutWidth, layoutHeight := r.GetSize()
 	pmap := make([][]int, layoutWidth)
 	for i := range pmap {
 		pmap[i] = make([]int, layoutHeight)
@@ -242,14 +247,14 @@ func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
 
 	for x := 0; x < layoutWidth; x++ {
 		for y := 0; y < layoutHeight; y++ {
-			if layout.areCoordsEmpty(x, y) {
+			if r.areCoordsEmpty(x, y) {
 				pmap[x][y] = 1
 				// TODO: think how to better randomize path costs
-				if RandomizePath {
+				if r.randomizePaths {
 					// lowering the "from" increases path randomness, but also makes the generator to fail more frequently
 					// because it increases the probability for creating a non-existing path
 					// "* 10" is to compensate the heuristics in the pathfinder
-					pmap[x][y] += rnd.RandInRange(-100, 10000) * 10
+					pmap[x][y] += r.rnd.RandInRange(-100, 10000) * 10
 				}
 			} else {
 				pmap[x][y] = -1
@@ -286,7 +291,7 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 	e := r.elements[cellx][celly]
 	ca := make([][]rune, 5)
-	for i := range (ca) {
+	for i := range ca {
 		ca[i] = make([]rune, 5)
 	}
 
@@ -331,7 +336,7 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 			ca[2][3] = rune(e.nodeInfo.nodeStatus[1])
 			ca[3][3] = rune(e.nodeInfo.nodeStatus[2])
 		}
-	// draw path cell
+		// draw path cell
 	} else if e.pathInfo != nil {
 		ca[2][2] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
 		for x := -1; x <= 1; x++ {
@@ -349,14 +354,14 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 func (r *LayoutMap) WholeMapToCharArray() *[][]rune {
 	sx, sy := r.GetSize()
 	ca := make([][]rune, 5*sx)
-	for i := range (ca) {
+	for i := range ca {
 		ca[i] = make([]rune, 5*sy)
 	}
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
 			cellArr := r.CellToCharArray(x, y)
-			for i:=0;i<5;i++{
-				for j:=0;j<5;j++{
+			for i := 0; i < 5; i++ {
+				for j := 0; j < 5; j++ {
 					ca[5*x+i][5*y+j] = cellArr[i][j]
 				}
 			}

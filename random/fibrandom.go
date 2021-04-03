@@ -1,4 +1,4 @@
-package additive_random
+package random
 
 import (
 	"time"
