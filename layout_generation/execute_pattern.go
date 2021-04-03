@@ -24,12 +24,16 @@ func execPatternStep(step *patternStep) bool {
 		return execPlaceNodeNearPath(step)
 	case ACTION_PLACE_RANDOM_CONNECTED_NODES:
 		return execPlaceRandomConnectedNodes(step)
+	case ACTION_FILL_WITH_RANDOM_CONNECTED_NODES:
+		return execFillWithRandomConnectedNodes(step)
 	case ACTION_SET_NODE_STATUS:
 		return execSetNodeStatus(step)
 	case ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH:
 		return execSetNodeConnectionsLockedFromPath(step)
 	case ACTION_PLACE_NODE_AT_PATH:
 		return execPlaceNodeAtPath(step)
+	default:
+		panic("No implementation for action!")
 	}
 	return true
 }
@@ -88,6 +92,18 @@ func execPlaceRandomConnectedNodes(step *patternStep) bool {
 		layout.elements[px][py].setConnectionByCoords(&connection{}, x-px, y-py)
 	}
 	return true
+}
+
+func execFillWithRandomConnectedNodes(step *patternStep) bool {
+	for {
+		px, py, x, y := layout.getRandomNonEmptyCoordsAndRandomCellNearIt()
+		if px == -1 || py == -1 || x == -1 || y == -1 {
+			return true // no more empty spaces to fill
+		}
+		layout.placeNodeAtCoords(x, y, step.nameOfNode)
+		layout.elements[x][y].setConnectionByCoords(&connection{}, px-x, py-y)
+		layout.elements[px][py].setConnectionByCoords(&connection{}, x-px, y-py)
+	}
 }
 
 func execPlaceObstacleInCenter(step *patternStep) bool {

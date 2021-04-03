@@ -63,16 +63,15 @@ func (r *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int, allowN
 }
 
 func (r *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int, int) {
-	const tries = 10
-	for try := 0; try < tries; try++ {
-		px, py := r.getRandomNonEmptyCellCoords()
-		x, y := r.getRandomEmptyCellNearCoords(px, py)
-		if x == -1 && y == -1 {
-			continue
-		}
-		return px, py, x, y
+	px, py := r.getRandomNonEmptyCellCoords(1)
+	if px == -1 && py == -1 {
+		return -1, -1, -1, -1
 	}
-	return -1, -1, -1, -1
+	x, y := r.getRandomEmptyCellNearCoords(px, py)
+	if x == -1 && y == -1 {
+		return -1, -1, -1, -1
+	}
+	return px, py, x, y
 }
 
 func (r *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int) (int, int) {
@@ -142,12 +141,12 @@ func (r *LayoutMap) getRandomEmptyCellNearCoords(nx, ny int) (int, int) {
 	return emptiesX[index], emptiesY[index]
 }
 
-func (r *LayoutMap) getRandomNonEmptyCellCoords() (int, int) {
+func (r *LayoutMap) getRandomNonEmptyCellCoords(minEmptyCellsNear int) (int, int) {
 	nonEmptiesX := make([]int, 0)
 	nonEmptiesY := make([]int, 0)
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
-			if !r.elements[x][y].isEmpty() {
+			if !r.elements[x][y].isEmpty() && layout.countEmptyCellsNear(x, y) >= minEmptyCellsNear {
 				nonEmptiesX = append(nonEmptiesX, x)
 				nonEmptiesY = append(nonEmptiesY, y)
 			}

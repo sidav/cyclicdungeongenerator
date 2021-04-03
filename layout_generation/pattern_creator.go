@@ -11,6 +11,20 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", minEmptyCellsNear: 0},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
 	},
+	// test pattern #2, TODO: remove
+	{
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", minEmptyCellsNear: 0},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", minEmptyCellsNear: 0},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
+		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, countFrom: 3, countTo: 6},
+	},
+	// test pattern #3, TODO: remove
+	{
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "STA", minEmptyCellsNear: 0},
+		&patternStep{actionType: ACTION_PLACE_NODE_AT_EMPTY, nameOfNode: "FIN", minEmptyCellsNear: 0},
+		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "FIN", pathNumber: 1},
+		&patternStep{actionType: ACTION_FILL_WITH_RANDOM_CONNECTED_NODES},
+	},
 	// pattern 0
 	{
 		// randomly place beginning and end
@@ -81,7 +95,7 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "FIN", pathNumber: 5},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "FIN", pathNumber: 6},
 		// place garbage nodes
-		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, countFrom: 2, countTo: 7},
+		&patternStep{actionType: ACTION_FILL_WITH_RANDOM_CONNECTED_NODES},
 	},
 	// pattern 4, mine.
 	{
@@ -95,11 +109,13 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "STA", nameTo: "ND2", pathNumber: 3},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND2", pathNumber: 4},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "FIN", pathNumber: 5},
-		// place garbage nodes
-		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, countFrom: 2, countTo: 7},
+
 		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND2", status: "KEY"},
 		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 1, lockNumber: 0},
 		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 5, lockNumber: 0},
+
+		// place garbage nodes
+		&patternStep{actionType: ACTION_FILL_WITH_RANDOM_CONNECTED_NODES},
 	},
 	// pattern 5.
 	{
@@ -114,12 +130,14 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND2", pathNumber: 4},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND1", nameTo: "ND3", pathNumber: 5},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND3", nameTo: "FIN", pathNumber: 6},
-		// place garbage nodes
-		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, countFrom: 2, countTo: 7},
+
 		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND2", status: "KEY"},
 		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 1, lockNumber: 0},
 		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "ND3", pathNumber: 3, lockNumber: 0},
 		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "ND3", pathNumber: 5, lockNumber: 0},
+
+		// place garbage nodes
+		&patternStep{actionType: ACTION_FILL_WITH_RANDOM_CONNECTED_NODES},
 	},
 	// pattern 6, two-keyed
 	{
@@ -135,12 +153,14 @@ var patterns_array = [][]*patternStep{
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND2", nameTo: "ND3", pathNumber: 4},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND3", nameTo: "ND4", pathNumber: 5},
 		&patternStep{actionType: ACTION_PLACE_PATH_FROM_TO, nameFrom: "ND4", nameTo: "FIN", pathNumber: 6},
-		// place garbage nodes
-		&patternStep{actionType: ACTION_PLACE_RANDOM_CONNECTED_NODES, countFrom: 2, countTo: 7},
+
 		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND1", status: "KY1"},
 		&patternStep{actionType: ACTION_SET_NODE_STATUS, nameOfNode: "ND2", status: "KY2"},
 		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "ND4", pathNumber: 5, lockNumber: 0},
 		&patternStep{actionType: ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH, nameOfNode: "FIN", pathNumber: 6, lockNumber: 1},
+
+		// place garbage nodes
+		&patternStep{actionType: ACTION_FILL_WITH_RANDOM_CONNECTED_NODES},
 	},
 }
 

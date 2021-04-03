@@ -5,6 +5,7 @@ const (
 	ACTION_PLACE_NODE_AT_EMPTY                  = iota
 	ACTION_PLACE_NODE_NEAR_PATH                 = iota
 	ACTION_PLACE_RANDOM_CONNECTED_NODES         = iota // For additional "garbage" dead end nodes. Can be placed connected to anything: a node, a path...
+	ACTION_FILL_WITH_RANDOM_CONNECTED_NODES     = iota // For additional "garbage" dead end nodes. Can be placed connected to anything: a node, a path...
 	ACTION_PLACE_PATH_FROM_TO                   = iota
 	ACTION_PLACE_OBSTACLE_IN_CENTER             = iota
 	ACTION_PLACE_RANDOM_OBSTACLES               = iota
@@ -16,8 +17,8 @@ const (
 
 type patternStep struct {
 	actionType                   int
-	fx, fy, tx, ty               int // for coordinate ranges
-	minEmptyCellsNear            int // for nodes placement.
+	fx, fy, tx, ty               int    // for coordinate ranges
+	minEmptyCellsNear            int    // for nodes placement.
 	countFrom, countTo           int    // for random ranges
 	nameOfNode, nameFrom, nameTo string // for node names
 	obstacleRadius               int    // for centered non-random obstacle
