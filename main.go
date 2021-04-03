@@ -34,6 +34,4 @@ func main() {
 	doLayoutVisualization()
 	// tmv := tmv{}
 	// tmv.doTilemapVisualization()
-	//gen := generatedVisualizer{}
-	//gen.doGeneratedVisualization()
 }
