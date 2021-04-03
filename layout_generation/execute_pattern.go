@@ -14,8 +14,8 @@ func execPatternStep(step *patternStep) bool {
 		return execPlaceNodeAtEmpty(step)
 	case ACTION_PLACE_OBSTACLE_IN_CENTER:
 		return execPlaceObstacleInCenter(step)
-	case ACTION_PLACE_RANDOM_OBSTACLES:
-		return execPlaceRandomObstacles(step)
+	//case ACTION_PLACE_RANDOM_OBSTACLES:
+	//	return execPlaceRandomObstacles(step)
 	case ACTION_PLACE_PATH_FROM_TO:
 		return execPlacePathFromTo(step)
 	case ACTION_CLEAR_OBSTACLES:
@@ -123,16 +123,16 @@ func execPlaceObstacleInCenter(step *patternStep) bool {
 	return true
 }
 
-func execPlaceRandomObstacles(step *patternStep) bool {
-	count := getRandomCountForStep(step)
-	for i := 0; i < count; i++ {
-		x, y := layout.getRandomEmptyCellCoords(0)
-		if !(x*y == 0 || x == layoutWidth-1 || y == layoutHeight-1) {
-			layout.placeObstacleAtCoords(x, y)
-		}
-	}
-	return true
-}
+//func execPlaceRandomObstacles(step *patternStep) bool {
+//	count := getRandomCountForStep(step)
+//	for i := 0; i < count; i++ {
+//		x, y := layout.getRandomEmptyCellCoords(0)
+//		if !(x*y == 0 || x == layoutWidth-1 || y == layoutHeight-1) {
+//			layout.placeObstacleAtCoords(x, y)
+//		}
+//	}
+//	return true
+//}
 
 func execPlacePathFromTo(step *patternStep) bool {
 	pmap := layout.getPassabilityMapForPathfinder()
