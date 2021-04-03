@@ -3,7 +3,7 @@ package layout_generation
 import (
 	rnd "CyclicDungeonGenerator/random"
 )
-import rpath "CyclicDungeonGenerator/layout_generation/random_pathfinder"
+import rpath "CyclicDungeonGenerator/layout_generation/pathfinder"
 
 //ACTION_PLACE_NODE_AT_PATH     = iota
 //ACTION_PLACE_NODE_NEAR_PATH   = iota

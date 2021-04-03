@@ -247,7 +247,10 @@ func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
 				pmap[x][y] = 1
 				// TODO: think how to better randomize path costs
 				if RandomizePath {
-					pmap[x][y] += rnd.RandInRange(-100, 250)
+					// lowering the "from" increases path randomness, but also makes the generator to fail more frequently
+					// because it increases the probability for creating a non-existing path
+					// "* 10" is to compensate the heuristics in the pathfinder
+					pmap[x][y] += rnd.RandInRange(-100, 10000) * 10
 				}
 			} else {
 				pmap[x][y] = -1

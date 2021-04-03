@@ -1,4 +1,4 @@
-package random_pathfinder
+package pathfinder
 
 const (
 	DIAGONAL_COST             = 14
