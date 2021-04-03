@@ -37,20 +37,20 @@ func doLayoutVisualization() {
 		for {
 			key = cw.ReadKey()
 			switch key {
-			case "r":
+			case "r", "UP":
 				layout_generation.RandomizePath = !layout_generation.RandomizePath
 				break keyread
-			case "=", "+":
+			case "=", "+", "RIGHT":
 				if desiredPatternNum < layout_generation.GetTotalPatternsNumber()-1 {
 					desiredPatternNum++
 				}
 				break keyread
-			case "-":
+			case "-", "LEFT":
 				if desiredPatternNum > -1 {
 					desiredPatternNum--
 				}
 				break keyread
-			case " ", "ESCAPE":
+			case " ", "TAB", "ESCAPE":
 				break keyread
 			}
 		}
