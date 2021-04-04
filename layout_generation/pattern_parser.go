@@ -43,7 +43,7 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 			if scanner.Text() != "" {
 				newInstr := pp.parseLineToInstruction(scanner.Text())
 				if newInstr != nil {
-					pat.instructions = append(pat.instructions, *newInstr)
+					pat.instructions = append(pat.instructions, newInstr)
 				}
 			}
 		}
