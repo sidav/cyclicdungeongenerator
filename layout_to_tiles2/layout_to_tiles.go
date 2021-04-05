@@ -74,12 +74,20 @@ func doForRooms(layout *layout_generation.LayoutMap) {
 				}
 				for connIndex := range conns {
 					cx, cy := conns[connIndex][0], conns[connIndex][1]
+					// randomly displace center for creating random door offset
+					centerXoff := centerX
+					centerYoff := centerY
+					if cx == 0 {  // horiz
+						centerXoff = centerX + rnd.RandInRange(-roomsize/2, roomsize/2)
+					} else { // ver
+						centerYoff = centerY + rnd.RandInRange(-roomsize/2, roomsize/2)
+					}
 					connRune := '+'
 					switch layoutElem.GetConnectionByCoords(cx, cy).LockNum {
 					case 1: connRune = '%'
 					case 2: connRune = '='
 					}
-					charmap[centerX+conns[connIndex][0]*(roomsize+1)/2][centerY+conns[connIndex][1]*(roomsize+1)/2] = connRune
+					charmap[centerXoff+conns[connIndex][0]*(roomsize+1)/2][centerYoff+conns[connIndex][1]*(roomsize+1)/2] = connRune
 				}
 			}
 		}
