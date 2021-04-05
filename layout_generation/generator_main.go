@@ -9,25 +9,26 @@ type CyclicGenerator struct {
 	layoutWidth, layoutHeight int
 	layout                    LayoutMap
 	rnd                       random.FibRandom
+	TriesForPattern           int
 }
 
 func InitCyclicGenerator(randomizePath bool, layoutWidth, layoutHeight int, seed int) *CyclicGenerator {
 	gen := &CyclicGenerator{
-		RandomizePath: randomizePath,
-		layoutWidth:   layoutWidth,
-		layoutHeight:  layoutHeight,
-		layout:        LayoutMap{},
-		rnd:           random.FibRandom{},
+		RandomizePath:   randomizePath,
+		layoutWidth:     layoutWidth,
+		layoutHeight:    layoutHeight,
+		layout:          LayoutMap{},
+		rnd:             random.FibRandom{},
+		TriesForPattern: 25,
 	}
 	gen.rnd.InitBySeed(seed)
 	return gen
 }
 
 func (cg *CyclicGenerator) GenerateLayout(pattern *pattern) (*LayoutMap, int) {
-	const triesForPattern = 25
 
 generationStart:
-	for generatorRestarts := 0; generatorRestarts <= triesForPattern; generatorRestarts++ {
+	for generatorRestarts := 0; generatorRestarts <= cg.TriesForPattern; generatorRestarts++ {
 		cg.layout.init(cg.layoutWidth, cg.layoutHeight, &cg.rnd, cg.RandomizePath)
 
 		for i := range pattern.instructions {
@@ -38,5 +39,5 @@ generationStart:
 		}
 		return &cg.layout, generatorRestarts
 	}
-	return nil, triesForPattern
+	return nil, cg.TriesForPattern
 }

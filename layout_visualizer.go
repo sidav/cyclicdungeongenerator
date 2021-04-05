@@ -23,6 +23,7 @@ func doLayoutVisualization() {
 			pattNum = desiredPatternNum
 		}
 		gen := layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
+		gen.TriesForPattern = 100
 		pattern := parser.ParsePatternFile(filenames[pattNum])
 		generatedMap, genRestarts := gen.GenerateLayout(pattern)
 
