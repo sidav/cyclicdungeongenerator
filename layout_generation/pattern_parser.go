@@ -10,7 +10,8 @@ import (
 )
 
 type PatternParser struct {
-	currentSplitLine []string
+	currentSplitLine   []string
+	WriteLinesInResult bool
 }
 
 func (pp *PatternParser) ListPatternFilenamesInPath(path string) []string {
@@ -43,6 +44,9 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 			if scanner.Text() != "" {
 				newInstr := pp.parseLineToInstruction(scanner.Text())
 				if newInstr != nil {
+					if pp.WriteLinesInResult {
+						newInstr.instructionText = scanner.Text()
+					}
 					pat.instructions = append(pat.instructions, newInstr)
 				}
 			}

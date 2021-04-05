@@ -22,6 +22,7 @@ type Benchmark struct {
 }
 
 func (b *Benchmark) Benchmark(patternFilename string) {
+	b.parser.WriteLinesInResult = true
 	b.rnd = random.FibRandom{}
 	b.rnd.InitBySeed(-1)
 	if !b.CheckRandomPaths {
@@ -124,16 +125,29 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 	fmt.Printf("Pattern #%s, min flaws %d, max flaws %d, mean flaws count %.2f, %d failed attempts (%.2f%%)\n", pattern.Name,
 		minSteps, maxSteps, float64(stepsSum)/float64(b.BenchLoopsForPattern), fails,
 		100.0*float64(fails)/(float64(b.BenchLoopsForPattern)))
-	fmt.Print("Flaws per step: \n")
-	flawsArrString := ""
-	for i := 0; i < len(flawsPerStep); i++ {
-		flawsArrString += fmt.Sprintf("%d: %d;  ", i, flawsPerStep[i])
+	//fmt.Print("Flaws per step: \n")
+	//flawsArrString := ""
+	//for i := 0; i < len(flawsPerStep); i++ {
+	//	flawsArrString += fmt.Sprintf("%d: %d;  ", i, flawsPerStep[i])
+	//}
+	//fmt.Print(flawsArrString + "\n")
+	fmt.Print("Flaws: \n")
+	totalFlaws := 0
+	for i := range flawsPerStep {
+		totalFlaws += flawsPerStep[i]
 	}
-	fmt.Print(flawsArrString + "\n")
+	for i := 0; i < len(flawsPerStep); i++ {
+		percent := 100 * float64(flawsPerStep[i])/float64(totalFlaws)
+		if flawsPerStep[i] > 0 {
+			fmt.Printf("%d: %s: %d(%.1f%%)\n", i, pattern.instructions[i].instructionText, flawsPerStep[i], percent)
+		}
+	}
 
 	if testUniquity {
-		fmt.Printf("There was %d unique maps and %d repeats, repeats consist %.2f%% of total maps generated).\n\n",
-			len(generatedMaps), repeats, 100.0*float64(repeats)/float64(repeats+len(generatedMaps)))
+		repeatsPerc := 100.0*float64(repeats)/float64(repeats+len(generatedMaps))
+		fmt.Printf("There was %d (%.2f%%) unique maps and %d (%.2f%%) repeats.\n\n",
+			// repeats consist %.2f%% of total maps generated).\n\n",
+			len(generatedMaps), 100-repeatsPerc, repeats, repeatsPerc)
 	} else {
 		fmt.Printf("Uniquity test was not performed as set by TestUniquity flag. \n")
 	}

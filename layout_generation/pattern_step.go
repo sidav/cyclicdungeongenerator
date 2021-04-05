@@ -25,5 +25,6 @@ type patternStep struct {
 	allowPlaceNearNode           bool   // for ACTION_PLACE_NODE_NEAR_PATH
 	status                       string // for ACTION_SET_NODE_STATUS
 	lockNumber                   int    // for various locks
-	allowCrossPaths              bool	// for allowing the new path to cross already existing one
+	allowCrossPaths              bool   // for allowing the new path to cross already existing one
+	instructionText              string // is written only if the parser is set so
 }
