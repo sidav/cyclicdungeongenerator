@@ -55,7 +55,7 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 	pp.currentSplitLine = strings.Split(line, " ")
 
-	action := strings.ToUpper(pp.currentSplitLine[0])
+	action := strings.Replace(strings.ToUpper(pp.currentSplitLine[0]), "_", "", -1)
 	if action[0] == "#"[0] { // that's a comment
 		return nil
 	}
@@ -131,8 +131,11 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 
 func (pp *PatternParser) getStringAfterIdentifier(ident string) string {
 	for i := range pp.currentSplitLine {
-		if i > 0 && strings.ToUpper(pp.currentSplitLine[i-1]) == ident {
-			return pp.currentSplitLine[i]
+		if i > 0 {
+			str := strings.Replace(strings.ToUpper(pp.currentSplitLine[i-1]), "_", "", -1)
+			if str == ident {
+				return pp.currentSplitLine[i]
+			}
 		}
 	}
 	return ""
@@ -140,12 +143,15 @@ func (pp *PatternParser) getStringAfterIdentifier(ident string) string {
 
 func (pp *PatternParser) getIntAfterIdentifier(ident string) int {
 	for i := range pp.currentSplitLine {
-		if i > 0 && strings.ToUpper(pp.currentSplitLine[i-1]) == ident {
-			val, err := strconv.Atoi(pp.currentSplitLine[i])
-			if err != nil {
-				panic("Broken!")
+		if i > 0 {
+			str := strings.Replace(strings.ToUpper(pp.currentSplitLine[i-1]), "_", "", -1)
+			if str == ident {
+				val, err := strconv.Atoi(pp.currentSplitLine[i])
+				if err != nil {
+					panic("Broken!")
+				}
+				return val
 			}
-			return val
 		}
 	}
 	return 0
