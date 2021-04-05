@@ -24,5 +24,6 @@ type patternStep struct {
 	pathNumber                   int    // for... path numbering, I guess o_O
 	allowPlaceNearNode           bool   // for ACTION_PLACE_NODE_NEAR_PATH
 	status                       string // for ACTION_SET_NODE_STATUS
-	lockNumber                   int    // for vatious locks
+	lockNumber                   int    // for various locks
+	allowCrossPaths              bool	// for allowing the new path to cross already existing one
 }

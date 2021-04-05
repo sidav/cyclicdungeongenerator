@@ -192,6 +192,14 @@ func (r *LayoutMap) areCoordsEmpty(x, y int) bool {
 	return r.elements[x][y].isEmpty()
 }
 
+func (r *LayoutMap) isPathPresentAtCoords(x, y int) bool {
+	return r.elements[x][y].isPartOfAPath()
+}
+
+func (r *LayoutMap) areCoordsEmptyOrPathOnly(x, y int) bool {
+	return r.elements[x][y].isPathOrEmpty()
+}
+
 func (r *LayoutMap) countEmptyCellsNear(x, y int) int {
 	count := 0
 	w, h := r.GetSize()
@@ -238,7 +246,7 @@ func (r *LayoutMap) GetElement(x, y int) *element {
 	return r.elements[x][y]
 }
 
-func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
+func (r *LayoutMap) getPassabilityMapForPathfinder(pathsArePassable bool) *[][]int {
 	layoutWidth, layoutHeight := r.GetSize()
 	pmap := make([][]int, layoutWidth)
 	for i := range pmap {
@@ -247,8 +255,11 @@ func (r *LayoutMap) getPassabilityMapForPathfinder() *[][]int {
 
 	for x := 0; x < layoutWidth; x++ {
 		for y := 0; y < layoutHeight; y++ {
-			if r.areCoordsEmpty(x, y) {
+			if r.areCoordsEmpty(x, y) || pathsArePassable && r.areCoordsEmptyOrPathOnly(x, y) {
 				pmap[x][y] = 1
+				if r.isPathPresentAtCoords(x, y) {
+					pmap[x][y] += 100
+				}
 				// TODO: think how to better randomize path costs
 				if r.randomizePaths {
 					// lowering the "from" increases path randomness, but also makes the generator to fail more frequently

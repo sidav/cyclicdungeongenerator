@@ -135,7 +135,7 @@ func (step *patternStep)execPlaceObstacleInCenter(layout *LayoutMap) bool {
 //}
 
 func (step *patternStep)execPlacePathFromTo(layout *LayoutMap) bool {
-	pmap := layout.getPassabilityMapForPathfinder()
+	pmap := layout.getPassabilityMapForPathfinder(step.allowCrossPaths)
 	fx, fy := layout.getCoordsOfNode(step.nameFrom)
 	tx, ty := layout.getCoordsOfNode(step.nameTo)
 	path := rpath.FindPath(pmap, fx, fy, tx, ty, false, false, true)

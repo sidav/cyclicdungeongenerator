@@ -18,6 +18,10 @@ func (e *element) isEmpty() bool {
 	return e.pathInfo == nil && e.nodeInfo == nil && !e.isObstacle
 }
 
+func (e *element) isPathOrEmpty() bool {
+	return e.nodeInfo == nil && !e.isObstacle
+}
+
 func (e *element) setConnectionByCoords(c *connection, x, y int) {
 	direction := "wat?"
 	if x == 0 && y == 1 {

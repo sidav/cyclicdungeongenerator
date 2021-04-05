@@ -77,6 +77,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),
 			nameTo:            pp.getStringAfterIdentifier("TO"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
+			allowCrossPaths:   strings.ToUpper(pp.getStringAfterIdentifier("ALLOWINTERSECT")) == "TRUE",
 		}
 	case "PLACERANDOMROOMS": // PLACERANDOMROOMS MIN minrooms MAX maxrooms
 		return &patternStep{
