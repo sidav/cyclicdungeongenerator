@@ -5,70 +5,74 @@ import (
 	"CyclicDungeonGenerator/random"
 )
 
-var charmap [][]rune
-var roomsize int
-var rnd *random.FibRandom
-
-// roomsize is WITHOUT walls taken into account!
-func MakeCharmap(rndgen *random.FibRandom, roomSize int, layout *layout_generation.LayoutMap) [][]rune {
-	roomsize = roomSize
-	rw, rh := layout.GetSize()
-	rnd = rndgen
-
-	// +1 is for walls
-	charmap = make([][]rune, rw*(roomsize+1)+1)
-	for i := range charmap {
-		// +1 is for walls
-		charmap[i] = make([]rune, rh*(roomsize+1)+1)
-	}
-
-	for x := range charmap {
-		for y := range charmap[x] {
-			charmap[x][y] = ' ' // empty everything
-		}
-	}
-
-	doForConnections(layout)
-	doForRooms(layout)
-
-
-	// draw perimeter walls, replace "temp walls" with true walls
-	for x := range charmap {
-		for y := range charmap[x] {
-			if charmap[x][y] == '?' {
-				charmap[x][y] = '#'
-			}
-			if x == 0 || x == len(charmap)-1 || y == 0 || y == len(charmap[x])-1 {
-				charmap[x][y] = '#'
-			}
-		}
-	}
-	dilateWalls(2,30)
-	erodeWalls(1, 10)
-	dilateWalls(1,0)
-
-	return charmap
+type LayoutToLevel struct {
+	charmap  [][]rune
+	roomSize int
+	rnd *random.FibRandom
 }
 
-func doForRooms(layout *layout_generation.LayoutMap) {
+func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomSize int) {
+	ltl.rnd = rnd
+	ltl.roomSize = roomSize
+}
+
+// roomSize is WITHOUT walls taken into account!
+func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap) [][]rune {
+	rw, rh := layout.GetSize()
+
+	// +1 is for walls
+	ltl.charmap = make([][]rune, rw*(ltl.roomSize+1)+1)
+	for i := range ltl.charmap {
+		// +1 is for walls
+		ltl.charmap[i] = make([]rune, rh*(ltl.roomSize+1)+1)
+	}
+
+	for x := range ltl.charmap {
+		for y := range ltl.charmap[x] {
+			ltl.charmap[x][y] = ' ' // empty everything
+		}
+	}
+
+	ltl.doForConnections(layout)
+	ltl.doForRooms(layout)
+
+	// draw perimeter walls, replace "temp walls" with true walls
+	for x := range ltl.charmap {
+		for y := range ltl.charmap[x] {
+			if ltl.charmap[x][y] == '?' {
+				ltl.charmap[x][y] = '#'
+			}
+			if x == 0 || x == len(ltl.charmap)-1 || y == 0 || y == len(ltl.charmap[x])-1 {
+				ltl.charmap[x][y] = '#'
+			}
+		}
+	}
+	ltl.dilateWalls(2, 30)
+	ltl.erodeWalls(1, 10)
+	ltl.dilateWalls(1, 0)
+
+	return ltl.charmap
+}
+
+func (ltl *LayoutToLevel) doForRooms(layout *layout_generation.LayoutMap) {
 	rw, rh := layout.GetSize()
 	for lroomx := 0; lroomx < rw; lroomx++ {
 		for lroomy := 0; lroomy < rh; lroomy++ {
 			layoutElem := layout.GetElement(lroomx, lroomy)
 			// surround it with walls
-			boundLeft := lroomx * (roomsize + 1)
-			boundRight := (lroomx + 1) * (roomsize + 1)
-			boundUpper := (lroomy) * (roomsize + 1)
-			boundLower := (lroomy + 1) * (roomsize + 1)
-			centerX := boundLeft + (roomsize+1)/2
-			centerY := boundUpper + (roomsize+1)/2
+			boundLeft := lroomx * (ltl.roomSize + 1)
+			boundRight := (lroomx + 1) * (ltl.roomSize + 1)
+			boundUpper := (lroomy) * (ltl.roomSize + 1)
+			boundLower := (lroomy + 1) * (ltl.roomSize + 1)
+			centerX := boundLeft + (ltl.roomSize+1)/2
+			centerY := boundUpper + (ltl.roomSize+1)/2
 			conns := layoutElem.GetAllConnectionsCoords()
 			// is a room
 			if layoutElem.IsNode() {
 				for x := boundLeft; x <= boundRight; x++ {
 					for y := boundUpper; y <= boundLower; y++ {
 						if x == boundRight || x == boundLeft || y == boundUpper || y == boundLower {
-							charmap[x][y] = '#'
+							ltl.charmap[x][y] = '#'
 						}
 					}
 				}
@@ -77,39 +81,41 @@ func doForRooms(layout *layout_generation.LayoutMap) {
 					// randomly displace center for creating random door offset
 					centerXoff := centerX
 					centerYoff := centerY
-					if cx == 0 {  // horiz
-						centerXoff = centerX + rnd.RandInRange(-roomsize/2, roomsize/2)
+					if cx == 0 { // horiz
+						centerXoff = centerX + ltl.rnd.RandInRange(-ltl.roomSize/2, ltl.roomSize/2)
 					} else { // ver
-						centerYoff = centerY + rnd.RandInRange(-roomsize/2, roomsize/2)
+						centerYoff = centerY + ltl.rnd.RandInRange(-ltl.roomSize/2, ltl.roomSize/2)
 					}
 					connRune := '+'
 					switch layoutElem.GetConnectionByCoords(cx, cy).LockNum {
-					case 1: connRune = '%'
-					case 2: connRune = '='
+					case 1:
+						connRune = '%'
+					case 2:
+						connRune = '='
 					}
-					charmap[centerXoff+conns[connIndex][0]*(roomsize+1)/2][centerYoff+conns[connIndex][1]*(roomsize+1)/2] = connRune
+					ltl.charmap[centerXoff+conns[connIndex][0]*(ltl.roomSize+1)/2][centerYoff+conns[connIndex][1]*(ltl.roomSize+1)/2] = connRune
 				}
 			}
 		}
 	}
 }
 
-func doForConnections(layout *layout_generation.LayoutMap) {
+func (ltl *LayoutToLevel) doForConnections(layout *layout_generation.LayoutMap) {
 	rw, rh := layout.GetSize()
 	for lroomx := 0; lroomx < rw; lroomx++ {
 		for lroomy := 0; lroomy < rh; lroomy++ {
 			layoutElem := layout.GetElement(lroomx, lroomy)
 			// surround it with walls
-			boundLeft := lroomx * (roomsize + 1)
-			boundRight := (lroomx + 1) * (roomsize + 1)
-			boundUpper := (lroomy) * (roomsize + 1)
-			boundLower := (lroomy + 1) * (roomsize + 1)
+			boundLeft := lroomx * (ltl.roomSize + 1)
+			boundRight := (lroomx + 1) * (ltl.roomSize + 1)
+			boundUpper := (lroomy) * (ltl.roomSize + 1)
+			boundLower := (lroomy + 1) * (ltl.roomSize + 1)
 			conns := layoutElem.GetAllConnectionsCoords()
 			// is a room
 			if !layoutElem.IsNode() {
 				for x := boundLeft; x <= boundRight; x++ {
 					for y := boundUpper; y <= boundLower; y++ {
-						charmap[x][y] = '#'
+						ltl.charmap[x][y] = '#'
 					}
 				}
 				for connIndex := range conns {
@@ -130,9 +136,9 @@ func doForConnections(layout *layout_generation.LayoutMap) {
 					if cony == 1 {
 						botOff = 1
 					}
-					for x := boundLeft+1-leftOff; x < boundRight+rightOff; x++ {
-						for y := boundUpper+1-upOff; y < boundLower+botOff; y++ {
-							charmap[x][y] = ' '
+					for x := boundLeft + 1 - leftOff; x < boundRight+rightOff; x++ {
+						for y := boundUpper + 1 - upOff; y < boundLower+botOff; y++ {
+							ltl.charmap[x][y] = ' '
 						}
 					}
 				}

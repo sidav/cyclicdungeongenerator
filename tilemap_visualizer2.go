@@ -98,14 +98,16 @@ func (g *vis) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, 
 	}
 }
 
-func (g *vis) putTileMap(rnd *random.FibRandom, a *layout_generation.LayoutMap) {
+func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.LayoutMap) {
 	cw.Clear_console()
-	g.putTileArray(layout_to_tiles2.MakeCharmap(rnd, g.roomSize, a), 0, 0)
+	ltl := layout_to_tiles2.LayoutToLevel{}
+	ltl.Init(rnd, g.roomSize)
+	g.putTileArray(ltl.MakeCharmap(layout), 0, 0)
 	roomSize := g.roomSize + 1
-	rw, rh := a.GetSize()
+	rw, rh := layout.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {
-			node := a.GetElement(rx, ry)
+			node := layout.GetElement(rx, ry)
 			conns := node.GetAllConnectionsCoords()
 			if len(conns) > 0 {
 				cw.SetFgColor(cw.GREEN)
