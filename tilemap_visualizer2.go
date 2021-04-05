@@ -9,10 +9,12 @@ import (
 	"fmt"
 )
 
-type vis struct {}
+type vis struct {
+	roomSize int
+}
 
 func (g *vis) doTilemapVisualization() {
-	roomSize := 3
+	g.roomSize = 3
 	key := "none"
 	desiredPatternNum := -1
 	rnd := random.FibRandom{}
@@ -29,7 +31,8 @@ func (g *vis) doTilemapVisualization() {
 		}
 		gen := layout_generation.InitCyclicGenerator(true, W, H, -1)
 		gen.TriesForPattern = 100
-		generatedMap, genRestarts := gen.GenerateLayout(parser.ParsePatternFile(filenames[pattNum]))
+		patt := parser.ParsePatternFile(filenames[pattNum])
+		generatedMap, genRestarts := gen.GenerateLayout(patt)
 
 		if generatedMap == nil {
 			cw.PutString(":(", 0, 0)
@@ -41,7 +44,8 @@ func (g *vis) doTilemapVisualization() {
 			}
 			continue
 		} else {
-			g.putTileMap(generatedMap, roomSize)
+			g.putTileMap(&rnd, generatedMap)
+			g.putInfo(generatedMap, pattNum, desiredPatternNum, patt.Filename, patt.Name, genRestarts, gen.RandomizePath)
 			// putMiniMapAndPatternNumberAndNumberOfTries(generatedMap, pattNum, desiredPatternNum, genRestarts)
 		}
 		cw.Flush_console()
@@ -60,7 +64,7 @@ func (g *vis) doTilemapVisualization() {
 				}
 				break keyread
 			case "b":
-				roomSize++
+				g.roomSize++
 				break keyread
 			case " ", "ESCAPE":
 				break keyread
@@ -69,10 +73,32 @@ func (g *vis) doTilemapVisualization() {
 	}
 }
 
-func (g *vis) putTileMap(a *layout_generation.LayoutMap, roomSize int) {
+func (g *vis) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts int, rand bool) {
+	sx, sy := a.GetSize()
+	for y := 0; y < sy; y++ {
+		for x := 0; x < sx; x++ {
+			chr := a.GetCharOfElementAtCoords(x, y)
+			setcolorForRune(chr)
+			cw.PutChar(chr, x+sx*(g.roomSize+1)+2, y)
+		}
+	}
+	cw.SetFgColor(cw.BEIGE)
+	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*(g.roomSize+1)+2, sy+2)
+	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*(g.roomSize+1)+2, sy+3)
+	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*(g.roomSize+1)+2, sy+4)
+	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*(g.roomSize+1)+2, sy+5)
+	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*(g.roomSize+1)+2, sy+6)
+	if rand {
+		cw.PutString("Random paths", sx*(g.roomSize+1)+2, sy+7)
+	} else {
+		cw.PutString("Shortest paths", sx*(g.roomSize+1)+2, sy+7)
+	}
+}
+
+func (g *vis) putTileMap(rnd *random.FibRandom, a *layout_generation.LayoutMap) {
 	cw.Clear_console()
-	g.putTileArray(layout_to_tiles2.MakeCharmap(roomSize, a), 0, 0)
-	roomSize+=1
+	g.putTileArray(layout_to_tiles2.MakeCharmap(rnd, g.roomSize, a), 0, 0)
+	roomSize := g.roomSize + 1
 	rw, rh := a.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {

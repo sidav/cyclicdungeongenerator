@@ -1,14 +1,19 @@
 package layout_to_tiles2
 
-import "CyclicDungeonGenerator/layout_generation"
+import (
+	"CyclicDungeonGenerator/layout_generation"
+	"CyclicDungeonGenerator/random"
+)
 
 var charmap [][]rune
 var roomsize int
+var rnd *random.FibRandom
 
 // roomsize is WITHOUT walls taken into account!
-func MakeCharmap(roomSize int, layout *layout_generation.LayoutMap) [][]rune {
+func MakeCharmap(rndgen *random.FibRandom, roomSize int, layout *layout_generation.LayoutMap) [][]rune {
 	roomsize = roomSize
 	rw, rh := layout.GetSize()
+	rnd = rndgen
 
 	// +1 is for walls
 	charmap = make([][]rune, rw*(roomsize+1)+1)
@@ -38,6 +43,10 @@ func MakeCharmap(roomSize int, layout *layout_generation.LayoutMap) [][]rune {
 			}
 		}
 	}
+	dilateWalls(2,30)
+	erodeWalls(1, 10)
+	dilateWalls(1,0)
+
 	return charmap
 }
 
