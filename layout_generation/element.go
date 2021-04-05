@@ -43,7 +43,7 @@ func (e *element) setConnectionByCoords(c *connection, x, y int) {
 	e.connections[direction] = c
 }
 
-func (e *element) getConnectionByCoords(x, y int) *connection {
+func (e *element) GetConnectionByCoords(x, y int) *connection {
 	direction := "wat?"
 	if x == 0 && y == 1 {
 		direction = "south"
@@ -66,8 +66,8 @@ func (e *element) getConnectionByCoords(x, y int) *connection {
 func (e *element) setAllConnectionsLockedForPath(pathNum int, lockNum int) {
 	for _, v := range e.connections {
 		if v != nil && v.pathNum == pathNum {
-			v.isLocked = true
-			v.lockNum = lockNum
+			v.IsLocked = true
+			v.LockNum = lockNum
 		}
 	}
 }

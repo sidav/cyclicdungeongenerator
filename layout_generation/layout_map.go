@@ -324,10 +324,10 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 		}
 		for x := -1; x <= 1; x++ {
 			for y := -1; y <= 2; y++ {
-				conn := e.getConnectionByCoords(x, y)
+				conn := e.GetConnectionByCoords(x, y)
 				if conn != nil {
-					if conn.isLocked {
-						if conn.lockNum == 0 {
+					if conn.IsLocked {
+						if conn.LockNum == 0 {
 							ca[2+x*2][2+y*2] = '%'
 						} else {
 							ca[2+x*2][2+y*2] = '='
@@ -356,7 +356,7 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 		ca[2][2] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
 		for x := -1; x <= 1; x++ {
 			for y := -1; y <= 1; y++ {
-				if e.getConnectionByCoords(x, y) != nil {
+				if e.GetConnectionByCoords(x, y) != nil {
 					ca[2+x*2][2+y*2] = ' '
 					ca[2+x][2+y] = ' '
 				}
