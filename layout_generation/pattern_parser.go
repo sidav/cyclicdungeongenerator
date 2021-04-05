@@ -100,6 +100,17 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 		}
+	case "PLACEROOMATPATH": // PLACEROOMATPATH PATHID id ROOMNAME newroomname
+		return &patternStep{
+			actionType:        ACTION_PLACE_NODE_AT_PATH,
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
+			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
+			nameFrom:          pp.getStringAfterIdentifier("FROM"),
+			nameTo:            pp.getStringAfterIdentifier("TO"),
+			countFrom:         pp.getIntAfterIdentifier("MIN"),
+			countTo:           pp.getIntAfterIdentifier("MAX"),
+			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
+		}
 	case "LOCKROOMFROMPATH": // LOCKROOMFROMPATH PATHID id ROOMNAME roomname LOCKID lockid
 		return &patternStep{
 			actionType:        ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH,
