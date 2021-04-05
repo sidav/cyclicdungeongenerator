@@ -247,6 +247,10 @@ func (r *LayoutMap) GetElement(x, y int) *element {
 }
 
 func (r *LayoutMap) getPassabilityMapForPathfinder(pathsArePassable bool) *[][]int {
+	const (
+		minRandomCostIncrease = -100
+		maxRandomCostIncrease = 10000
+	)
 	layoutWidth, layoutHeight := r.GetSize()
 	pmap := make([][]int, layoutWidth)
 	for i := range pmap {
@@ -258,14 +262,14 @@ func (r *LayoutMap) getPassabilityMapForPathfinder(pathsArePassable bool) *[][]i
 			if r.areCoordsEmpty(x, y) || pathsArePassable && r.areCoordsEmptyOrPathOnly(x, y) {
 				pmap[x][y] = 1
 				if r.isPathPresentAtCoords(x, y) {
-					pmap[x][y] += 100
+					pmap[x][y] += maxRandomCostIncrease
 				}
 				// TODO: think how to better randomize path costs
 				if r.randomizePaths {
 					// lowering the "from" increases path randomness, but also makes the generator to fail more frequently
 					// because it increases the probability for creating a non-existing path
 					// "* 10" is to compensate the heuristics in the pathfinder
-					pmap[x][y] += r.rnd.RandInRange(-100, 10000) * 10
+					pmap[x][y] += r.rnd.RandInRange(minRandomCostIncrease, maxRandomCostIncrease) * 10
 				}
 			} else {
 				pmap[x][y] = -1
