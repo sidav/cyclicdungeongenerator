@@ -32,7 +32,9 @@ func main() {
 	cw.Init_console()
 	defer cw.Close_console()
 
-	doLayoutVisualization()
+	// doLayoutVisualization()
 	//tmv := tmv{}
 	//tmv.doTilemapVisualization()
+	vis := vis{}
+	vis.doTilemapVisualization()
 }
