@@ -131,16 +131,20 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 	//	flawsArrString += fmt.Sprintf("%d: %d;  ", i, flawsPerStep[i])
 	//}
 	//fmt.Print(flawsArrString + "\n")
-	fmt.Print("Flaws: \n")
 	totalFlaws := 0
 	for i := range flawsPerStep {
 		totalFlaws += flawsPerStep[i]
 	}
-	for i := 0; i < len(flawsPerStep); i++ {
-		percent := 100 * float64(flawsPerStep[i])/float64(totalFlaws)
-		if flawsPerStep[i] > 0 {
-			fmt.Printf("%d: %s: %d(%.1f%%)\n", i, pattern.instructions[i].instructionText, flawsPerStep[i], percent)
+	if totalFlaws > 0 {
+		fmt.Print("Flaws by instruction: \n")
+		for i := 0; i < len(flawsPerStep); i++ {
+			percent := 100 * float64(flawsPerStep[i]) / float64(totalFlaws)
+			if flawsPerStep[i] > 0 {
+				fmt.Printf("%d: %s: %d(%.1f%%)\n", i, pattern.instructions[i].instructionText, flawsPerStep[i], percent)
+			}
 		}
+	} else {
+		fmt.Print("No flaws occurred. Wonderful! \n")
 	}
 
 	if testUniquity {
