@@ -10,11 +10,11 @@ import (
 )
 
 type vis struct {
-	roomSize int
+	roomW, roomH int
 }
 
 func (g *vis) doTilemapVisualization() {
-	g.roomSize = 3
+	g.roomW, g.roomH = 5, 3
 	key := "none"
 	desiredPatternNum := -1
 	rnd := random.FibRandom{}
@@ -54,10 +54,12 @@ func (g *vis) doTilemapVisualization() {
 			key = cw.ReadKey()
 			switch key {
 			case "b":
-				g.roomSize++
+				g.roomW++
+				g.roomH++
 				break keyread
 			case "s":
-				g.roomSize--
+				g.roomW--
+				g.roomH--
 				break keyread
 			case "=", "+", "RIGHT":
 				if desiredPatternNum < len(filenames)-1 {
@@ -82,28 +84,28 @@ func (g *vis) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, 
 		for x := 0; x < sx; x++ {
 			chr := a.GetCharOfElementAtCoords(x, y)
 			setcolorForRune(chr)
-			cw.PutChar(chr, x+sx*(g.roomSize+1)+2, y)
+			cw.PutChar(chr, x+sx*(g.roomW+1)+2, y)
 		}
 	}
 	cw.SetFgColor(cw.BEIGE)
-	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*(g.roomSize+1)+2, sy+2)
-	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*(g.roomSize+1)+2, sy+3)
-	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*(g.roomSize+1)+2, sy+4)
-	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*(g.roomSize+1)+2, sy+5)
-	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*(g.roomSize+1)+2, sy+6)
+	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*(g.roomW+1)+2, sy+2)
+	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*(g.roomW+1)+2, sy+3)
+	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*(g.roomW+1)+2, sy+4)
+	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*(g.roomW+1)+2, sy+5)
+	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*(g.roomW+1)+2, sy+6)
+	cw.PutString(fmt.Sprintf("Room size: %dx%d", g.roomW, g.roomH), sx*(g.roomW+1)+2, sy+7)
 	if rand {
-		cw.PutString("Random paths", sx*(g.roomSize+1)+2, sy+7)
+		cw.PutString("Random paths", sx*(g.roomW+1)+2, sy+8)
 	} else {
-		cw.PutString("Shortest paths", sx*(g.roomSize+1)+2, sy+7)
+		cw.PutString("Shortest paths", sx*(g.roomW+1)+2, sy+8)
 	}
 }
 
 func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.LayoutMap) {
 	cw.Clear_console()
 	ltl := layout_to_tiles2.LayoutToLevel{}
-	ltl.Init(rnd, g.roomSize)
+	ltl.Init(rnd, g.roomW, g.roomH)
 	g.putTileArray(ltl.MakeCharmap(layout), 0, 0)
-	roomSize := g.roomSize + 1
 	rw, rh := layout.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {
@@ -114,8 +116,8 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 				if node.IsNode() {
 					name := node.GetName()
 					namelen := len(name)
-					offset := roomSize / 2 - namelen / 2
-					cw.PutString(name, rx*roomSize + offset, ry*roomSize+roomSize/2)
+					offset := (g.roomW+1) / 2 - namelen / 2
+					cw.PutString(name, rx*(g.roomW+1)  + offset, ry*(g.roomH+1)+(g.roomH+1)/2)
 				}
 			}
 		}
