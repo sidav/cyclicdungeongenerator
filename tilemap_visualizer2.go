@@ -53,20 +53,23 @@ func (g *vis) doTilemapVisualization() {
 		for {
 			key = cw.ReadKey()
 			switch key {
-			case "=", "+":
+			case "b":
+				g.roomSize++
+				break keyread
+			case "s":
+				g.roomSize--
+				break keyread
+			case "=", "+", "RIGHT":
 				if desiredPatternNum < len(filenames)-1 {
 					desiredPatternNum++
 				}
 				break keyread
-			case "-":
+			case "-", "LEFT":
 				if desiredPatternNum > -1 {
 					desiredPatternNum--
 				}
 				break keyread
-			case "b":
-				g.roomSize++
-				break keyread
-			case " ", "ESCAPE":
+			case " ", "TAB", "ESCAPE":
 				break keyread
 			}
 		}
