@@ -3,7 +3,7 @@ package main
 import (
 	cw "CyclicDungeonGenerator/console_wrapper"
 	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/layout_to_tiles2"
+	"CyclicDungeonGenerator/layout_to_tiled_map"
 	"CyclicDungeonGenerator/random"
 	"fmt"
 )
@@ -101,11 +101,11 @@ func (g *vis) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, 
 
 func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.LayoutMap) {
 	cw.Clear_console()
-	ltl := layout_to_tiles2.LayoutToLevel{}
+	ltl := layout_to_tiled_map.LayoutToLevel{}
 	ltl.Init(rnd, g.roomW, g.roomH)
 	ltl.CAConnectionChance = 100
 	ltl.CARoomChance = 15
-	g.putTileArray(ltl.MakeCharmap(layout, "layout_to_tiles2/submaps/"), 0, 0)
+	g.putTileArray(ltl.MakeCharmap(layout, "layout_to_tiled_map/submaps/"), 0, 0)
 	rw, rh := layout.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {

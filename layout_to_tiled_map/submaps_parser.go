@@ -1,4 +1,4 @@
-package layout_to_tiles2
+package layout_to_tiled_map
 
 import (
 	"bufio"

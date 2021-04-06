@@ -1,4 +1,4 @@
-package layout_to_tiles2
+package layout_to_tiled_map
 
 func (ltl *LayoutToLevel) erodeWalls(fromx, fromy, tox, toy, iters, chancePerc int) {
 	var coordsToErode [][2]int

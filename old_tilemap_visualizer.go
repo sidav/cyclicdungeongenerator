@@ -2,7 +2,7 @@ package main
 
 import (
 	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/layout_to_tilemap"
+	"CyclicDungeonGenerator/deprecated/layout_to_tilemap"
 	"fmt"
 	cw "CyclicDungeonGenerator/console_wrapper"
 	"CyclicDungeonGenerator/random"
