@@ -13,6 +13,8 @@ func (step *patternStep)execPatternStep(layout *LayoutMap) bool {
 		return step.execPlaceNodeAtEmpty(layout)
 	case ACTION_PLACE_OBSTACLE_IN_CENTER:
 		return step.execPlaceObstacleInCenter(layout)
+	case ACTION_PLACE_OBSTACLE_AT_COORDS:
+		return step.execPlaceObstacleAtCoords(layout)
 	//case ACTION_PLACE_RANDOM_OBSTACLES:
 	//	return execPlaceRandomObstacles(layout)
 	case ACTION_PLACE_PATH_FROM_TO:
@@ -121,6 +123,16 @@ func (step *patternStep)execPlaceObstacleInCenter(layout *LayoutMap) bool {
 			if i*i+j*j <= obstSize*obstSize {
 				layout.placeObstacleAtCoords(cx+i, cy+j)
 			}
+		}
+	}
+	return true
+}
+
+func (step *patternStep) execPlaceObstacleAtCoords(layout *LayoutMap) bool {
+	fx, fy, tx, ty := step.getAbsoluteCoordsForStep(layout)
+	for x := fx; x <= tx; x++ {
+		for y := fy; y <= ty; y++ {
+			layout.placeObstacleAtCoords(x, y)
 		}
 	}
 	return true

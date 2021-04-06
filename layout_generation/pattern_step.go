@@ -7,6 +7,7 @@ const (
 	ACTION_FILL_WITH_RANDOM_CONNECTED_NODES = iota // For additional "garbage" dead end nodes. Can be placed connected to anything: a node, a path...
 	ACTION_PLACE_PATH_FROM_TO               = iota
 	ACTION_PLACE_OBSTACLE_IN_CENTER         = iota
+	ACTION_PLACE_OBSTACLE_AT_COORDS         = iota
 	// ACTION_PLACE_RANDOM_OBSTACLES               = iota // unneeded since there is random pathfinding
 	ACTION_CLEAR_OBSTACLES                      = iota
 	ACTION_PLACE_NODE_AT_PATH                   = iota

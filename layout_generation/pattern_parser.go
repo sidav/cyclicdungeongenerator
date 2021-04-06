@@ -145,7 +145,25 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
 			tags:              pp.getStringAfterIdentifier("TAGS"),
 		}
+	case "PLACEOBSTACLE": // PLACEOBSTACLE FROMX x FROMY y TOX tx TY ty
+		return &patternStep{
+			actionType:        ACTION_PLACE_OBSTACLE_AT_COORDS,
+			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
+			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
+			nameFrom:          pp.getStringAfterIdentifier("FROM"),
+			nameTo:            pp.getStringAfterIdentifier("TO"),
+			countFrom:         pp.getIntAfterIdentifier("MIN"),
+			countTo:           pp.getIntAfterIdentifier("MAX"),
+			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
+			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
+			tags:              pp.getStringAfterIdentifier("TAGS"),
+			fromX:             pp.getIntAfterIdentifier("FX"),
+			fromY:             pp.getIntAfterIdentifier("FY"),
+			toX:               pp.getIntAfterIdentifier("TX"),
+			toY:               pp.getIntAfterIdentifier("TY"),
+		}
 	}
+
 	panic("UNKNOWN ACTION IDENTIFIER " + action)
 }
 

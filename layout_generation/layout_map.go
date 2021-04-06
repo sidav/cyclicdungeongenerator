@@ -149,7 +149,8 @@ func (r *LayoutMap) getRandomNonEmptyCellCoords(minEmptyCellsNear int) (int, int
 	nonEmptiesY := make([]int, 0)
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
-			if !r.elements[x][y].isEmpty() && r.countEmptyCellsNear(x, y) >= minEmptyCellsNear {
+			// obstacles should not be counted as "non-empty"
+			if !r.elements[x][y].isObstacle && !r.elements[x][y].isEmpty() && r.countEmptyCellsNear(x, y) >= minEmptyCellsNear {
 				nonEmptiesX = append(nonEmptiesX, x)
 				nonEmptiesY = append(nonEmptiesY, y)
 			}
