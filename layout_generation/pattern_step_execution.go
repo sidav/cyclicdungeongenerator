@@ -48,7 +48,7 @@ func (step *patternStep)execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 	}
 	if x != -1 && y != -1 {
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
-		layout.elements[x][y].nodeInfo.AddTag(step.tags)
+		layout.elements[x][y].nodeInfo.setTags(step.tags)
 		return true
 	}
 	return false
@@ -63,7 +63,7 @@ func (step *patternStep)execPlaceNodeNearPath(layout *LayoutMap) bool {
 	}
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
 	layout.elements[x][y].setConnectionByCoords(&connection{pathNum: num}, px-x, py-y)
-	layout.elements[x][y].nodeInfo.AddTag(step.tags)
+	layout.elements[x][y].nodeInfo.setTags(step.tags)
 	layout.elements[px][py].setConnectionByCoords(&connection{pathNum: num}, x-px, y-py)
 	return true
 }
@@ -73,7 +73,7 @@ func (step *patternStep)execPlaceNodeAtPath(layout *LayoutMap) bool {
 	x, y := layout.getRandomPathCellCoords(num, false)
 	if x != -1 && y != -1 {
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
-		layout.elements[x][y].nodeInfo.AddTag(step.tags)
+		layout.elements[x][y].nodeInfo.setTags(step.tags)
 		return true
 	}
 	return false
@@ -169,7 +169,7 @@ func (step *patternStep) execSetNodeTags(layout *LayoutMap) bool {
 	if nx == -1 && ny == -1 {
 		return false
 	}
-	layout.elements[nx][ny].nodeInfo.AddTag(tags)
+	layout.elements[nx][ny].nodeInfo.setTags(tags)
 	return true
 }
 

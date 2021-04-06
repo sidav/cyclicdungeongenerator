@@ -5,6 +5,6 @@ type nodeCell struct {
 	nodeTag  string // Locked? Key-containing? Anything.
 }
 
-func (n *nodeCell) AddTag(tag string) { // TODO: make the tags an array
-	n.nodeTag = tag
+func (n *nodeCell) setTags(tags string) { // TODO: make the tags an array
+	n.nodeTag = tags
 }

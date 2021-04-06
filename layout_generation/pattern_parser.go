@@ -132,7 +132,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
 		}
-	case "ADDROOMTAGS": // ADDROOMTAGS ROOMNAME roomname TAGS tags
+	case "SETROOMTAGS": // SETROOMTAGS ROOMNAME roomname TAGS tags
 		return &patternStep{
 			actionType:        ACTION_SET_NODE_TAGS,
 			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
