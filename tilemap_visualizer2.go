@@ -105,7 +105,7 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 	ltl.Init(rnd, g.roomW, g.roomH)
 	ltl.CAConnectionChance = 100
 	ltl.CARoomChance = 15
-	g.putTileArray(ltl.MakeCharmap(layout), 0, 0)
+	g.putTileArray(ltl.MakeCharmap(layout, "layout_to_tiles2/submaps/"), 0, 0)
 	rw, rh := layout.GetSize()
 	for rx := 0; rx < rw; rx++ {
 		for ry := 0; ry < rh; ry++ {

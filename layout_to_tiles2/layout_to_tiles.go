@@ -6,9 +6,10 @@ import (
 )
 
 type LayoutToLevel struct {
-	charmap      [][]rune
-	roomW, roomH int
-	rnd          *random.FibRandom
+	charmap                          [][]rune
+	submaps                          []submap
+	roomW, roomH                     int
+	rnd                              *random.FibRandom
 	CARoomChance, CAConnectionChance int
 }
 
@@ -19,7 +20,8 @@ func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
 }
 
 // roomSize is WITHOUT walls taken into account!
-func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap) *[][]rune {
+func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap, submapsDir string) *[][]rune {
+	ltl.parseSubmapsDir(submapsDir)
 	rw, rh := layout.GetSize()
 
 	// +1 is for walls
@@ -51,7 +53,7 @@ func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap) *[][]
 	}
 
 	ltl.iterateNodesForCA(layout)
-
+	ltl.applySubmaps()
 	return &ltl.charmap
 }
 
@@ -59,10 +61,10 @@ func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation.LayoutMap)
 	rw, rh := layout.GetSize()
 	for lroomx := 0; lroomx < rw; lroomx++ {
 		for lroomy := 0; lroomy < rh; lroomy++ {
-			fromx := lroomx * (ltl.roomW+1)
-			tox := (lroomx + 1) * (ltl.roomW+1)
-			fromy := lroomy * (ltl.roomH+1)
-			toy := (lroomy + 1) * (ltl.roomH+1)
+			fromx := lroomx * (ltl.roomW + 1)
+			tox := (lroomx + 1) * (ltl.roomW + 1)
+			fromy := lroomy * (ltl.roomH + 1)
+			toy := (lroomy + 1) * (ltl.roomH + 1)
 			if layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.CARoomChance {
 				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 30)
 				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 30)
@@ -107,22 +109,22 @@ func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doCo
 					evenWAddition := 0
 					evenHAddition := 0
 					// for dealing with wrong doors placement for non-odd room sizes.
-					if ltl.roomW % 2 == 0 {
+					if ltl.roomW%2 == 0 {
 						evenWAddition = 1
 					}
-					if ltl.roomH % 2 == 0 {
+					if ltl.roomH%2 == 0 {
 						evenHAddition = 1
 					}
 					if cx == 0 { // horiz
-						centerXoff = centerX + ltl.rnd.RandInRange(-ltl.roomW/2 + evenWAddition, ltl.roomW/2)
+						centerXoff = centerX + ltl.rnd.RandInRange(-ltl.roomW/2+evenWAddition, ltl.roomW/2)
 					} else { // ver
-						centerYoff = centerY + ltl.rnd.RandInRange(-ltl.roomH/2 + evenHAddition, ltl.roomH/2)
+						centerYoff = centerY + ltl.rnd.RandInRange(-ltl.roomH/2+evenHAddition, ltl.roomH/2)
 					}
 					// for dealing with wrong doors placement for non-odd room sizes.
-					if ltl.roomW % 2 == 0 && cx > 0 {
+					if ltl.roomW%2 == 0 && cx > 0 {
 						centerXoff++
 					}
-					if ltl.roomH % 2 == 0 && cy > 0 {
+					if ltl.roomH%2 == 0 && cy > 0 {
 						centerYoff++
 					}
 					connRune := '+'
@@ -132,8 +134,8 @@ func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doCo
 					case 2:
 						connRune = '='
 					}
-					doorX := centerXoff+conns[connIndex][0]*(ltl.roomW+1)/2
-					doorY := centerYoff+conns[connIndex][1]*(ltl.roomH+1)/2
+					doorX := centerXoff + conns[connIndex][0]*(ltl.roomW+1)/2
+					doorY := centerYoff + conns[connIndex][1]*(ltl.roomH+1)/2
 					// restrict non-locked doors to be placed over locked doors:
 					if connRune == '+' && ltl.charmap[doorX][doorY] != '#' {
 						continue
