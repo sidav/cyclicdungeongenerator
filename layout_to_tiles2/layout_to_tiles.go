@@ -19,7 +19,7 @@ func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
 }
 
 // roomSize is WITHOUT walls taken into account!
-func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap) [][]rune {
+func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap) *[][]rune {
 	rw, rh := layout.GetSize()
 
 	// +1 is for walls
@@ -52,7 +52,7 @@ func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap) [][]r
 
 	ltl.iterateNodesForCA(layout)
 
-	return ltl.charmap
+	return &ltl.charmap
 }
 
 func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation.LayoutMap) {

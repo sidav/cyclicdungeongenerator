@@ -124,10 +124,10 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 	}
 }
 
-func (g *vis) putTileArray(arr [][]rune, sx, sy int) {
-	for x :=0; x <len(arr); x++{
-		for y :=0; y <len((arr)[x]); y++ {
-			chr := (arr)[x][y]
+func (g *vis) putTileArray(arr *[][]rune, sx, sy int) {
+	for x :=0; x <len(*arr); x++{
+		for y :=0; y <len((*arr)[x]); y++ {
+			chr := (*arr)[x][y]
 			setcolorForRune(chr)
 			cw.PutChar(chr, sx+x, sy+y)
 			cw.SetColor(cw.WHITE, cw.BLACK)
