@@ -165,11 +165,29 @@ func (step *patternStep) execClearObstacles(layout *LayoutMap) bool {
 func (step *patternStep) execSetNodeTags(layout *LayoutMap) bool {
 	nname := step.nameOfNode
 	tags := step.tags
-	nx, ny := layout.getCoordsOfNode(nname)
-	if nx == -1 && ny == -1 {
-		return false
+	if nname != "" {
+		nx, ny := layout.getCoordsOfNode(nname)
+		if nx == -1 && ny == -1 {
+			return false
+		}
+		layout.elements[nx][ny].nodeInfo.setTags(tags)
+	} else { // set tags to random untagged node
+		suitableCoords := make([][2]int, 0)
+		w, h := layout.GetSize()
+		for x := 0; x < w; x++ {
+			for y := 0; y < h; y++ {
+				elem := layout.GetElement(x, y)
+				if elem.IsNode() && elem.nodeInfo.nodeTag == "" {
+					suitableCoords = append(suitableCoords, [2]int{x, y})
+				}
+			}
+		}
+		if len(suitableCoords) == 0 {
+			return false
+		}
+		randIndex := layout.rnd.Rand(len(suitableCoords))
+		layout.GetElement(suitableCoords[randIndex][0], suitableCoords[randIndex][1]).nodeInfo.setTags(step.tags)
 	}
-	layout.elements[nx][ny].nodeInfo.setTags(tags)
 	return true
 }
 
