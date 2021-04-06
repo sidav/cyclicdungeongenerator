@@ -1,61 +1,38 @@
 package layout_to_tiles2
 
-import (
-	"bufio"
-	"io/ioutil"
-	"log"
-	"os"
-	"strings"
-)
-
 type submap struct {
 	chars     [][]rune
-	usedTimes int
+	timesUsed int
 }
 
-func (ltl *LayoutToLevel) parseSubmapsDir(path string) {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, f := range files {
-		name := strings.Replace(path+"/"+f.Name(), "//", "/", -1)
-		ltl.parseSubmapFile(name)
-	}
-}
-
-func (ltl *LayoutToLevel) parseSubmapFile(filename string) {
-	file, _ := os.Open(filename)
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-
-	sm := submap{}
-	for scanner.Scan() {
-		if scanner.Text() == "" {
-			ltl.submaps = append(ltl.submaps, sm)
-			sm = submap{}
-			continue
-		}
-		line := scanner.Text()
-		var newArr []rune
-		for _, chr := range line {
-			if chr == '.' {
-				chr = ' '
+func (sm *submap) rotate(times int) {
+	for t := 0; t < times; t++ {
+		var newChars [][]rune
+		for y := 0; y < len(sm.chars[0]); y++ {
+			var arr []rune
+			for x := 0; x < len(sm.chars); x++ {
+				arr = append(arr, sm.chars[x][y])
 			}
-			newArr = append(newArr, rune(chr))
+			newChars = append(newChars, arr)
 		}
-		sm.chars = append(sm.chars, newArr)
+		sm.chars = newChars
 	}
-	ltl.submaps = append(ltl.submaps, sm)
 }
 
 func (ltl *LayoutToLevel) applySubmaps() {
-	for i := range ltl.submaps {
-		ltl.applySubmapAtRandom(&ltl.submaps[i])
+	for tries := 0; tries < 3; tries++ {
+		indexOffset := ltl.rnd.Rand(len(ltl.submaps))
+		for i := range ltl.submaps {
+			ind := (i + indexOffset) % len(ltl.submaps)
+			if ltl.submaps[ind].timesUsed == 0 {
+				ltl.applySubmapAtRandom(&ltl.submaps[ind])
+			}
+		}
 	}
 }
 
 func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap) {
+	sm.rotate(ltl.rnd.Rand(4))
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	applicableCoords := make([][2]int, 0)
 	for x := 0; x < len(ltl.charmap)-smW; x++ {
@@ -68,6 +45,7 @@ func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap) {
 	if len(applicableCoords) > 0 {
 		randCoordsIndex := ltl.rnd.Rand(len(applicableCoords))
 		ltl.applySubmapAtCoords(sm, applicableCoords[randCoordsIndex][0], applicableCoords[randCoordsIndex][1])
+		sm.timesUsed++
 	}
 }
 
