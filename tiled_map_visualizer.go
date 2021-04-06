@@ -85,7 +85,7 @@ func (g *vis) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, 
 			cw.PutChar(chr, x+sx*(g.roomW+1)+2, y)
 		}
 	}
-	cw.SetFgColor(cw.BEIGE)
+	cw.SetColor(cw.BEIGE, cw.BLACK)
 	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*(g.roomW+1)+2, sy+2)
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*(g.roomW+1)+2, sy+3)
 	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*(g.roomW+1)+2, sy+4)
