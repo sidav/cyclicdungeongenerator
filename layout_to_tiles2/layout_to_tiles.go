@@ -132,7 +132,13 @@ func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doCo
 					case 2:
 						connRune = '='
 					}
-					ltl.charmap[centerXoff+conns[connIndex][0]*(ltl.roomW+1)/2][centerYoff+conns[connIndex][1]*(ltl.roomH+1)/2] = connRune
+					doorX := centerXoff+conns[connIndex][0]*(ltl.roomW+1)/2
+					doorY := centerYoff+conns[connIndex][1]*(ltl.roomH+1)/2
+					// restrict non-locked doors to be placed over locked doors:
+					if connRune == '+' && ltl.charmap[doorX][doorY] != '#' {
+						continue
+					}
+					ltl.charmap[doorX][doorY] = connRune
 				}
 			}
 			// do nodes
