@@ -1,10 +1,10 @@
 package layout_to_tiles2
 
-func (ltl *LayoutToLevel) erodeWalls(iters, chancePerc int) {
+func (ltl *LayoutToLevel) erodeWalls(fromx, fromy, tox, toy, iters, chancePerc int) {
 	var coordsToErode [][2]int
 	for i := 0; i < iters; i++ {
-		for x := 1; x < len(ltl.charmap)-1; x++ {
-			for y := 1; y < len(ltl.charmap[x])-1; y++ {
+		for x := fromx; x < tox; x++ {
+			for y := fromy; y < toy; y++ {
 				if ltl.charmap[x][y] == '#' {
 					adjDP, adjDC := ltl.countDoorsNearby(x, y)
 					if adjDP+adjDC > 0 {
@@ -28,11 +28,11 @@ func (ltl *LayoutToLevel) erodeWalls(iters, chancePerc int) {
 	}
 }
 
-func (ltl *LayoutToLevel) dilateWalls(iters, chancePerc int) {
+func (ltl *LayoutToLevel) dilateWalls(fromx, fromy, tox, toy, iters, chancePerc int) {
 	var coords [][2]int
 	for i := 0; i < iters; i++ {
-		for x := 1; x < len(ltl.charmap)-1; x++ {
-			for y := 1; y < len(ltl.charmap[x])-1; y++ {
+		for x := fromx; x < tox; x++ {
+			for y := fromy; y < toy; y++ {
 				if ltl.charmap[x][y] == ' ' {
 					adjDP, _ := ltl.countDoorsNearby(x, y)
 					if adjDP > 0 {
@@ -63,6 +63,9 @@ func (ltl *LayoutToLevel) countDoorsNearby(xx, yy int) (int, int) {
 			if x == 0 && y == 0 {
 				continue
 			}
+			if xx+x < 0 || xx+x >= len(ltl.charmap) || yy+y < 0 || yy+y >= len(ltl.charmap[0]) {
+				continue
+			}
 			if '+' == ltl.charmap[xx+x][yy+y] || '%' == ltl.charmap[xx+x][yy+y] || '=' == ltl.charmap[xx+x][yy+y] {
 				if x*y == 0 {
 					countedPlus++
@@ -81,6 +84,9 @@ func (ltl *LayoutToLevel) countNeighbouring(xx, yy int, counts rune) (int, int) 
 	for x := -1; x <= 1; x++ {
 		for y := -1; y <= 1; y++ {
 			if x == 0 && y == 0 {
+				continue
+			}
+			if xx+x < 0 || xx+x >= len(ltl.charmap) || yy+y < 0 || yy+y >= len(ltl.charmap[0]) {
 				continue
 			}
 			if counts == ltl.charmap[xx+x][yy+y] {

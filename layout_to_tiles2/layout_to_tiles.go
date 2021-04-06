@@ -9,6 +9,7 @@ type LayoutToLevel struct {
 	charmap      [][]rune
 	roomW, roomH int
 	rnd          *random.FibRandom
+	CARoomChance, CAConnectionChance int
 }
 
 func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
@@ -48,11 +49,32 @@ func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap) [][]r
 			}
 		}
 	}
-	ltl.dilateWalls(2, 30)
-	ltl.erodeWalls(1, 10)
-	ltl.dilateWalls(1, 0)
+
+	ltl.iterateNodesForCA(layout)
 
 	return ltl.charmap
+}
+
+func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation.LayoutMap) {
+	rw, rh := layout.GetSize()
+	for lroomx := 0; lroomx < rw; lroomx++ {
+		for lroomy := 0; lroomy < rh; lroomy++ {
+			fromx := lroomx * (ltl.roomW+1)
+			tox := (lroomx + 1) * (ltl.roomW+1)
+			fromy := lroomy * (ltl.roomH+1)
+			toy := (lroomy + 1) * (ltl.roomH+1)
+			if layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.CARoomChance {
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 30)
+				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 30)
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0)
+			}
+			if !layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.CAConnectionChance {
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 30)
+				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 30)
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0)
+			}
+		}
+	}
 }
 
 func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doConnections, doRooms bool) {

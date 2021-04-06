@@ -3,7 +3,6 @@ package main
 import (
 	cw "CyclicDungeonGenerator/console_wrapper"
 	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/layout_to_tilemap"
 	"CyclicDungeonGenerator/layout_to_tiles2"
 	"CyclicDungeonGenerator/random"
 	"fmt"
@@ -19,7 +18,6 @@ func (g *vis) doTilemapVisualization() {
 	desiredPatternNum := -1
 	rnd := random.FibRandom{}
 	rnd.InitDefault()
-	layout_to_tilemap.Random = &rnd
 	parser := layout_generation.PatternParser{}
 	filenames := parser.ListPatternFilenamesInPath("patterns/")
 
@@ -105,6 +103,8 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 	cw.Clear_console()
 	ltl := layout_to_tiles2.LayoutToLevel{}
 	ltl.Init(rnd, g.roomW, g.roomH)
+	ltl.CAConnectionChance = 100
+	ltl.CARoomChance = 15
 	g.putTileArray(ltl.MakeCharmap(layout), 0, 0)
 	rw, rh := layout.GetSize()
 	for rx := 0; rx < rw; rx++ {
