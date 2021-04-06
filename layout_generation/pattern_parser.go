@@ -2,6 +2,7 @@ package layout_generation
 
 import (
 	"bufio"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -45,7 +46,7 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 				newInstr := pp.parseLineToInstruction(scanner.Text())
 				if newInstr != nil {
 					if pp.WriteLinesInResult {
-						newInstr.instructionText = scanner.Text()
+						newInstr.instructionText = fmt.Sprintf("%d: %s", currLine, scanner.Text())
 					}
 					pat.instructions = append(pat.instructions, newInstr)
 				}

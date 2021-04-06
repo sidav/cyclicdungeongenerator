@@ -15,8 +15,8 @@ func main() {
 	const bench = false
 	if bench {
 		bnch := layout_generation.Benchmark{
-			LayoutWidth: 5,
-			LayoutHeight: 5,
+			LayoutWidth: W,
+			LayoutHeight: H,
 
 			BenchLoopsForPattern:            10000,
 			TriesForPattern:                 25,

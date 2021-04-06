@@ -140,7 +140,7 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 		for i := 0; i < len(flawsPerStep); i++ {
 			percent := 100 * float64(flawsPerStep[i]) / float64(totalFlaws)
 			if flawsPerStep[i] > 0 {
-				fmt.Printf("%d: %s: %d(%.1f%%)\n", i, pattern.instructions[i].instructionText, flawsPerStep[i], percent)
+				fmt.Printf("%s: %d(%.1f%%)\n", pattern.instructions[i].instructionText, flawsPerStep[i], percent)
 			}
 		}
 	} else {
