@@ -25,8 +25,8 @@ func (step *patternStep)execPatternStep(layout *LayoutMap) bool {
 		return step.execPlaceRandomConnectedNodes(layout)
 	case ACTION_FILL_WITH_RANDOM_CONNECTED_NODES:
 		return step.execFillWithRandomConnectedNodes(layout)
-	case ACTION_SET_NODE_STATUS:
-		return step.execSetNodeStatus(layout)
+	case ACTION_SET_NODE_TAGS:
+		return step.execSetNodeTags(layout)
 	case ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH:
 		return step.execSetNodeConnectionsLockedFromPath(layout)
 	case ACTION_PLACE_NODE_AT_PATH:
@@ -48,6 +48,7 @@ func (step *patternStep)execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 	}
 	if x != -1 && y != -1 {
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
+		layout.elements[x][y].nodeInfo.AddTag(step.tags)
 		return true
 	}
 	return false
@@ -62,6 +63,7 @@ func (step *patternStep)execPlaceNodeNearPath(layout *LayoutMap) bool {
 	}
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
 	layout.elements[x][y].setConnectionByCoords(&connection{pathNum: num}, px-x, py-y)
+	layout.elements[x][y].nodeInfo.AddTag(step.tags)
 	layout.elements[px][py].setConnectionByCoords(&connection{pathNum: num}, x-px, y-py)
 	return true
 }
@@ -71,6 +73,7 @@ func (step *patternStep)execPlaceNodeAtPath(layout *LayoutMap) bool {
 	x, y := layout.getRandomPathCellCoords(num, false)
 	if x != -1 && y != -1 {
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
+		layout.elements[x][y].nodeInfo.AddTag(step.tags)
 		return true
 	}
 	return false
@@ -159,14 +162,14 @@ func (step *patternStep) execClearObstacles(layout *LayoutMap) bool {
 	return true
 }
 
-func (step *patternStep)execSetNodeStatus(layout *LayoutMap) bool {
+func (step *patternStep) execSetNodeTags(layout *LayoutMap) bool {
 	nname := step.nameOfNode
-	status := step.status
+	tags := step.tags
 	nx, ny := layout.getCoordsOfNode(nname)
 	if nx == -1 && ny == -1 {
 		return false
 	}
-	layout.elements[nx][ny].nodeInfo.AddStatus(status)
+	layout.elements[nx][ny].nodeInfo.AddTag(tags)
 	return true
 }
 

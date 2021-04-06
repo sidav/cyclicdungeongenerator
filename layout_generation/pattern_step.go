@@ -10,7 +10,7 @@ const (
 	// ACTION_PLACE_RANDOM_OBSTACLES               = iota // unneeded since there is random pathfinding
 	ACTION_CLEAR_OBSTACLES                      = iota
 	ACTION_PLACE_NODE_AT_PATH                   = iota
-	ACTION_SET_NODE_STATUS                      = iota
+	ACTION_SET_NODE_TAGS                        = iota
 	ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH = iota
 )
 
@@ -23,7 +23,7 @@ type patternStep struct {
 	obstacleRadius               int    // for centered non-random obstacle
 	pathNumber                   int    // for... path numbering, I guess o_O
 	allowPlaceNearNode           bool   // for ACTION_PLACE_NODE_NEAR_PATH
-	status                       string // for ACTION_SET_NODE_STATUS
+	tags                         string // for ACTION_SET_NODE_TAGS
 	lockNumber                   int    // for various locks
 	allowCrossPaths              bool   // for allowing the new path to cross already existing one
 	instructionText              string // is written only if the parser is set so

@@ -65,7 +65,8 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 		return nil
 	}
 	switch action {
-	case "ADDROOMATEMPTY": // ADDROOMATEMPTY ROOMNAME room_name FX fromX FY fromY TX toX TY toY MINEMPTYNEAR minemptycellsnear
+	// ADDROOMATEMPTY ROOMNAME room_name FX fromX FY fromY TX toX TY toY MINEMPTYNEAR minemptycellsnear TAGS tags
+	case "ADDROOMATEMPTY":
 		return &patternStep{
 			actionType:        ACTION_PLACE_NODE_AT_EMPTY,
 			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
@@ -74,6 +75,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			fromY:             pp.getIntAfterIdentifier("FY"),
 			toX:               pp.getIntAfterIdentifier("TX"),
 			toY:               pp.getIntAfterIdentifier("TY"),
+			tags:              pp.getStringAfterIdentifier("TAGS"),
 		}
 	case "PLACEPATH": // PLACEPATH PATHID id FROM fromname TO toname
 		return &patternStep{
@@ -94,7 +96,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 		}
-	case "PLACEROOMNEARPATH": // PLACEROOMNEARPATH PATHID id ROOMNAME newroomname
+	case "PLACEROOMNEARPATH": // PLACEROOMNEARPATH PATHID id ROOMNAME newroomname TAGS tag
 		return &patternStep{
 			actionType:        ACTION_PLACE_NODE_NEAR_PATH,
 			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
@@ -104,8 +106,9 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countFrom:         pp.getIntAfterIdentifier("MIN"),
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
+			tags:              pp.getStringAfterIdentifier("TAGS"),
 		}
-	case "PLACEROOMATPATH": // PLACEROOMATPATH PATHID id ROOMNAME newroomname
+	case "PLACEROOMATPATH": // PLACEROOMATPATH PATHID id ROOMNAME newroomname TAGS tag
 		return &patternStep{
 			actionType:        ACTION_PLACE_NODE_AT_PATH,
 			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
@@ -115,6 +118,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countFrom:         pp.getIntAfterIdentifier("MIN"),
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
+			tags:              pp.getStringAfterIdentifier("TAGS"),
 		}
 	case "LOCKROOMFROMPATH": // LOCKROOMFROMPATH PATHID id ROOMNAME roomname LOCKID lockid
 		return &patternStep{
@@ -128,9 +132,9 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
 		}
-	case "ADDROOMSTATUS": // ADDROOMSTATUS ROOMNAME roomname STATUS status
+	case "ADDROOMTAGS": // ADDROOMTAGS ROOMNAME roomname TAGS tags
 		return &patternStep{
-			actionType:        ACTION_SET_NODE_STATUS,
+			actionType:        ACTION_SET_NODE_TAGS,
 			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),
@@ -139,7 +143,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
-			status:            pp.getStringAfterIdentifier("STATUS"),
+			tags:              pp.getStringAfterIdentifier("TAGS"),
 		}
 	}
 	panic("UNKNOWN ACTION IDENTIFIER " + action)
