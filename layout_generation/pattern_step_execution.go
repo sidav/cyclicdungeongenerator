@@ -197,7 +197,7 @@ func (step *patternStep)execSetNodeConnectionsLockedFromPath(layout *LayoutMap) 
 	if nx == -1 && ny == -1 {
 		return false
 	}
-	layout.elements[nx][ny].setAllConnectionsLockedForPath(step.pathNumber, step.lockNumber)
+	layout.setAllNodeConnectionsLockedForPath(nx, ny, step.pathNumber, step.lockNumber)
 	return true
 }
 

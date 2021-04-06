@@ -63,15 +63,6 @@ func (e *element) GetConnectionByCoords(x, y int) *connection {
 	return e.connections[direction]
 }
 
-func (e *element) setAllConnectionsLockedForPath(pathNum int, lockNum int) {
-	for _, v := range e.connections {
-		if v != nil && v.pathNum == pathNum {
-			v.IsLocked = true
-			v.LockNum = lockNum
-		}
-	}
-}
-
 // exported
 
 func (e *element) IsNode() bool {

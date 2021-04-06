@@ -50,7 +50,7 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 				conn := e.GetConnectionByCoords(x, y)
 				if conn != nil {
 					if conn.IsLocked {
-						if conn.LockNum == 0 {
+						if conn.LockNum == 1 {
 							ca[2+x*2][2+y*2] = '%'
 						} else {
 							ca[2+x*2][2+y*2] = '='

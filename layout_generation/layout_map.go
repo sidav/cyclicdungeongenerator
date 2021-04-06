@@ -230,6 +230,38 @@ func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
 	return -1, -1
 }
 
+func (l *LayoutMap) setAllNodeConnectionsLockedForPath(nodex, nodey, pathNum int, lockNum int) {
+	e := l.GetElement(nodex, nodey)
+	for dir, v := range e.connections {
+		if v != nil && v.pathNum == pathNum {
+			v.IsLocked = true
+			v.LockNum = lockNum
+			// set the lock for neighbouring connection
+			var dirCoords [2]int
+			var opposingPath string
+			if dir == "north" {
+				dirCoords = [2]int{0, -1}
+				opposingPath = "south"
+			}
+			if dir == "south" {
+				dirCoords = [2]int{0, 1}
+				opposingPath = "north"
+			}
+			if dir == "east" {
+				dirCoords = [2]int{1, 0}
+				opposingPath = "west"
+			}
+			if dir == "west" {
+				dirCoords = [2]int{-1, 0}
+				opposingPath = "east"
+			}
+			elem2 := l.GetElement(nodex+dirCoords[0], nodey+dirCoords[1])
+			elem2.connections[opposingPath].IsLocked = true
+			elem2.connections[opposingPath].LockNum = lockNum
+		}
+	}
+}
+
 func (r *LayoutMap) areCoordsValid(x, y int) bool {
 	w, h := r.GetSize()
 	return x >= 0 && x < w && y >= 0 && y < h
