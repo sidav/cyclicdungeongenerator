@@ -115,9 +115,13 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 				cw.SetFgColor(cw.GREEN)
 				if node.IsNode() {
 					name := node.GetName()
-					namelen := len(name)
-					offset := (g.roomW+1) / 2 - namelen / 2
+					strlen := len(name)
+					offset := (g.roomW+1) / 2 - strlen/ 2
 					cw.PutString(name, rx*(g.roomW+1)  + offset, ry*(g.roomH+1)+(g.roomH+1)/2)
+					tags := node.GetTags()
+					strlen = len(tags)
+					offset = (g.roomW+1) / 2 - strlen/ 2
+					cw.PutString(tags, rx*(g.roomW+1)  + offset, ry*(g.roomH+1)+(g.roomH+1)/2+1)
 				}
 			}
 		}
