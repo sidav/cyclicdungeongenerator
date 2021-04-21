@@ -48,6 +48,7 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 					if pp.WriteLinesInResult {
 						newInstr.instructionText = fmt.Sprintf("%d: %s", currLine, scanner.Text())
 					}
+					newInstr.pattern = &pat
 					pat.instructions = append(pat.instructions, newInstr)
 				}
 			}

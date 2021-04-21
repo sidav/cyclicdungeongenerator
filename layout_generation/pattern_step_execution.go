@@ -41,10 +41,18 @@ func (step *patternStep)execPatternStep(layout *LayoutMap) bool {
 
 func (step *patternStep)execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 	minEmpties := step.minEmptyCellsNear
+	totalConnections := step.pattern.getTotalConnectionsForNodeWithName(step.nameOfNode)
+	if minEmpties == 0 {
+		minEmpties = totalConnections
+	}
 	var x, y int
 	fx, fy, tx, ty := step.getAbsoluteCoordsForStep(layout)
 	if fx == 0 && fy == 0 && tx == 0 && ty == 0 { // the coords were not set, so we can use absolutely any ones
-		x, y = layout.getRandomEmptyCellCoords(minEmpties)
+		// Don't place the node in the corner if there should be more than 2 connections for it
+		cornerAllowed := totalConnections <= 2
+		// Don't place the node at the edge if there should be more than 3 connections for it
+		edgeAllowed := totalConnections <= 3
+		x, y = layout.getRandomEmptyCellCoords(minEmpties, cornerAllowed, edgeAllowed)
 	} else {
 		x, y = layout.getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmpties)
 	}

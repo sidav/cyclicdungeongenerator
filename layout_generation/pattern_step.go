@@ -16,6 +16,7 @@ const (
 )
 
 type patternStep struct {
+	pattern                      *pattern
 	actionType                   int
 	fromX, fromY, toX, toY       int    // for coordinate ranges
 	minEmptyCellsNear            int    // for nodes placement.
