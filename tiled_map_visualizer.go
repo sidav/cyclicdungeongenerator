@@ -9,7 +9,8 @@ import (
 )
 
 type vis struct {
-	roomW, roomH int
+	roomW, roomH                int
+	drawRoomNames, drawRoomTags bool
 }
 
 func (g *vis) doTilemapVisualization() {
@@ -120,14 +121,18 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 			if len(conns) > 0 {
 				cw.SetFgColor(cw.GREEN)
 				if node.IsNode() {
-					name := node.GetName()
-					strlen := len(name)
-					offset := (g.roomW+1) / 2 - strlen/ 2
-					cw.PutString(name, rx*(g.roomW+1)  + offset, ry*(g.roomH+1)+(g.roomH+1)/2)
-					tags := node.GetTags()
-					strlen = len(tags)
-					offset = (g.roomW+1) / 2 - strlen/ 2
-					cw.PutString(tags, rx*(g.roomW+1)  + offset, ry*(g.roomH+1)+(g.roomH+1)/2+1)
+					if g.drawRoomNames {
+						name := node.GetName()
+						strlen := len(name)
+						offset := (g.roomW+1)/2 - strlen/2
+						cw.PutString(name, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2)
+					}
+					if g.drawRoomTags {
+						tags := node.GetTags()
+						strlen := len(tags)
+						offset := (g.roomW+1)/2 - strlen/2
+						cw.PutString(tags, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2+1)
+					}
 				}
 			}
 		}
@@ -135,8 +140,8 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 }
 
 func (g *vis) putTileArray(arr *[][]rune, sx, sy int) {
-	for x :=0; x <len(*arr); x++{
-		for y :=0; y <len((*arr)[x]); y++ {
+	for x := 0; x < len(*arr); x++ {
+		for y := 0; y < len((*arr)[x]); y++ {
 			chr := (*arr)[x][y]
 			setcolorForRune(chr)
 			cw.PutChar(chr, sx+x, sy+y)

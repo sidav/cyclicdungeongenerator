@@ -7,20 +7,23 @@ import (
 
 type LayoutToLevel struct {
 	TileMap                          [][]Tile
-	submaps                          []submap
+	submaps                          map[string][]submap
 	roomW, roomH                     int
 	rnd                              *random.FibRandom
 	CARoomChance, CAConnectionChance int
+	layout                           *layout_generation.LayoutMap
 }
 
 func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
 	ltl.rnd = rnd
 	ltl.roomW = roomW
 	ltl.roomH = roomH
+	ltl.submaps = make(map[string][]submap)
 }
 
 // roomSize is WITHOUT walls taken into account!
 func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation.LayoutMap, submapsDir string) {
+	ltl.layout = layout
 	ltl.parseSubmapsDir(submapsDir)
 	rw, rh := layout.GetSize()
 
@@ -52,8 +55,9 @@ func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation.LayoutMap, sub
 		}
 	}
 
-	ltl.iterateNodesForCA(layout)
 	ltl.applySubmaps()
+	ltl.iterateNodesForCA(layout)
+	// ltl.layout = nil // free memory
 }
 
 func (ltl *LayoutToLevel) GetCharMapForLevel() *[][]rune {

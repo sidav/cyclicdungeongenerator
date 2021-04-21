@@ -9,6 +9,8 @@ const (
 	TILE_WALL
 	TILE_DOOR
 	TILE_WATER
+	TILE_ENTRYPOINT
+	TILE_EXITPOINT
 	TILE_NOT_SET
 )
 
@@ -17,6 +19,8 @@ var CharToTileCode = map[rune]tileCode{
 	'#': TILE_WALL,
 	'+': TILE_DOOR,
 	'~': TILE_WATER,
+	'<': TILE_ENTRYPOINT,
+	'>': TILE_EXITPOINT,
 }
 
 type Tile struct {

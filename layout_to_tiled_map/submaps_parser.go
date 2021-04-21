@@ -9,17 +9,25 @@ import (
 )
 
 func (ltl *LayoutToLevel) parseSubmapsDir(path string) {
+	ltl.parseSubmapsDirRecursively(path, "")
+}
+
+func (ltl *LayoutToLevel) parseSubmapsDirRecursively(path, tag string) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for _, f := range files {
 		name := strings.Replace(path+"/"+f.Name(), "//", "/", -1)
-		ltl.parseSubmapFile(name)
+		if f.IsDir() {
+			ltl.parseSubmapsDirRecursively(path+"/"+f.Name(), f.Name())
+		} else {
+			ltl.parseSubmapFile(name, tag)
+		}
 	}
 }
 
-func (ltl *LayoutToLevel) parseSubmapFile(filename string) {
+func (ltl *LayoutToLevel) parseSubmapFile(filename, tag string) {
 	file, _ := os.Open(filename)
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
@@ -27,7 +35,7 @@ func (ltl *LayoutToLevel) parseSubmapFile(filename string) {
 	sm := submap{}
 	for scanner.Scan() {
 		if scanner.Text() == "" {
-			ltl.submaps = append(ltl.submaps, sm)
+			ltl.submaps[tag] = append(ltl.submaps[tag], sm)
 			sm = submap{}
 			continue
 		}
@@ -41,5 +49,5 @@ func (ltl *LayoutToLevel) parseSubmapFile(filename string) {
 		}
 		sm.chars = append(sm.chars, newArr)
 	}
-	ltl.submaps = append(ltl.submaps, sm)
+	ltl.submaps[tag] = append(ltl.submaps[tag], sm)
 }

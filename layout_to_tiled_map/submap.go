@@ -1,5 +1,7 @@
 package layout_to_tiled_map
 
+import "strings"
+
 type submap struct {
 	chars     [][]rune
 	timesUsed int
@@ -22,22 +24,24 @@ func (sm *submap) rotate(times int) {
 func (ltl *LayoutToLevel) applySubmaps() {
 	for tries := 0; tries < 3; tries++ {
 		indexOffset := ltl.rnd.Rand(len(ltl.submaps))
-		for i := range ltl.submaps {
-			ind := (i + indexOffset) % len(ltl.submaps)
-			if ltl.submaps[ind].timesUsed == 0 {
-				ltl.applySubmapAtRandom(&ltl.submaps[ind])
+		for tag := range ltl.submaps {
+			for i := range ltl.submaps[tag] {
+				ind := (i + indexOffset) % len(ltl.submaps[tag])
+				if ltl.submaps[tag][ind].timesUsed == 0 {
+					ltl.applySubmapAtRandom(&ltl.submaps[tag][ind], tag)
+				}
 			}
 		}
 	}
 }
 
-func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap) {
+func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap, tag string) {
 	sm.rotate(ltl.rnd.Rand(4))
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	applicableCoords := make([][2]int, 0)
 	for x := 0; x < len(ltl.TileMap)-smW; x++ {
 		for y := 0; y < len(ltl.TileMap[x])-smH; y++ {
-			if ltl.isSpaceEmpty(x, y, smW, smH) {
+			if ltl.isSpaceEmpty(x, y, smW, smH) && ltl.isSpaceEvenlyTagged(x, y, smW, smH, tag) {
 				applicableCoords = append(applicableCoords, [2]int{x, y})
 			}
 		}
@@ -69,6 +73,18 @@ func (ltl *LayoutToLevel) isSpaceEmpty(xx, yy, w, h int) bool {
 	for x := xx; x < xx+w; x++ {
 		for y := yy; y < yy+h; y++ {
 			if ltl.TileMap[x][y].Code != TILE_FLOOR {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (ltl *LayoutToLevel) isSpaceEvenlyTagged(xx, yy, w, h int, tag string) bool {
+	for x := xx; x < xx+w; x++ {
+		for y := yy; y < yy+h; y++ {
+			elem := ltl.layout.GetElement(x/(ltl.roomW+1), y/(ltl.roomH+1))
+			if tag != "" && (!elem.IsNode() || !strings.Contains(elem.GetTags(), tag)) {
 				return false
 			}
 		}
