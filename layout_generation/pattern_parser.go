@@ -55,6 +55,7 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 		}
 		currLine++
 	}
+	pat.optimizeStepsOrder()
 	return &pat
 }
 
