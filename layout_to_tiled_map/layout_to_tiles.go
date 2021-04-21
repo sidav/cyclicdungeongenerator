@@ -84,15 +84,17 @@ func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation.LayoutMap)
 			tox := (lroomx + 1) * (ltl.roomW + 1)
 			fromy := lroomy * (ltl.roomH + 1)
 			toy := (lroomy + 1) * (ltl.roomH + 1)
+			// rooms
 			if layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.CARoomChance {
-				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 30)
-				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 30)
-				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0)
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 20)
+				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 20)
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0) // cleanup for better passability
 			}
+			// connections
 			if !layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.CAConnectionChance {
-				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 30)
-				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 30)
-				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0)
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 40)
+				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 35)
+				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0) // cleanup for better passability
 			}
 		}
 	}

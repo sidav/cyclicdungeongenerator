@@ -49,7 +49,7 @@ func (g *vis) doTilemapVisualization() {
 				break
 			}
 		} else {
-			g.putTileMap(&rnd, generatedMap)
+			g.convertLayoutToLevel(&rnd, generatedMap)
 			g.putInfo(generatedMap, pattNum, desiredPatternNum, patt.Filename, patt.Name, genRestarts, gen.RandomizePath)
 			// putMiniMapAndPatternNumberAndNumberOfTries(generatedMap, pattNum, desiredPatternNum, genRestarts)
 		}
@@ -106,7 +106,7 @@ func (g *vis) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, 
 	}
 }
 
-func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.LayoutMap) {
+func (g *vis) convertLayoutToLevel(rnd *random.FibRandom, layout *layout_generation.LayoutMap) {
 	cw.Clear_console()
 	ltl := layout_to_tiled_map.LayoutToLevel{}
 	ltl.Init(rnd, g.roomW, g.roomH)
