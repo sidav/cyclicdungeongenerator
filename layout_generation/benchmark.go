@@ -4,6 +4,7 @@ import (
 	"CyclicDungeonGenerator/random"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type Benchmark struct {
@@ -36,7 +37,7 @@ func (b *Benchmark) Benchmark(patternFilename string) {
 			fmt.Printf("\rBENCHMARK FOR ALL PATTERNS:\n")
 			filenames := b.parser.ListPatternFilenamesInPath(patternFilename)
 			for i := range filenames {
-					b.startBench(filenames[i])
+				b.startBench(filenames[i])
 			}
 		} else {
 			fmt.Printf("\rBENCHMARKING PATTERN %s:\n", patternFilename)
@@ -64,8 +65,9 @@ func (b *Benchmark) startBench(patternFilename string) {
 	}
 }
 
-func (b *Benchmark) getCharmapAndTriesAndSuccessForGeneration(pattern *pattern, countGarbageNodes bool) (*[][]rune, int, bool, *[]int) {
+func (b *Benchmark) generateAndGetMeasurements(pattern *pattern, countGarbageNodes bool) (*[][]rune, int, bool, *[]int, time.Duration) {
 	flawsPerStep := make([]int, len(pattern.instructions))
+	start := time.Now()
 
 generationStart:
 	for patternTry := 0; patternTry <= b.TriesForPattern; patternTry++ {
@@ -84,9 +86,11 @@ generationStart:
 				continue generationStart
 			}
 		}
-		return b.layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep
+		elapsed := time.Since(start)
+		return b.layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep, elapsed
 	}
-	return nil, b.TriesForPattern, false, &flawsPerStep
+	elapsed := 100000 * time.Hour // so it will be obvious if the mean time measurement is bugged
+	return nil, b.TriesForPattern, false, &flawsPerStep, elapsed
 }
 
 func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countGarbageNodes bool) {
@@ -97,9 +101,10 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 	fails := 0
 	repeats := 0
 	flawsPerStep := make([]int, len(pattern.instructions))
+	currentTotalGenerationTime := 0 * time.Millisecond
 	for loopNum := 0; loopNum < b.BenchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Progress "), loopNum+1, b.BenchLoopsForPattern+1, 15)
-		cMap, tries, success, flawsPerGeneration := b.getCharmapAndTriesAndSuccessForGeneration(pattern, countGarbageNodes)
+		cMap, tries, success, flawsPerGeneration, elapsed := b.generateAndGetMeasurements(pattern, countGarbageNodes)
 		if testUniquity && cMap != nil {
 			if !b.isCharmapAlreadyInArray(cMap, &generatedMaps) {
 				generatedMaps = append(generatedMaps, cMap)
@@ -114,9 +119,13 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 		if minSteps > tries {
 			minSteps = tries
 		}
-		if !success {
+		// count successful generation time only 
+		if success {
+			currentTotalGenerationTime += elapsed
+		} else {
 			fails++
 		}
+
 		for i := 0; i < len(flawsPerStep); i++ {
 			flawsPerStep[i] += (*flawsPerGeneration)[i]
 		}
@@ -125,6 +134,9 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 	fmt.Printf("Pattern #%s, min flaws %d, max flaws %d, mean flaws count %.2f, %d failed attempts (%.2f%%)\n", pattern.Name,
 		minSteps, maxSteps, float64(stepsSum)/float64(b.BenchLoopsForPattern), fails,
 		100.0*float64(fails)/(float64(b.BenchLoopsForPattern)))
+	if fails < b.BenchLoopsForPattern {
+		fmt.Printf("Mean generation time: %.2f ms\n", float64(currentTotalGenerationTime/time.Millisecond)/float64(b.BenchLoopsForPattern-fails))
+	}
 	//fmt.Print("Flaws per step: \n")
 	//flawsArrString := ""
 	//for i := 0; i < len(flawsPerStep); i++ {
@@ -148,7 +160,7 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 	}
 
 	if testUniquity {
-		repeatsPerc := 100.0*float64(repeats)/float64(repeats+len(generatedMaps))
+		repeatsPerc := 100.0 * float64(repeats) / float64(repeats+len(generatedMaps))
 		fmt.Printf("There was %d (%.2f%%) unique maps and %d (%.2f%%) repeats.\n\n",
 			// repeats consist %.2f%% of total maps generated).\n\n",
 			len(generatedMaps), 100-repeatsPerc, repeats, repeatsPerc)
