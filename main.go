@@ -20,8 +20,8 @@ func main() {
 		fmt.Printf(
 			"Arguments: \n" +
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
-				" -l layout_w layout_h: generate and show layouts \n" +
-				" -t leyout_w layout_h: generate and show tilemaps \n")
+				" -l <layout_w> <layout_h>: generate and show layouts \n" +
+				" -t <layout_w> <layout_h>: generate and show tilemaps \n")
 	}
 
 	if len(args) >= 3 {
@@ -55,16 +55,16 @@ func main() {
 		fmt.Printf(
 			"Unknown argument \"%s\". Arguments: \n" +
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
-				" -l layout_w layout_h: generate and show layouts \n" +
-				" -t leyout_w layout_h: generate and show tilemaps \n", args[0])
+				" -l <layout_w> <layout_h>: generate and show layouts \n" +
+				" -t <layout_w> <layout_h>: generate and show tilemaps \n", args[0])
 	}
 }
 
 func bench(args []string) {
 	if len(args) < 5 {
 		fmt.Printf("Too few arguments...\n")
-		fmt.Printf("usage: -b num_loops tries_for_pattern map_w map_h \n")
-		fmt.Printf("example: -b 10000 25 5 5 \n")
+		fmt.Printf("usage: -b num_loops tries_for_pattern map_w map_h <pattern file>\n")
+		fmt.Printf("example: -b 10000 25 5 5 patterns/example_pattern.ptn \n")
 		return
 	}
 	loops, err := strconv.Atoi(args[1])
@@ -83,6 +83,10 @@ func bench(args []string) {
 	if err != nil {
 		panic(err)
 	}
+	benchPatternsPath := "patterns/"
+	if len(args) > 5 {
+		benchPatternsPath = args[5]
+	}
 	bnch := layout_generation.Benchmark{
 		LayoutWidth:  width,
 		LayoutHeight: height,
@@ -94,5 +98,5 @@ func bench(args []string) {
 		TestUniquity:                    true,
 		GenerateAndConsiderGarbageNodes: false,
 	}
-	bnch.Benchmark("patterns/")
+	bnch.Benchmark(benchPatternsPath)
 }
