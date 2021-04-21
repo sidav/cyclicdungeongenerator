@@ -22,6 +22,7 @@ func main() {
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
 				" -l <layout_w> <layout_h>: generate and show layouts \n" +
 				" -t <layout_w> <layout_h>: generate and show tilemaps \n")
+		return 
 	}
 
 	if len(args) >= 3 {
