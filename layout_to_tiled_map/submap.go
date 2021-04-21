@@ -35,8 +35,8 @@ func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap) {
 	sm.rotate(ltl.rnd.Rand(4))
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	applicableCoords := make([][2]int, 0)
-	for x := 0; x < len(ltl.charmap)-smW; x++ {
-		for y := 0; y < len(ltl.charmap[x])-smH; y++ {
+	for x := 0; x < len(ltl.TileMap)-smW; x++ {
+		for y := 0; y < len(ltl.TileMap[x])-smH; y++ {
 			if ltl.isSpaceEmpty(x, y, smW, smH) {
 				applicableCoords = append(applicableCoords, [2]int{x, y})
 			}
@@ -54,7 +54,12 @@ func (ltl *LayoutToLevel) applySubmapAtCoords(sm *submap, xx, yy int) bool {
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	for x := 0; x < smW; x++ {
 		for y := 0; y < smH; y++ {
-			ltl.charmap[xx+x][yy+y] = sm.chars[y][x]
+			code, set := CharToTileCode[sm.chars[y][x]]
+			if set {
+				ltl.TileMap[xx+x][yy+y].Code = code
+			} else {
+				ltl.TileMap[xx+x][yy+y].Code = TILE_NOT_SET
+			}
 		}
 	}
 	return true
@@ -63,7 +68,7 @@ func (ltl *LayoutToLevel) applySubmapAtCoords(sm *submap, xx, yy int) bool {
 func (ltl *LayoutToLevel) isSpaceEmpty(xx, yy, w, h int) bool {
 	for x := xx; x < xx+w; x++ {
 		for y := yy; y < yy+h; y++ {
-			if ltl.charmap[x][y] != ' ' {
+			if ltl.TileMap[x][y].Code != TILE_FLOOR {
 				return false
 			}
 		}

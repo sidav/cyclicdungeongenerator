@@ -6,7 +6,7 @@ import (
 )
 
 type LayoutToLevel struct {
-	charmap                          [][]rune
+	TileMap                          [][]Tile
 	submaps                          []submap
 	roomW, roomH                     int
 	rnd                              *random.FibRandom
@@ -20,20 +20,20 @@ func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
 }
 
 // roomSize is WITHOUT walls taken into account!
-func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap, submapsDir string) *[][]rune {
+func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation.LayoutMap, submapsDir string) {
 	ltl.parseSubmapsDir(submapsDir)
 	rw, rh := layout.GetSize()
 
 	// +1 is for walls
-	ltl.charmap = make([][]rune, rw*(ltl.roomW+1)+1)
-	for i := range ltl.charmap {
+	ltl.TileMap = make([][]Tile, rw*(ltl.roomW+1)+1)
+	for i := range ltl.TileMap {
 		// +1 is for walls
-		ltl.charmap[i] = make([]rune, rh*(ltl.roomH+1)+1)
+		ltl.TileMap[i] = make([]Tile, rh*(ltl.roomH+1)+1)
 	}
 
-	for x := range ltl.charmap {
-		for y := range ltl.charmap[x] {
-			ltl.charmap[x][y] = ' ' // empty everything
+	for x := range ltl.TileMap {
+		for y := range ltl.TileMap[x] {
+			ltl.TileMap[x][y].Code = TILE_FLOOR // empty everything
 		}
 	}
 
@@ -41,20 +41,34 @@ func (ltl *LayoutToLevel) MakeCharmap(layout *layout_generation.LayoutMap, subma
 	ltl.iterateNodes(layout, false, true)
 
 	// draw perimeter walls
-	for x := range ltl.charmap {
-		for y := range ltl.charmap[x] {
-			if ltl.charmap[x][y] == '?' {
-				ltl.charmap[x][y] = '#'
-			}
-			if x == 0 || x == len(ltl.charmap)-1 || y == 0 || y == len(ltl.charmap[x])-1 {
-				ltl.charmap[x][y] = '#'
+	for x := range ltl.TileMap {
+		for y := range ltl.TileMap[x] {
+			//if ltl.TileMap[x][y].Code == TILE_NOT_SET {
+			//	ltl.TileMap[x][y].Code = TILE_WALL
+			//}
+			if x == 0 || x == len(ltl.TileMap)-1 || y == 0 || y == len(ltl.TileMap[x])-1 {
+				ltl.TileMap[x][y].Code = TILE_WALL
 			}
 		}
 	}
 
 	ltl.iterateNodesForCA(layout)
 	ltl.applySubmaps()
-	return &ltl.charmap
+}
+
+func (ltl *LayoutToLevel) GetCharMapForLevel() *[][]rune {
+	w, h := len(ltl.TileMap), len(ltl.TileMap[0])
+	rmap := make([][]rune, w)
+	for i := range rmap {
+		// +1 is for walls
+		rmap[i] = make([]rune, h)
+	}
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			rmap[x][y] = ltl.TileMap[x][y].GetChar()
+		}
+	}
+	return &rmap
 }
 
 func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation.LayoutMap) {
@@ -97,7 +111,7 @@ func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doCo
 				for x := boundLeft; x <= boundRight; x++ {
 					for y := boundUpper; y <= boundLower; y++ {
 						if x == boundRight || x == boundLeft || y == boundUpper || y == boundLower {
-							ltl.charmap[x][y] = '#'
+							ltl.TileMap[x][y].Code = TILE_WALL
 						}
 					}
 				}
@@ -127,27 +141,24 @@ func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doCo
 					if ltl.roomH%2 == 0 && cy > 0 {
 						centerYoff++
 					}
-					connRune := '+'
-					switch layoutElem.GetConnectionByCoords(cx, cy).LockNum {
-					case 1:
-						connRune = '%'
-					case 2:
-						connRune = '='
-					}
+
 					doorX := centerXoff + conns[connIndex][0]*(ltl.roomW+1)/2
 					doorY := centerYoff + conns[connIndex][1]*(ltl.roomH+1)/2
+
+					currLockLevel := layoutElem.GetConnectionByCoords(cx, cy).LockNum
 					// restrict non-locked doors to be placed over locked doors:
-					if connRune == '+' && ltl.charmap[doorX][doorY] != '#' {
+					if currLockLevel == 0 && ltl.TileMap[doorX][doorY].LockId != 0 {
 						continue
 					}
-					ltl.charmap[doorX][doorY] = connRune
+					ltl.TileMap[doorX][doorY].Code = TILE_DOOR
+					ltl.TileMap[doorX][doorY].LockId = currLockLevel
 				}
 			}
 			// do nodes
 			if doConnections && !layoutElem.IsNode() {
 				for x := boundLeft; x <= boundRight; x++ {
 					for y := boundUpper; y <= boundLower; y++ {
-						ltl.charmap[x][y] = '#'
+						ltl.TileMap[x][y].Code = TILE_WALL
 					}
 				}
 				for connIndex := range conns {
@@ -170,7 +181,7 @@ func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doCo
 					}
 					for x := boundLeft + 1 - leftOff; x < boundRight+rightOff; x++ {
 						for y := boundUpper + 1 - upOff; y < boundLower+botOff; y++ {
-							ltl.charmap[x][y] = ' '
+							ltl.TileMap[x][y].Code = TILE_FLOOR
 						}
 					}
 				}
