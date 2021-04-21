@@ -3,6 +3,9 @@ package main
 import (
 	cw "CyclicDungeonGenerator/console_wrapper"
 	"CyclicDungeonGenerator/layout_generation"
+	"fmt"
+	"os"
+	"strconv"
 )
 
 var (
@@ -11,30 +14,88 @@ var (
 )
 
 func main() {
+	args := os.Args[1:]
 
-	const bench = false
-	if bench {
-		bnch := layout_generation.Benchmark{
-			LayoutWidth: W,
-			LayoutHeight: H,
-
-			BenchLoopsForPattern:            10000,
-			TriesForPattern:                 25,
-			CheckRandomPaths:                true,
-			CheckShortestPaths:              true,
-			TestUniquity:                    true,
-			GenerateAndConsiderGarbageNodes: false,
-		}
-		bnch.Benchmark("patterns/")
+	if len(args) == 0 {
+		fmt.Printf(
+			"Arguments: \n" +
+				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
+				" -l layout_w layout_h: generate and show layouts \n" +
+				" -t leyout_w layout_h: generate and show tilemaps \n")
 	}
 
-	// cw.Init_console("CDG", cw.TCellRenderer)
-	cw.Init_console()
-	defer cw.Close_console()
+	if len(args) >= 3 {
+		var err error
+		W, err = strconv.Atoi(args[1])
+		if err != nil {
+			W = 5
+		}
+		H, err = strconv.Atoi(args[2])
+		if err != nil {
+			H = 5
+		}
+	}
 
-	doLayoutVisualization()
+	switch args[0] {
+	case "-b", "b", "benchmark":
+		bench(args)
+
+	case "l", "-l", "layout":
+		cw.Init_console()
+		defer cw.Close_console()
+		doLayoutVisualization()
+
+	case "t", "-t", "tilemap":
+		cw.Init_console()
+		defer cw.Close_console()
+		vis := vis{}
+		vis.doTilemapVisualization()
+
+	default:
+		fmt.Printf(
+			"Unknown argument \"%s\". Arguments: \n" +
+				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
+				" -l layout_w layout_h: generate and show layouts \n" +
+				" -t leyout_w layout_h: generate and show tilemaps \n", args[0])
+	}
+
 	//tmv := tmv{}
 	//tmv.doTilemapVisualization()
-	vis := vis{}
-	vis.doTilemapVisualization()
+}
+
+func bench(args []string) {
+	if len(args) < 5 {
+		fmt.Printf("Too few arguments...\n")
+		fmt.Printf("usage: -b num_loops tries_for_pattern map_w map_h \n")
+		fmt.Printf("example: -b 10000 25 5 5 \n")
+		return
+	}
+	loops, err := strconv.Atoi(args[1])
+	if err != nil {
+		panic(err)
+	}
+	tries, err := strconv.Atoi(args[2])
+	if err != nil {
+		panic(err)
+	}
+	width, err := strconv.Atoi(args[3])
+	if err != nil {
+		panic(err)
+	}
+	height, err := strconv.Atoi(args[4])
+	if err != nil {
+		panic(err)
+	}
+	bnch := layout_generation.Benchmark{
+		LayoutWidth:  width,
+		LayoutHeight: height,
+
+		BenchLoopsForPattern:            loops,
+		TriesForPattern:                 tries,
+		CheckRandomPaths:                true,
+		CheckShortestPaths:              true,
+		TestUniquity:                    true,
+		GenerateAndConsiderGarbageNodes: false,
+	}
+	bnch.Benchmark("patterns/")
 }

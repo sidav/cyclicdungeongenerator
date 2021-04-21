@@ -40,7 +40,11 @@ func (g *vis) doTilemapVisualization() {
 			for key != "ESCAPE" && key != "ENTER" {
 				key = cw.ReadKey()
 			}
-			continue
+			if key == "ENTER" {
+				continue
+			} else {
+				break
+			}
 		} else {
 			g.putTileMap(&rnd, generatedMap)
 			g.putInfo(generatedMap, pattNum, desiredPatternNum, patt.Filename, patt.Name, genRestarts, gen.RandomizePath)

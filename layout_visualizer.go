@@ -35,7 +35,11 @@ func doLayoutVisualization() {
 			for key != "ESCAPE" && key != "ENTER" {
 				key = cw.ReadKey()
 			}
-			continue
+			if key == "ENTER" {
+				continue
+			} else {
+				break
+			}
 		} else {
 			putMap(generatedMap)
 			putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name, genRestarts, randomPaths)

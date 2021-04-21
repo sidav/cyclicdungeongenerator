@@ -36,7 +36,11 @@ func (g *tmv) doTilemapVisualization() {
 			for key != "ESCAPE" && key != "ENTER" {
 				key = cw.ReadKey()
 			}
-			continue
+			if key == "ENTER" {
+				continue
+			} else {
+				break
+			}
 		} else {
 			g.putTileMap(generatedMap)
 			// putMiniMapAndPatternNumberAndNumberOfTries(generatedMap, pattNum, desiredPatternNum, genRestarts)
