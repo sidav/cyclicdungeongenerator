@@ -1,7 +1,5 @@
 package layout_to_tiled_map
 
-import "strings"
-
 type submap struct {
 	chars     [][]rune
 	timesUsed int
@@ -73,18 +71,6 @@ func (ltl *LayoutToLevel) isSpaceEmpty(xx, yy, w, h int) bool {
 	for x := xx; x < xx+w; x++ {
 		for y := yy; y < yy+h; y++ {
 			if ltl.TileMap[x][y].Code != TILE_FLOOR {
-				return false
-			}
-		}
-	}
-	return true
-}
-
-func (ltl *LayoutToLevel) isSpaceEvenlyTagged(xx, yy, w, h int, tag string) bool {
-	for x := xx; x < xx+w; x++ {
-		for y := yy; y < yy+h; y++ {
-			elem := ltl.layout.GetElement(x/(ltl.roomW+1), y/(ltl.roomH+1))
-			if tag != "" && (!elem.IsNode() || !strings.Contains(elem.GetTags(), tag)) {
 				return false
 			}
 		}

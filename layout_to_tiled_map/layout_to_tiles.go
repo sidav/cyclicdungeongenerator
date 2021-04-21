@@ -57,6 +57,7 @@ func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation.LayoutMap, sub
 
 	ltl.applySubmaps()
 	ltl.iterateNodesForCA(layout)
+	ltl.finishTagsRelatedStuff()
 	// ltl.layout = nil // free memory
 }
 

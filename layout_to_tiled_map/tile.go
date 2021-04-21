@@ -11,6 +11,7 @@ const (
 	TILE_WATER
 	TILE_ENTRYPOINT
 	TILE_EXITPOINT
+	TILE_KEY_PLACE
 	TILE_NOT_SET
 )
 
@@ -21,6 +22,7 @@ var CharToTileCode = map[rune]tileCode{
 	'~': TILE_WATER,
 	'<': TILE_ENTRYPOINT,
 	'>': TILE_EXITPOINT,
+	'=': TILE_KEY_PLACE,
 }
 
 type Tile struct {
@@ -30,6 +32,9 @@ type Tile struct {
 
 func (t *Tile) GetChar() rune {
 	if t.Code == TILE_DOOR && t.LockId != 0 {
+		return rune(strconv.Itoa(t.LockId)[0])
+	}
+	if t.Code == TILE_KEY_PLACE {
 		return rune(strconv.Itoa(t.LockId)[0])
 	}
 	for i := range CharToTileCode {
