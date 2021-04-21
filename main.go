@@ -58,9 +58,6 @@ func main() {
 				" -l layout_w layout_h: generate and show layouts \n" +
 				" -t leyout_w layout_h: generate and show tilemaps \n", args[0])
 	}
-
-	//tmv := tmv{}
-	//tmv.doTilemapVisualization()
 }
 
 func bench(args []string) {
