@@ -29,6 +29,7 @@ func (g *tmv) doTilemapVisualization() {
 		generatedMap, genRestarts := gen.GenerateLayout(parser.ParsePatternFile(filenames[pattNum]))
 
 		if generatedMap == nil {
+			key = ""
 			cw.PutString(":(", 0, 0)
 			cw.PutString(fmt.Sprintf("Generation failed even after %d restarts, pattern #%d", genRestarts, pattNum), 0, 1)
 			cw.PutString("Press ENTER to generate again or ESCAPE to exit.", 0, 2)
