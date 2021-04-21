@@ -24,7 +24,7 @@ func (p *pattern) optimizeStepsOrder() {
 			if p.instructions[j].actionType == ACTION_PLACE_PATH_FROM_TO {
 				areNodesPlaced = p.areNodesPlacedUntilStep(p.instructions[j].nameFrom, p.instructions[j].nameTo, i)
 				if areNodesPlaced {
-					p.moveInstruction(i, j)
+					p.moveInstructionUpFromTo(j, i)
 				}
 			}
 		}
@@ -62,8 +62,11 @@ func (p *pattern) swapInstructionsAtIndices(i, j int) {
 	p.instructions[i] = t
 }
 
-func (p *pattern) moveInstruction(from, to int) {
-	for x := to; x > from; x-- {
+func (p *pattern) moveInstructionUpFromTo(from, to int) {
+	if to > from {
+		panic("to should be < from!")
+	}
+	for x := from; x > to; x-- {
 		p.swapInstructionsAtIndices(x, x-1)
 	}
 }
