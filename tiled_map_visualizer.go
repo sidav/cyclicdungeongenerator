@@ -6,6 +6,7 @@ import (
 	"CyclicDungeonGenerator/layout_to_tiled_map"
 	"CyclicDungeonGenerator/random"
 	"fmt"
+	"strconv"
 )
 
 type vis struct {
@@ -112,26 +113,29 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 	ltl.CAConnectionChance = 100
 	ltl.CARoomChance = 15
 	ltl.ProcessLayout(layout, "layout_to_tiled_map/submaps/")
-	g.putTileArray(ltl.GetCharMapForLevel(), 0, 0)
+	g.drawLevel(&ltl.TileMap, 0, 0)
 	rw, rh := layout.GetSize()
-	for rx := 0; rx < rw; rx++ {
-		for ry := 0; ry < rh; ry++ {
-			node := layout.GetElement(rx, ry)
-			conns := node.GetAllConnectionsCoords()
-			if len(conns) > 0 {
-				cw.SetFgColor(cw.GREEN)
-				if node.IsNode() {
-					if g.drawRoomNames {
-						name := node.GetName()
-						strlen := len(name)
-						offset := (g.roomW+1)/2 - strlen/2
-						cw.PutString(name, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2)
-					}
-					if g.drawRoomTags {
-						tags := node.GetTags()
-						strlen := len(tags)
-						offset := (g.roomW+1)/2 - strlen/2
-						cw.PutString(tags, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2+1)
+
+	if g.drawRoomTags || g.drawRoomNames {
+		for rx := 0; rx < rw; rx++ {
+			for ry := 0; ry < rh; ry++ {
+				node := layout.GetElement(rx, ry)
+				conns := node.GetAllConnectionsCoords()
+				if len(conns) > 0 {
+					cw.SetFgColor(cw.GREEN)
+					if node.IsNode() {
+						if g.drawRoomNames {
+							name := node.GetName()
+							strlen := len(name)
+							offset := (g.roomW+1)/2 - strlen/2
+							cw.PutString(name, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2)
+						}
+						if g.drawRoomTags {
+							tags := node.GetTags()
+							strlen := len(tags)
+							offset := (g.roomW+1)/2 - strlen/2
+							cw.PutString(tags, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2+1)
+						}
 					}
 				}
 			}
@@ -139,11 +143,24 @@ func (g *vis) putTileMap(rnd *random.FibRandom, layout *layout_generation.Layout
 	}
 }
 
-func (g *vis) putTileArray(arr *[][]rune, sx, sy int) {
-	for x := 0; x < len(*arr); x++ {
-		for y := 0; y < len((*arr)[x]); y++ {
-			chr := (*arr)[x][y]
+func (g *vis) drawLevel(level *[][]layout_to_tiled_map.Tile, sx, sy int) {
+	for x := 0; x < len(*level); x++ {
+		for y := 0; y < len((*level)[x]); y++ {
+			chr := (*level)[x][y].GetChar()
 			setcolorForRune(chr)
+
+			code := (*level)[x][y].Code
+			lockId := (*level)[x][y].LockId
+			if code == layout_to_tiled_map.TILE_DOOR {
+				if lockId != 0 {
+					chr = rune(strconv.Itoa(lockId)[0])
+					cw.SetColor(cw.BLACK, cw.DARK_MAGENTA)
+				}
+			}
+			if code == layout_to_tiled_map.TILE_KEY_PLACE {
+				chr = rune(strconv.Itoa(lockId)[0])
+				cw.SetColor(cw.DARK_MAGENTA, cw.BLACK)
+			}
 			cw.PutChar(chr, sx+x, sy+y)
 			cw.SetColor(cw.WHITE, cw.BLACK)
 		}
