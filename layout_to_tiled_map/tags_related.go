@@ -13,11 +13,30 @@ func (ltl *LayoutToLevel) getTagsForTileAtCoords(x, y int) string {
 	return elem.GetTags()
 }
 
+func (ltl *LayoutToLevel) countTotalTagUsages(tag string) int {
+	usages := 0
+	w, h := ltl.layout.GetSize()
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			elem := ltl.layout.GetElement(x, y)
+			if elem.IsNode() {
+				if strings.Contains(elem.GetTags(), tag) {
+					usages++
+				}
+			}
+		}
+	}
+	return usages
+}
+
 // TODO: rewrite all the following func
 func (ltl *LayoutToLevel) isSpaceEvenlyTagged(xx, yy, w, h int, tag string) bool {
 	for x := xx; x < xx+w; x++ {
 		for y := yy; y < yy+h; y++ {
 			tileTag := ltl.getTagsForTileAtCoords(x, y)
+			if tileTag != "" && tag == "" {
+				return false
+			}
 			if !strings.Contains(tileTag, tag) {
 				return false
 			}

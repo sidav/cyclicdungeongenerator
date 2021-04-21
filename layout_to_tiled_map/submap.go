@@ -20,20 +20,32 @@ func (sm *submap) rotate(times int) {
 }
 
 func (ltl *LayoutToLevel) applySubmaps() {
-	for tries := 0; tries < 3; tries++ {
-		indexOffset := ltl.rnd.Rand(len(ltl.submaps))
-		for tag := range ltl.submaps {
+	const TRIES_FOR_SUBMAP_PLACEMENT = 3
+	// iterate through tags
+	for tag := range ltl.submaps {
+		totalSubmapUsesForTag := 0
+		maxTagUses := ltl.countTotalTagUsages(tag)
+
+		for tries := 0; tries < TRIES_FOR_SUBMAP_PLACEMENT; tries++ {
+			indexOffset := ltl.rnd.Rand(len(ltl.submaps[tag]))
 			for i := range ltl.submaps[tag] {
+				placed := false
+				if tag != "" && totalSubmapUsesForTag == maxTagUses {
+					break
+				}
 				ind := (i + indexOffset) % len(ltl.submaps[tag])
 				if ltl.submaps[tag][ind].timesUsed == 0 {
-					ltl.applySubmapAtRandom(&ltl.submaps[tag][ind], tag)
+					placed = ltl.applySubmapAtRandom(&ltl.submaps[tag][ind], tag)
+				}
+				if placed {
+					totalSubmapUsesForTag++
 				}
 			}
 		}
 	}
 }
 
-func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap, tag string) {
+func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap, tag string) bool {
 	sm.rotate(ltl.rnd.Rand(4))
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	applicableCoords := make([][2]int, 0)
@@ -48,11 +60,12 @@ func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap, tag string) {
 		randCoordsIndex := ltl.rnd.Rand(len(applicableCoords))
 		ltl.applySubmapAtCoords(sm, applicableCoords[randCoordsIndex][0], applicableCoords[randCoordsIndex][1])
 		sm.timesUsed++
+		return true
 	}
+	return false
 }
 
-
-func (ltl *LayoutToLevel) applySubmapAtCoords(sm *submap, xx, yy int) bool {
+func (ltl *LayoutToLevel) applySubmapAtCoords(sm *submap, xx, yy int) {
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	for x := 0; x < smW; x++ {
 		for y := 0; y < smH; y++ {
@@ -64,7 +77,6 @@ func (ltl *LayoutToLevel) applySubmapAtCoords(sm *submap, xx, yy int) bool {
 			}
 		}
 	}
-	return true
 }
 
 func (ltl *LayoutToLevel) isSpaceEmpty(xx, yy, w, h int) bool {
