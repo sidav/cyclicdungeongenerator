@@ -88,7 +88,12 @@ func FindPath(costMap *[][]int, fromx, fromy, tox, toy int, diagonalMoveAllowed 
 	var currentCell *Cell
 	total_steps := 0
 	targetReached := false
+	totalCells := len(*costMap)*len((*costMap)[0])
 	maxSearchDepth := DEFAULT_PATHFINDING_STEPS
+	// TODO: make this optional
+	if totalCells > DEFAULT_PATHFINDING_STEPS {
+		maxSearchDepth = totalCells
+	}
 
 	// step 1
 	origin := &Cell{X: fromx, Y: fromy, h: heuristicCost(fromx, fromy, tox, toy, diagonalMoveAllowed)}
