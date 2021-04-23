@@ -239,11 +239,14 @@ func (step *patternStep) execSetNodeTags(layout *LayoutMap) bool {
 
 func (step *patternStep) execSetNodeConnectionsLockedFromPath(layout *LayoutMap) bool {
 	nname := step.nameOfNode
-	nx, ny := layout.getAnyOfCoordsOfNode(nname)
-	if nx == -1 && ny == -1 {
+	allNodeCoords := layout.getAllCoordsOfNode(nname)
+	if len(allNodeCoords) == 0 {
 		return false
 	}
-	layout.setAllNodeConnectionsLockedForPath(nx, ny, step.pathNumber, step.lockNumber)
+	for _, coords := range allNodeCoords {
+		nx, ny := coords[0], coords[1]
+		layout.setAllNodeConnectionsLockedForPath(nx, ny, step.pathNumber, step.lockNumber)
+	}
 	return true
 }
 
