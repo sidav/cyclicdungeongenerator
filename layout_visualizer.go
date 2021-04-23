@@ -1,76 +1,14 @@
 package main
 
 import (
-	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/random"
-	"fmt"
 	cw "CyclicDungeonGenerator/console_wrapper"
+	"CyclicDungeonGenerator/layout_generation"
+	"fmt"
 )
 
-func doLayoutVisualization() {
-	rnd := random.FibRandom{}
-	rnd.InitBySeed(-1)
-	key := "none"
-	desiredPatternNum := -1
-	randomPaths := true
-	parser := layout_generation.PatternParser{}
-	filenames := parser.ListPatternFilenamesInPath("patterns/")
+type layoutVisualiser struct{}
 
-	for key != "ESCAPE" {
-		cw.Clear_console()
-		pattNum := rnd.Rand(len(filenames))
-		if desiredPatternNum != -1 {
-			pattNum = desiredPatternNum
-		}
-		gen := layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
-		gen.TriesForPattern = 100
-		pattern := parser.ParsePatternFile(filenames[pattNum])
-		generatedMap, genRestarts := gen.GenerateLayout(pattern)
-
-		if generatedMap == nil {
-			key = ""
-			cw.PutString(":(", 0, 0)
-			cw.PutString(fmt.Sprintf("Generation failed even after %d restarts, pattern #%d", genRestarts, pattNum), 0, 1)
-			cw.PutString("Press ENTER to generate again or ESCAPE to exit.", 0, 2)
-			cw.Flush_console()
-			for key != "ESCAPE" && key != "ENTER" {
-				key = cw.ReadKey()
-			}
-			if key == "ENTER" {
-				continue
-			} else {
-				break
-			}
-		} else {
-			putMap(generatedMap)
-			putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name, genRestarts, randomPaths)
-		}
-		cw.Flush_console()
-	keyread:
-		for {
-			key = cw.ReadKey()
-			switch key {
-			case "r", "UP":
-				randomPaths = !randomPaths
-				break keyread
-			case "=", "+", "RIGHT":
-				if desiredPatternNum < len(filenames)-1 {
-					desiredPatternNum++
-				}
-				break keyread
-			case "-", "LEFT":
-				if desiredPatternNum > -1 {
-					desiredPatternNum--
-				}
-				break keyread
-			case " ", "TAB", "ESCAPE":
-				break keyread
-			}
-		}
-	}
-}
-
-func putCharArray(x, y int, c *[][]rune) {
+func (l *layoutVisualiser) putCharArray(x, y int, c *[][]rune) {
 	for i := 0; i < len(*c); i++ {
 		for j := 0; j < len((*c)[0]); j++ {
 			setcolorForRune((*c)[i][j])
@@ -79,11 +17,11 @@ func putCharArray(x, y int, c *[][]rune) {
 	}
 }
 
-func putMap(a *layout_generation.LayoutMap) {
-	putCharArray(0, 0, a.WholeMapToCharArray())
+func (l *layoutVisualiser) putMap(a *layout_generation.LayoutMap) {
+	l.putCharArray(0, 0, a.WholeMapToCharArray())
 }
 
-func putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts int, rand bool) {
+func (l *layoutVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -97,7 +35,8 @@ func putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pN
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*5+2, sy+3)
 	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*5+2, sy+4)
 	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*5+2, sy+5)
-	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+6)
+	cw.PutString(fmt.Sprintf("%dx%d nodes", W, H), sx*5+2, sy+6)
+	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+7)
 	if rand {
 		cw.PutString("Random paths", sx*5+2, sy+7)
 	} else {

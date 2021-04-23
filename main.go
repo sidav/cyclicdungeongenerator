@@ -22,7 +22,7 @@ func main() {
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
 				" -l <layout_w> <layout_h>: generate and show layouts \n" +
 				" -t <layout_w> <layout_h>: generate and show tilemaps \n")
-		return 
+		return
 	}
 
 	if len(args) >= 3 {
@@ -41,22 +41,17 @@ func main() {
 	case "-b", "b", "benchmark":
 		bench(args)
 
-	case "l", "-l", "layout":
+	case "l", "-l", "layout", "t", "-t", "tilemap":
 		cw.Init_console()
 		defer cw.Close_console()
-		doLayoutVisualization()
-
-	case "t", "-t", "tilemap":
-		cw.Init_console()
-		defer cw.Close_console()
-		vis := vis{}
-		vis.doTilemapVisualization()
+		visboth := visBoth{}
+		visboth.do()
 
 	default:
 		fmt.Printf(
-			"Unknown argument \"%s\". Arguments: \n" +
-				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
-				" -l <layout_w> <layout_h>: generate and show layouts \n" +
+			"Unknown argument \"%s\". Arguments: \n"+
+				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n"+
+				" -l <layout_w> <layout_h>: generate and show layouts \n"+
 				" -t <layout_w> <layout_h>: generate and show tilemaps \n", args[0])
 	}
 }
