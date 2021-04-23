@@ -103,7 +103,7 @@ func (r *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllowe
 
 // creates additional node with the same name.
 func (r *LayoutMap) tryGrowingNodeInRandomDirection(nodeName string) {
-	x, y := r.getCoordsOfNode(nodeName)
+	x, y := r.getAnyOfCoordsOfNode(nodeName)
 	ex, ey := r.getRandomEmptyCellNearCoords(x, y)
 	if ex > -1 && ey > -1 {
 		r.placeNodeAtCoords(ex, ey, nodeName)
@@ -248,7 +248,7 @@ func (r *LayoutMap) countEmptyCellsNear(x, y int) int {
 	return count
 }
 
-func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
+func (r *LayoutMap) getAnyOfCoordsOfNode(nodeName string) (int, int) {
 	possibleCoords := make([][2]int, 0)
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
@@ -261,8 +261,23 @@ func (r *LayoutMap) getCoordsOfNode(nodeName string) (int, int) {
 		rndIndex := r.rnd.Rand(len(possibleCoords))
 		return possibleCoords[rndIndex][0], possibleCoords[rndIndex][1]
 	}
-	panic("getCoordsOfNode failed with node " + nodeName)
+	panic("getAnyOfCoordsOfNode failed with node " + nodeName)
 	return -1, -1
+}
+
+func (r *LayoutMap) getAllCoordsOfNode(nodeName string) [][2]int {
+	possibleCoords := make([][2]int, 0)
+	for x := 0; x < len(r.elements); x++ {
+		for y := 0; y < len(r.elements[0]); y++ {
+			if r.elements[x][y].IsNode() && r.elements[x][y].nodeInfo.nodeName == nodeName {
+				possibleCoords = append(possibleCoords, [2]int{x, y})
+			}
+		}
+	}
+	if len(possibleCoords) > 0 {
+		return possibleCoords
+	}
+	panic("getAllCoordsOfNode failed with node " + nodeName)
 }
 
 func (l *LayoutMap) setAllNodeConnectionsLockedForPath(nodex, nodey, pathNum int, lockNum int) {
