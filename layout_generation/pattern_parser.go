@@ -170,6 +170,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 	case "GROWALLROOMS": // no params
 		return &patternStep{
 			actionType: ACTION_GROW_ALL_NODES,
+			maxNodeSize:       pp.getIntAfterIdentifier("MAXSIZE"),
 		}
 	}
 

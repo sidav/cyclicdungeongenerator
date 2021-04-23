@@ -34,7 +34,7 @@ func (step *patternStep) execPatternStep(layout *LayoutMap) bool {
 	case ACTION_PLACE_NODE_AT_PATH:
 		return step.execPlaceNodeAtPath(layout)
 	case ACTION_GROW_ALL_NODES:
-		layout.growAllNodesToFillSpace()
+		layout.growAllNodesToFillSpace(step.maxNodeSize)
 	default:
 		panic("No implementation for action!")
 	}

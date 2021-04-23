@@ -37,7 +37,7 @@ func (r *LayoutMap) placeObstacleAtCoords(x, y int) {
 	r.elements[x][y].isObstacle = true
 }
 
-func (r *LayoutMap) getNumOfEmptyElements() int {
+func (r *LayoutMap) countEmptyElements() int {
 	w, h := r.GetSize()
 	empties := 0
 	for x := 0; x < w; x++ {
@@ -50,6 +50,18 @@ func (r *LayoutMap) getNumOfEmptyElements() int {
 	return empties
 }
 
+func (r *LayoutMap) countNodesOfName(nodeName string) int {
+	w, h := r.GetSize()
+	count := 0
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			if r.elements[x][y].IsNode() && r.elements[x][y].GetName() == nodeName {
+				count++
+			}
+		}
+	}
+	return count
+}
 
 func (r *LayoutMap) removeAllObstacles() {
 	for x := 0; x < len(r.elements); x++ {
@@ -122,18 +134,24 @@ func (r *LayoutMap) tryGrowingNodeByName(nodeName string) {
 }
 
 // creates additional node with the same name.
-func (r *LayoutMap) growAllNodesToFillSpace() {
+func (r *LayoutMap) growAllNodesToFillSpace(maxNodeSize int) {
 	w, h := r.GetSize()
-	currentEmpty := r.getNumOfEmptyElements()
+	currentEmpty := r.countEmptyElements()
 	prevEmpty := -1
 	for currentEmpty > 0 && prevEmpty != currentEmpty {
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
-				r.tryGrowingNodeFromCoords(x, y)
+				if r.elements[x][y].IsNode() {
+					nodeName := r.elements[x][y].GetName()
+					size := r.countNodesOfName(nodeName)
+					if size < maxNodeSize || maxNodeSize == 0 {
+						r.tryGrowingNodeFromCoords(x, y)
+					}
+				}
 			}
 		}
 		prevEmpty = currentEmpty
-		currentEmpty = r.getNumOfEmptyElements()
+		currentEmpty = r.countEmptyElements()
 	}
 }
 
