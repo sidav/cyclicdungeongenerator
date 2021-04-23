@@ -104,6 +104,7 @@ func (r *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllowe
 func (r *LayoutMap) getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmptyCellsNear int) (int, int) { // range inclusive
 	emptiesX := make([]int, 0)
 	emptiesY := make([]int, 0)
+	w, h := r.GetSize()
 	if fx > tx {
 		t := tx
 		tx = fx
@@ -113,6 +114,12 @@ func (r *LayoutMap) getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmptyCell
 		t := ty
 		ty = fy
 		fy = t
+	}
+	if tx >= w {
+		tx = w-1
+	}
+	if ty >= h {
+		ty = h-1
 	}
 	for x := fx; x <= tx; x++ {
 		for y := fy; y <= ty; y++ {
