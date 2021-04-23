@@ -12,9 +12,13 @@ type visBoth struct {
 	levelVis         tiledMapVisualiser
 	layoutVis        layoutVisualiser
 	currModeIsLayout bool // if false, curr mode is tiles
+
+	flawsCritical, maxDesiredFlaws int
 }
 
 func (v *visBoth) do() {
+	v.flawsCritical = 1000
+	v.maxDesiredFlaws = 100
 	rnd := random.FibRandom{}
 	rnd.InitBySeed(-1)
 	key := "none"
@@ -31,7 +35,7 @@ func (v *visBoth) do() {
 		pattNum = desiredPatternNum
 	}
 	gen := layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
-	gen.TriesForPattern = 100
+	gen.TriesForPattern = v.flawsCritical
 	pattern := parser.ParsePatternFile(filenames[pattNum])
 	generatedMap, genRestarts := gen.GenerateLayout(pattern)
 
@@ -44,7 +48,7 @@ func (v *visBoth) do() {
 				pattNum = desiredPatternNum
 			}
 			gen = layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
-			gen.TriesForPattern = 100
+			gen.TriesForPattern = v.flawsCritical
 			pattern = parser.ParsePatternFile(filenames[pattNum])
 			generatedMap, genRestarts = gen.GenerateLayout(pattern)
 			reGenerate = false
@@ -68,10 +72,12 @@ func (v *visBoth) do() {
 		} else {
 			if v.currModeIsLayout {
 				v.layoutVis.putMap(generatedMap)
-				v.layoutVis.putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name, genRestarts, randomPaths)
+				v.layoutVis.putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name,
+					genRestarts, v.maxDesiredFlaws, randomPaths)
 			} else {
 				v.levelVis.convertLayoutToLevelAndDraw(&rnd, generatedMap)
-				v.levelVis.putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name, genRestarts, gen.RandomizePath)
+				v.levelVis.putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name,
+					genRestarts, v.maxDesiredFlaws, gen.RandomizePath)
 			}
 		}
 		cw.Flush_console()

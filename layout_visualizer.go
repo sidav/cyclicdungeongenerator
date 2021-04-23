@@ -21,7 +21,7 @@ func (l *layoutVisualiser) putMap(a *layout_generation.LayoutMap) {
 	l.putCharArray(0, 0, a.WholeMapToCharArray())
 }
 
-func (l *layoutVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts int, rand bool) {
+func (l *layoutVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -36,7 +36,11 @@ func (l *layoutVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desi
 	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*5+2, sy+4)
 	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*5+2, sy+5)
 	cw.PutString(fmt.Sprintf("%dx%d nodes", W, H), sx*5+2, sy+6)
+	if restarts > maxDesiredRestarts {
+		cw.SetColor(cw.BLACK, cw.RED)
+	}
 	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+7)
+	cw.SetColor(cw.BEIGE, cw.BLACK)
 	if rand {
 		cw.PutString("Random paths", sx*5+2, sy+8)
 	} else {

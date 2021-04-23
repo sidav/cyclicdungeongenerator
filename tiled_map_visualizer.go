@@ -51,7 +51,7 @@ func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, 
 	}
 }
 
-func (g *tiledMapVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts int, rand bool) {
+func (g *tiledMapVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -66,7 +66,11 @@ func (g *tiledMapVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, de
 	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*(g.roomW+1)+2, sy+4)
 	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*(g.roomW+1)+2, sy+5)
 	cw.PutString(fmt.Sprintf("%dx%d nodes", W, H), sx*(g.roomW+1)+2, sy+6)
+	if restarts > maxDesiredRestarts {
+		cw.SetColor(cw.BLACK, cw.RED)
+	}
 	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*(g.roomW+1)+2, sy+7)
+	cw.SetColor(cw.BEIGE, cw.BLACK)
 	cw.PutString(fmt.Sprintf("Room size: %dx%d", g.roomW, g.roomH), sx*(g.roomW+1)+2, sy+8)
 	if rand {
 		cw.PutString("Random paths", sx*(g.roomW+1)+2, sy+9)
