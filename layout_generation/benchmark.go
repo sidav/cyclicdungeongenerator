@@ -86,6 +86,7 @@ generationStart:
 				continue generationStart
 			}
 		}
+		b.layout.randomizeTagLocationsPerNode()
 		elapsed := time.Since(start)
 		return b.layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep, elapsed, !b.layout.PerformLocksCheckForPattern(pattern)
 	}

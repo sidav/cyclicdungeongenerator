@@ -4,8 +4,8 @@ import "strconv"
 
 // output. Used in benchmark to detect uniquity, should not be removed.
 
-func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for rendering
-	elem := r.elements[x][y]
+func (lm *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for rendering
+	elem := lm.elements[x][y]
 	// rune := '?'
 	if elem.isEmpty() {
 		return '.'
@@ -26,8 +26,8 @@ func (r *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for render
 	return '?'
 }
 
-func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
-	e := r.elements[cellx][celly]
+func (lm *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
+	e := lm.elements[cellx][celly]
 	ca := make([][]rune, 5)
 	for i := range ca {
 		ca[i] = make([]rune, 5)
@@ -97,15 +97,15 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 	return ca
 }
 
-func (r *LayoutMap) WholeMapToCharArray() *[][]rune {
-	sx, sy := r.GetSize()
+func (lm *LayoutMap) WholeMapToCharArray() *[][]rune {
+	sx, sy := lm.GetSize()
 	ca := make([][]rune, 5*sx)
 	for i := range ca {
 		ca[i] = make([]rune, 5*sy)
 	}
-	for x := 0; x < len(r.elements); x++ {
-		for y := 0; y < len(r.elements[0]); y++ {
-			cellArr := r.CellToCharArray(x, y)
+	for x := 0; x < len(lm.elements); x++ {
+		for y := 0; y < len(lm.elements[0]); y++ {
+			cellArr := lm.CellToCharArray(x, y)
 			for i := 0; i < 5; i++ {
 				for j := 0; j < 5; j++ {
 					ca[5*x+i][5*y+j] = cellArr[i][j]

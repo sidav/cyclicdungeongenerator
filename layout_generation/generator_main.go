@@ -37,6 +37,7 @@ generationStart:
 				continue generationStart
 			}
 		}
+		cg.layout.randomizeTagLocationsPerNode()
 		return &cg.layout, generatorRestarts
 	}
 	return nil, cg.TriesForPattern
