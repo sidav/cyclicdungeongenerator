@@ -249,7 +249,9 @@ func (l *LayoutMap) setAllNodeConnectionsLockedForPath(nodex, nodey, pathNum int
 	for dir, v := range e.connections {
 		if v != nil && v.pathNum == pathNum {
 			v.IsLocked = true
-			v.LockNum = lockNum
+			if v.LockNum < lockNum {
+				v.LockNum = lockNum
+			}
 			// set the lock for neighbouring connection
 			var dirCoords [2]int
 			var opposingPath string
@@ -271,7 +273,9 @@ func (l *LayoutMap) setAllNodeConnectionsLockedForPath(nodex, nodey, pathNum int
 			}
 			elem2 := l.GetElement(nodex+dirCoords[0], nodey+dirCoords[1])
 			elem2.connections[opposingPath].IsLocked = true
-			elem2.connections[opposingPath].LockNum = lockNum
+			if elem2.connections[opposingPath].LockNum < lockNum {
+				elem2.connections[opposingPath].LockNum = lockNum
+			}
 		}
 	}
 }
