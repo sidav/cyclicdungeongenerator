@@ -81,8 +81,10 @@ func (v *visBoth) do() {
 			randomPaths = !randomPaths
 			reGenerate = true
 
-		case "ENTER", "m":
+		case "TAB", "m":
 			v.currModeIsLayout = !v.currModeIsLayout
+			reGenerate = false
+			continue
 
 		case "a":
 			v.levelVis.roomW--
@@ -124,9 +126,8 @@ func (v *visBoth) do() {
 				reGenerate = true
 			}
 
-		case " ", "TAB", "ESCAPE":
+		case "ENTER", "ESCAPE":
 			reGenerate = true
-
 		}
 	}
 }
