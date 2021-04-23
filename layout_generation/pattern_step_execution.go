@@ -77,9 +77,13 @@ func (step *patternStep)execPlaceNodeNearPath(layout *LayoutMap) bool {
 		return false // no cell was returned, step failed...
 	}
 	layout.placeNodeAtCoords(x, y, step.nameOfNode)
-	layout.elements[x][y].setConnectionByCoords(&connection{pathNum: num}, px-x, py-y)
 	layout.elements[x][y].nodeInfo.setTags(step.tags)
-	layout.elements[px][py].setConnectionByCoords(&connection{pathNum: num}, x-px, y-py)
+	layout.setConnectionsBetweenTwoCoords(&connection{pathNum: num}, x, y, px, py)
+	if step.maxNodeSize > 1 {
+		for growStep := 0; growStep < layout.rnd.Rand(step.maxNodeSize); growStep++ {
+			layout.tryGrowingNodeInRandomDirection(step.nameOfNode)
+		}
+	}
 	return true
 }
 
@@ -89,6 +93,11 @@ func (step *patternStep)execPlaceNodeAtPath(layout *LayoutMap) bool {
 	if x != -1 && y != -1 {
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
 		layout.elements[x][y].nodeInfo.setTags(step.tags)
+		if step.maxNodeSize > 1 {
+			for growStep := 0; growStep < layout.rnd.Rand(step.maxNodeSize); growStep++ {
+				layout.tryGrowingNodeInRandomDirection(step.nameOfNode)
+			}
+		}
 		return true
 	}
 	return false
@@ -105,8 +114,7 @@ func (step *patternStep)execPlaceRandomConnectedNodes(layout *LayoutMap) bool {
 			return false // no cell was returned, step failed...
 		}
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
-		layout.elements[x][y].setConnectionByCoords(&connection{}, px-x, py-y)
-		layout.elements[px][py].setConnectionByCoords(&connection{}, x-px, y-py)
+		layout.setConnectionsBetweenTwoCoords(&connection{}, x, y, px, py)
 	}
 	return true
 }
@@ -118,8 +126,7 @@ func (step *patternStep)execFillWithRandomConnectedNodes(layout *LayoutMap) bool
 			return true // no more empty spaces to fill
 		}
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
-		layout.elements[x][y].setConnectionByCoords(&connection{}, px-x, py-y)
-		layout.elements[px][py].setConnectionByCoords(&connection{}, x-px, y-py)
+		layout.setConnectionsBetweenTwoCoords(&connection{}, x, y, px, py)
 	}
 }
 

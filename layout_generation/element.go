@@ -37,7 +37,7 @@ func (e *element) setConnectionByCoords(c *connection, x, y int) {
 		direction = "west"
 	}
 	if direction == "wat?" {
-		fmt.Printf("ERROR PLACING CONNECTION: (%d,%d)\n", x, y)
+		panic(fmt.Sprintf("ERROR PLACING CONNECTION: (%d,%d)\n", x, y))
 		return
 	}
 	e.connections[direction] = c
