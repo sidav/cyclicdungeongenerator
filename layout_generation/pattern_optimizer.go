@@ -2,14 +2,16 @@ package layout_generation
 
 import "fmt"
 
-func (p *pattern) ShowInitialAndOptimizedInstructionOrders() {
+type PatternOptimizer struct {}
+
+func (po *PatternOptimizer) ShowInitialAndOptimizedInstructionOrders(p *pattern) {
 	fmt.Printf("=== OPTIMIZATION OF PATTERN ===\n")
 	fmt.Printf("=== BEFORE ===\n")
 	for i := range p.instructions {
 		fmt.Printf("%d: %s\n", i, p.instructions[i].instructionText)
 		p.instructions[i].instructionText += fmt.Sprintf(" (old num %d)", i)
 	}
-	p.optimizeStepsOrder()
+	po.optimizePattern(p)
 	fmt.Printf("\n=== AFTER ===\n")
 	for i := range p.instructions {
 		fmt.Printf("%d: %s\n", i, p.instructions[i].instructionText)
@@ -17,17 +19,17 @@ func (p *pattern) ShowInitialAndOptimizedInstructionOrders() {
 	fmt.Printf("===+===+===\n")
 }
 
-func (p *pattern) optimizeStepsOrder() {
+func (po *PatternOptimizer) optimizePattern(p *pattern) {
 	// move all node-creating to the beginning
 	types := []int{
 		ACTION_PLACE_NODE_AT_EMPTY,
 	}
 	for i := 0; i < len(p.instructions)-1; i++ {
-		if p.isCodeInArray(p.instructions[i].actionType, types) {
+		if po.isCodeInArray(p.instructions[i].actionType, types) {
 			continue
 		}
 		for j := i+1; j < len(p.instructions); j++ {
-			if p.isCodeInArray(p.instructions[j].actionType, types) {
+			if po.isCodeInArray(p.instructions[j].actionType, types) {
 				p.moveInstructionUpFromTo(j, i)
 				break
 			}
@@ -78,6 +80,15 @@ func (p *pattern) optimizeStepsOrder() {
 			}
 		}
 	}
+}
+
+func (po *PatternOptimizer) isCodeInArray(code int, array []int) bool {
+	for _, c := range array {
+		if code == c {
+			return true
+		}
+	}
+	return false
 }
 
 func (p *pattern) iterateInstructionsDownToEndOrCode(codesToStopAt []int) {
@@ -151,13 +162,4 @@ func (p *pattern) moveInstructionToEnd(from int) {
 	for x := from; x < len(p.instructions)-1; x++ {
 		p.swapInstructionsAtIndices(x, x+1)
 	}
-}
-
-func (p *pattern) isCodeInArray(code int, array []int) bool {
-	for _, c := range array {
-		if code == c {
-			return true
-		}
-	}
-	return false
 }

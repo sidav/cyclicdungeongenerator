@@ -52,7 +52,8 @@ func main() {
 			pathToPattern := args[1]
 			pp := layout_generation.PatternParser{WriteLinesInResult: true}
 			pat := pp.ParsePatternFile(pathToPattern, false)
-			pat.ShowInitialAndOptimizedInstructionOrders()
+			po := layout_generation.PatternOptimizer{}
+			po.ShowInitialAndOptimizedInstructionOrders(pat)
 		} else {
 			fmt.Println("Path to the pattern is missing.")
 		}
@@ -100,7 +101,7 @@ func bench(args []string) {
 		BenchLoopsForPattern:            loops,
 		TriesForPattern:                 tries,
 		CheckRandomPaths:                true,
-		CheckShortestPaths:              true,
+		CheckShortestPaths:              false,
 		TestUniquity:                    true,
 		GenerateAndConsiderGarbageNodes: false,
 	}
