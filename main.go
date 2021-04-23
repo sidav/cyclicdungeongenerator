@@ -20,8 +20,7 @@ func main() {
 		fmt.Printf(
 			"Arguments: \n" +
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
-				" -l <layout_w> <layout_h>: generate and show layouts \n" +
-				" -t <layout_w> <layout_h>: generate and show tilemaps \n")
+				" -l <layout_w> <layout_h>: generate and show layouts/tilemaps \n")
 		return
 	}
 
@@ -51,8 +50,7 @@ func main() {
 		fmt.Printf(
 			"Unknown argument \"%s\". Arguments: \n"+
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n"+
-				" -l <layout_w> <layout_h>: generate and show layouts \n"+
-				" -t <layout_w> <layout_h>: generate and show tilemaps \n", args[0])
+				" -l <layout_w> <layout_h>: generate and show layouts/tilemaps \n", args[0])
 	}
 }
 
