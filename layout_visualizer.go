@@ -38,9 +38,9 @@ func (l *layoutVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desi
 	cw.PutString(fmt.Sprintf("%dx%d nodes", W, H), sx*5+2, sy+6)
 	cw.PutString(fmt.Sprintf("Gen restarts: %d", restarts), sx*5+2, sy+7)
 	if rand {
-		cw.PutString("Random paths", sx*5+2, sy+7)
+		cw.PutString("Random paths", sx*5+2, sy+8)
 	} else {
-		cw.PutString("Shortest paths", sx*5+2, sy+7)
+		cw.PutString("Shortest paths", sx*5+2, sy+8)
 	}
 }
 
