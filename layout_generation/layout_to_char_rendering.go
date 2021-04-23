@@ -56,7 +56,7 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 							ca[2+x*2][2+y*2] = '='
 						}
 					} else {
-						if conn.isNotADoor {
+						if conn.IsNodeExtension {
 							ca[2+x*2-y][2+y*2] = ' '
 							ca[2+x*2][2+y*2] = ' '
 							ca[2+x*2+y][2+y*2] = ' '

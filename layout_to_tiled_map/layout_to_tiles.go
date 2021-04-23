@@ -124,6 +124,31 @@ func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doCo
 				}
 				for connIndex := range conns {
 					cx, cy := conns[connIndex][0], conns[connIndex][1]
+					// if the connection is just for "extended node", remove the wall.
+					if layoutElem.GetConnectionByCoords(cx, cy).IsNodeExtension {
+						leftOff := 0
+						rightOff := 0
+						upOff := 0
+						botOff := 0
+						if cx == -1 {
+							leftOff = 1
+						}
+						if cx == 1 {
+							rightOff = 1
+						}
+						if cy == -1 {
+							upOff = 1
+						}
+						if cy == 1 {
+							botOff = 1
+						}
+						for x := boundLeft + 1 - leftOff; x < boundRight+rightOff; x++ {
+							for y := boundUpper + 1 - upOff; y < boundLower+botOff; y++ {
+								ltl.TileMap[x][y].Code = TILE_FLOOR
+							}
+						}
+						continue
+					}
 					// randomly displace center for creating random door offset
 					centerXoff := centerX
 					centerYoff := centerY

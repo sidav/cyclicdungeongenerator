@@ -107,12 +107,12 @@ func (r *LayoutMap) tryGrowingNodeInRandomDirection(nodeName string) {
 	ex, ey := r.getRandomEmptyCellNearCoords(x, y)
 	if ex > -1 && ey > -1 {
 		r.placeNodeAtCoords(ex, ey, nodeName)
-		r.setConnectionsBetweenTwoCoords(&connection{isNotADoor: true}, x, y, ex, ey)
+		r.setConnectionsBetweenTwoCoords(&connection{IsNodeExtension: true}, x, y, ex, ey)
 	}
 }
 
 func (r *LayoutMap) setConnectionsBetweenTwoCoords(c *connection, x1, y1, x2, y2 int) {
-	// TODO: check for adjacency 
+	// TODO: check for adjacency
 	r.elements[x1][y1].setConnectionByCoords(c, x2-x1, y2-y1)
 	r.elements[x2][y2].setConnectionByCoords(c, x1-x2, y1-y2)
 }
