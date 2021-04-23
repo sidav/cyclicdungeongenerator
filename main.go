@@ -20,7 +20,8 @@ func main() {
 		fmt.Printf(
 			"Arguments: \n" +
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n" +
-				" -l <layout_w> <layout_h>: generate and show layouts/tilemaps \n")
+				" -l <layout_w> <layout_h>: generate and show layouts/tilemaps \n" +
+				" -o <path_to_pattern>: show initial and optimized instructions order for pattern \n")
 		return
 	}
 
@@ -46,11 +47,22 @@ func main() {
 		visboth := visBoth{}
 		visboth.do()
 
+	case "o", "-o":
+		if len(args) > 1 {
+			pathToPattern := args[1]
+			pp := layout_generation.PatternParser{WriteLinesInResult: true}
+			pat := pp.ParsePatternFile(pathToPattern, false)
+			pat.ShowInitialAndOptimizedInstructionOrders()
+		} else {
+			fmt.Println("Path to the pattern is missing.")
+		}
+
 	default:
 		fmt.Printf(
 			"Unknown argument \"%s\". Arguments: \n"+
 				" -b num_loops tries_for_pattern map_w map_h: do benchmark \n"+
-				" -l <layout_w> <layout_h>: generate and show layouts/tilemaps \n", args[0])
+				" -l <layout_w> <layout_h>: generate and show layouts/tilemaps \n"+
+				" -o <path_to_pattern>: show initial and optimized instructions order for pattern \n", args[0])
 	}
 }
 

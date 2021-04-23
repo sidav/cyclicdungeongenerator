@@ -30,7 +30,7 @@ func (pp *PatternParser) ListPatternFilenamesInPath(path string) []string {
 	return names
 }
 
-func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
+func (pp *PatternParser) ParsePatternFile(filename string, optimize bool) *pattern {
 	file, _ := os.Open(filename)
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
@@ -46,7 +46,7 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 				newInstr := pp.parseLineToInstruction(scanner.Text())
 				if newInstr != nil {
 					if pp.WriteLinesInResult {
-						newInstr.instructionText = fmt.Sprintf("%d: %s", currLine, scanner.Text())
+						newInstr.instructionText = fmt.Sprintf("%s", scanner.Text())
 					}
 					newInstr.pattern = &pat
 					pat.instructions = append(pat.instructions, newInstr)
@@ -55,7 +55,9 @@ func (pp *PatternParser) ParsePatternFile(filename string) *pattern {
 		}
 		currLine++
 	}
-	pat.optimizeStepsOrder()
+	if optimize {
+		pat.optimizeStepsOrder()
+	}
 	return &pat
 }
 

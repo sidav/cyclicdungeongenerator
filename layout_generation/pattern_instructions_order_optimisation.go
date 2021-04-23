@@ -1,11 +1,23 @@
 package layout_generation
 
-func (p *pattern) optimizeStepsOrder() {
-	//fmt.Println("BEFORE")
-	//for i := range p.instructions {
-	//	fmt.Println(p.instructions[i].instructionText)
-	//}
+import "fmt"
 
+func (p *pattern) ShowInitialAndOptimizedInstructionOrders() {
+	fmt.Printf("=== OPTIMIZATION OF PATTERN ===\n")
+	fmt.Printf("=== BEFORE ===\n")
+	for i := range p.instructions {
+		fmt.Printf("%d: %s\n", i, p.instructions[i].instructionText)
+		p.instructions[i].instructionText += fmt.Sprintf(" (old num %d)", i)
+	}
+	p.optimizeStepsOrder()
+	fmt.Printf("\n=== AFTER ===\n")
+	for i := range p.instructions {
+		fmt.Printf("%d: %s\n", i, p.instructions[i].instructionText)
+	}
+	fmt.Printf("===+===+===\n")
+}
+
+func (p *pattern) optimizeStepsOrder() {
 	// move all "add node" to the beginning
 	instructionMoved := true
 	for instructionMoved {
@@ -84,10 +96,6 @@ func (p *pattern) optimizeStepsOrder() {
 			}
 		}
 	}
-	//fmt.Println("AFTER")
-	//for i := range p.instructions {
-	//	fmt.Println(p.instructions[i].instructionText)
-	//}
 }
 
 func (p *pattern) areNodesPlacedUntilStep(name1, name2 string, step int) bool {

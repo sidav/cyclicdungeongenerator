@@ -52,7 +52,7 @@ func (b *Benchmark) Benchmark(patternFilename string) {
 }
 
 func (b *Benchmark) startBench(patternFilename string) {
-	pattern := b.parser.ParsePatternFile(patternFilename)
+	pattern := b.parser.ParsePatternFile(patternFilename, true)
 	if b.CheckRandomPaths {
 		fmt.Printf("BENCHMARKING %s, RANDOM PATHS: \n", pattern.Filename)
 		b.randomizePaths = true

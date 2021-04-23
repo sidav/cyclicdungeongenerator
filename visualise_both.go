@@ -36,7 +36,7 @@ func (v *visBoth) do() {
 	}
 	gen := layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
 	gen.TriesForPattern = v.flawsCritical
-	pattern := parser.ParsePatternFile(filenames[pattNum])
+	pattern := parser.ParsePatternFile(filenames[pattNum], true)
 	generatedMap, genRestarts := gen.GenerateLayout(pattern)
 
 	for key != "ESCAPE" {
@@ -49,7 +49,7 @@ func (v *visBoth) do() {
 			}
 			gen = layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
 			gen.TriesForPattern = v.flawsCritical
-			pattern = parser.ParsePatternFile(filenames[pattNum])
+			pattern = parser.ParsePatternFile(filenames[pattNum], true)
 			generatedMap, genRestarts = gen.GenerateLayout(pattern)
 			reGenerate = false
 		}
