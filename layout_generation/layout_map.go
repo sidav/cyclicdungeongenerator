@@ -37,6 +37,20 @@ func (r *LayoutMap) placeObstacleAtCoords(x, y int) {
 	r.elements[x][y].isObstacle = true
 }
 
+func (r *LayoutMap) getNumOfEmptyElements() int {
+	w, h := r.GetSize()
+	empties := 0
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			if r.elements[x][y].isEmpty() {
+				empties++
+			}
+		}
+	}
+	return empties
+}
+
+
 func (r *LayoutMap) removeAllObstacles() {
 	for x := 0; x < len(r.elements); x++ {
 		for y := 0; y < len(r.elements[0]); y++ {
@@ -102,12 +116,34 @@ func (r *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllowe
 }
 
 // creates additional node with the same name.
-func (r *LayoutMap) tryGrowingNodeInRandomDirection(nodeName string) {
+func (r *LayoutMap) tryGrowingNodeByName(nodeName string) {
 	x, y := r.getAnyOfCoordsOfNode(nodeName)
-	ex, ey := r.getRandomEmptyCellNearCoords(x, y)
-	if ex > -1 && ey > -1 {
-		r.placeNodeAtCoords(ex, ey, nodeName)
-		r.setConnectionsBetweenTwoCoords(&connection{IsNodeExtension: true}, x, y, ex, ey)
+	r.tryGrowingNodeFromCoords(x, y)
+}
+
+// creates additional node with the same name.
+func (r *LayoutMap) growAllNodesToFillSpace() {
+	w, h := r.GetSize()
+	currentEmpty := r.getNumOfEmptyElements()
+	prevEmpty := -1
+	for currentEmpty > 0 && prevEmpty != currentEmpty {
+		for x := 0; x < w; x++ {
+			for y := 0; y < h; y++ {
+				r.tryGrowingNodeFromCoords(x, y)
+			}
+		}
+		prevEmpty = currentEmpty
+		currentEmpty = r.getNumOfEmptyElements()
+	}
+}
+
+func (r *LayoutMap) tryGrowingNodeFromCoords(x, y int) {
+	if r.elements[x][y].IsNode() {
+		ex, ey := r.getRandomEmptyCellNearCoords(x, y)
+		if ex > -1 && ey > -1 {
+			r.placeNodeAtCoords(ex, ey, r.elements[x][y].GetName())
+			r.setConnectionsBetweenTwoCoords(&connection{IsNodeExtension: true}, x, y, ex, ey)
+		}
 	}
 }
 
@@ -132,10 +168,10 @@ func (r *LayoutMap) getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmptyCell
 		fy = t
 	}
 	if tx >= w {
-		tx = w-1
+		tx = w - 1
 	}
 	if ty >= h {
-		ty = h-1
+		ty = h - 1
 	}
 	for x := fx; x <= tx; x++ {
 		for y := fy; y <= ty; y++ {

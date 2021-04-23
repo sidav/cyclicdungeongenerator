@@ -167,6 +167,10 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			toX:               pp.getIntAfterIdentifier("TX"),
 			toY:               pp.getIntAfterIdentifier("TY"),
 		}
+	case "GROWALLROOMS": // no params
+		return &patternStep{
+			actionType: ACTION_GROW_ALL_NODES,
+		}
 	}
 
 	panic("UNKNOWN ACTION IDENTIFIER " + action)

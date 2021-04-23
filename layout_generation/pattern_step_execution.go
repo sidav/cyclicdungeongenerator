@@ -33,6 +33,8 @@ func (step *patternStep) execPatternStep(layout *LayoutMap) bool {
 		return step.execSetNodeConnectionsLockedFromPath(layout)
 	case ACTION_PLACE_NODE_AT_PATH:
 		return step.execPlaceNodeAtPath(layout)
+	case ACTION_GROW_ALL_NODES:
+		layout.growAllNodesToFillSpace()
 	default:
 		panic("No implementation for action!")
 	}
@@ -61,7 +63,7 @@ func (step *patternStep) execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 		layout.elements[x][y].nodeInfo.setTags(step.tags)
 		if step.maxNodeSize > 1 {
 			for growStep := 0; growStep < layout.rnd.Rand(step.maxNodeSize); growStep++ {
-				layout.tryGrowingNodeInRandomDirection(step.nameOfNode)
+				layout.tryGrowingNodeByName(step.nameOfNode)
 			}
 		}
 		return true
@@ -81,7 +83,7 @@ func (step *patternStep) execPlaceNodeNearPath(layout *LayoutMap) bool {
 	layout.setConnectionsBetweenTwoCoords(&connection{pathNum: num}, x, y, px, py)
 	if step.maxNodeSize > 1 {
 		for growStep := 0; growStep < layout.rnd.Rand(step.maxNodeSize); growStep++ {
-			layout.tryGrowingNodeInRandomDirection(step.nameOfNode)
+			layout.tryGrowingNodeByName(step.nameOfNode)
 		}
 	}
 	return true
@@ -95,7 +97,7 @@ func (step *patternStep) execPlaceNodeAtPath(layout *LayoutMap) bool {
 		layout.elements[x][y].nodeInfo.setTags(step.tags)
 		if step.maxNodeSize > 1 {
 			for growStep := 0; growStep < layout.rnd.Rand(step.maxNodeSize); growStep++ {
-				layout.tryGrowingNodeInRandomDirection(step.nameOfNode)
+				layout.tryGrowingNodeByName(step.nameOfNode)
 			}
 		}
 		return true
