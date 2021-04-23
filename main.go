@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	W = 6
+	W = 5
 	H = 5
 )
 
