@@ -18,54 +18,36 @@ func (p *pattern) ShowInitialAndOptimizedInstructionOrders() {
 }
 
 func (p *pattern) optimizeStepsOrder() {
-	// move all "add node" to the beginning
-	instructionMoved := true
-	for instructionMoved {
-		instructionMoved = false
-		instructionNeedsToMove := false
-	iterateInstructionsUp:
-		for i := range p.instructions {
-			types := []int{
-				ACTION_PLACE_NODE_AT_EMPTY,
-				ACTION_PLACE_NODE_AT_PATH,
-				ACTION_PLACE_NODE_NEAR_PATH,
-				ACTION_PLACE_OBSTACLE_AT_COORDS,
+	// move all node-creating to the beginning
+	types := []int{
+		ACTION_PLACE_NODE_AT_EMPTY,
+	}
+	for i := 0; i < len(p.instructions)-1; i++ {
+		if p.isCodeInArray(p.instructions[i].actionType, types) {
+			continue
+		}
+		for j := i+1; j < len(p.instructions); j++ {
+			if p.isCodeInArray(p.instructions[j].actionType, types) {
+				p.moveInstructionUpFromTo(j, i)
+				break
 			}
-			checkedType := p.instructions[i].actionType
-			for _, typeFromList := range types {
-				if checkedType == typeFromList {
-					if instructionNeedsToMove {
-						p.moveInstructionToBeginningOrToCode(i, types)
-						instructionMoved = true
-						break iterateInstructionsUp
-					}
-				}
-			}
+		}
+	}
+	// move all "add obstacle" to beginning (order is not important here)
+	for i := range p.instructions {
+		if p.instructions[i].actionType == ACTION_PLACE_OBSTACLE_AT_COORDS {
+			p.moveInstructionToBeginningOrToCode(i, []int{})
 		}
 	}
 	// move all non-creating instructions to end
-	instructionMoved = true
-	for instructionMoved {
-		instructionMoved = false
-	iterateInstructionsDown:
-		for i := range p.instructions {
-			types := []int{
-				ACTION_PLACE_NODE_AT_EMPTY,
-				ACTION_PLACE_NODE_AT_PATH,
-				ACTION_PLACE_NODE_NEAR_PATH,
-				ACTION_PLACE_OBSTACLE_AT_COORDS,
-			}
-			checkedType := p.instructions[i].actionType
-			for _, typeFromList := range types {
-				if checkedType == typeFromList {
-					break iterateInstructionsDown
-				}
-			}
-			p.moveInstructionToEnd(i)
-			instructionMoved = true
-			break
-		}
+	types = []int{
+		ACTION_PLACE_NODE_AT_EMPTY,
+		ACTION_PLACE_NODE_AT_PATH,
+		ACTION_PLACE_NODE_NEAR_PATH,
+		ACTION_PLACE_OBSTACLE_AT_COORDS,
 	}
+	p.iterateInstructionsDownToEndOrCode(types)
+
 	// move each "add path" as up as possible
 	for i := range p.instructions {
 		for j := i + 1; j < len(p.instructions); j++ {
@@ -94,6 +76,25 @@ func (p *pattern) optimizeStepsOrder() {
 					}
 				}
 			}
+		}
+	}
+}
+
+func (p *pattern) iterateInstructionsDownToEndOrCode(codesToStopAt []int) {
+	instructionMoved := true
+	for instructionMoved {
+		instructionMoved = false
+	iterateInstructionsDown:
+		for i := range p.instructions {
+			checkedType := p.instructions[i].actionType
+			for _, typeFromList := range codesToStopAt {
+				if checkedType == typeFromList {
+					break iterateInstructionsDown
+				}
+			}
+			p.moveInstructionToEnd(i)
+			instructionMoved = true
+			break
 		}
 	}
 }
@@ -150,4 +151,13 @@ func (p *pattern) moveInstructionToEnd(from int) {
 	for x := from; x < len(p.instructions)-1; x++ {
 		p.swapInstructionsAtIndices(x, x+1)
 	}
+}
+
+func (p *pattern) isCodeInArray(code int, array []int) bool {
+	for _, c := range array {
+		if code == c {
+			return true
+		}
+	}
+	return false
 }
