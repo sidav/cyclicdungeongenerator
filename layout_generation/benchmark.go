@@ -65,7 +65,7 @@ func (b *Benchmark) startBench(patternFilename string) {
 	}
 }
 
-func (b *Benchmark) generateAndGetMeasurements(pattern *pattern, countGarbageNodes bool) (*[][]rune, int, bool, *[]int, time.Duration) {
+func (b *Benchmark) generateAndGetMeasurements(pattern *pattern, countGarbageNodes bool) (*[][]rune, int, bool, *[]int, time.Duration, bool) {
 	flawsPerStep := make([]int, len(pattern.instructions))
 	start := time.Now()
 
@@ -87,10 +87,10 @@ generationStart:
 			}
 		}
 		elapsed := time.Since(start)
-		return b.layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep, elapsed
+		return b.layout.WholeMapToCharArray(), patternTry, true, &flawsPerStep, elapsed, !b.layout.PerformLocksCheckForPattern(pattern)
 	}
 	elapsed := 100000 * time.Hour // so it will be obvious if the mean time measurement is bugged
-	return nil, b.TriesForPattern, false, &flawsPerStep, elapsed
+	return nil, b.TriesForPattern, false, &flawsPerStep, elapsed, false
 }
 
 func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countGarbageNodes bool) {
@@ -104,7 +104,7 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 	currentTotalGenerationTime := 0 * time.Millisecond
 	for loopNum := 0; loopNum < b.BenchLoopsForPattern; loopNum++ {
 		progressBarCLI(fmt.Sprintf("Progress "), loopNum+1, b.BenchLoopsForPattern+1, 15)
-		cMap, tries, success, flawsPerGeneration, elapsed := b.generateAndGetMeasurements(pattern, countGarbageNodes)
+		cMap, tries, success, flawsPerGeneration, elapsed, violatesLocks := b.generateAndGetMeasurements(pattern, countGarbageNodes)
 		if testUniquity && cMap != nil {
 			if !b.isCharmapAlreadyInArray(cMap, &generatedMaps) {
 				generatedMaps = append(generatedMaps, cMap)
@@ -124,6 +124,12 @@ func (b *Benchmark) benchmarkPattern(pattern *pattern, testUniquity bool, countG
 			currentTotalGenerationTime += elapsed
 		} else {
 			fails++
+		}
+
+		if violatesLocks {
+			fmt.Println("")
+			fmt.Println("VIOLATION DETECTED")
+			break
 		}
 
 		for i := 0; i < len(flawsPerStep); i++ {
