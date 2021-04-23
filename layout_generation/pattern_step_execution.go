@@ -59,6 +59,11 @@ func (step *patternStep)execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 	if x != -1 && y != -1 {
 		layout.placeNodeAtCoords(x, y, step.nameOfNode)
 		layout.elements[x][y].nodeInfo.setTags(step.tags)
+		if step.maxNodeSize > 1 {
+			for growStep := 0; growStep < layout.rnd.Rand(step.maxNodeSize); growStep++ {
+				layout.tryGrowingNodeInRandomDirection(step.nameOfNode)
+			}
+		}
 		return true
 	}
 	return false

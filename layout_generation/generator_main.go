@@ -19,7 +19,7 @@ func InitCyclicGenerator(randomizePath bool, layoutWidth, layoutHeight int, seed
 		layoutHeight:    layoutHeight,
 		layout:          LayoutMap{},
 		rnd:             random.FibRandom{},
-		TriesForPattern: 25,
+		TriesForPattern: 100,
 	}
 	gen.rnd.InitBySeed(seed)
 	return gen

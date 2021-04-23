@@ -18,8 +18,9 @@ const (
 type patternStep struct {
 	pattern                      *pattern
 	actionType                   int
-	fromX, fromY, toX, toY       int    // for coordinate ranges
-	minEmptyCellsNear            int    // for nodes placement.
+	fromX, fromY, toX, toY       int // for coordinate ranges
+	minEmptyCellsNear            int // for nodes placement.
+	maxNodeSize                  int // for random "node grow"
 	countFrom, countTo           int    // for random ranges
 	nameOfNode, nameFrom, nameTo string // for node names
 	obstacleRadius               int    // for centered non-random obstacle

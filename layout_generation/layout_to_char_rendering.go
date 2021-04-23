@@ -46,7 +46,7 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 			}
 		}
 		for x := -1; x <= 1; x++ {
-			for y := -1; y <= 2; y++ {
+			for y := -1; y <= 1; y++ {
 				conn := e.GetConnectionByCoords(x, y)
 				if conn != nil {
 					if conn.IsLocked {
@@ -56,7 +56,15 @@ func (r *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 							ca[2+x*2][2+y*2] = '='
 						}
 					} else {
-						ca[2+x*2][2+y*2] = '+'
+						if conn.isNotADoor {
+							ca[2+x*2-y][2+y*2] = ' '
+							ca[2+x*2][2+y*2] = ' '
+							ca[2+x*2+y][2+y*2] = ' '
+							ca[2+x*2][2+y*2-x] = ' '
+							ca[2+x*2][2+y*2+x] = ' '
+						} else {
+							ca[2+x*2][2+y*2] = '+'
+						}
 					}
 				}
 			}
