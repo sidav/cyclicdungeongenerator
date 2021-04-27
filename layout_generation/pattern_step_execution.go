@@ -201,11 +201,11 @@ func (step *patternStep) execPlacePathFromTo(layout *LayoutMap) bool {
 				layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, -vx, -vy) // place reverse connection
 				pathLength += 1
 			}
-			// if the path is too short for following PLACE_ROOM_AT_PATH to ever be finished
-			if pathLength < step.pattern.getTotalNodesToBePlacedAtPath(step.pathNumber)+1 {
-				return false
+
+			// check if the path is too short for following PLACE_ROOM_AT_PATH to ever be finished
+			if pathLength >= step.pattern.getTotalNodesToBePlacedAtPath(step.pathNumber)+1 {
+				return true
 			}
-			return true
 		}
 	}
 	return false
