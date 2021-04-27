@@ -16,6 +16,9 @@ func heuristicCost(fromx, fromy, tox, toy int, diagonalsAllowed bool) int {
 
 type AStarPathfinder struct {
 	DiagonalMoveAllowed, ForceGetPath, ForceIncludeFinish, AutoAdjustDefaultMaxSteps bool
+	// private
+	targetCell *Cell
+	toX, toY int
 }
 
 func (aspf *AStarPathfinder) getIndexOfCellWithLowestF(openList []*Cell) int {
@@ -29,6 +32,9 @@ func (aspf *AStarPathfinder) getIndexOfCellWithLowestF(openList []*Cell) int {
 }
 
 func (aspf *AStarPathfinder) FindPath(costMap *[][]int, fromx, fromy, tox, toy int) *Cell {
+	aspf.toX = tox
+	aspf.toY = toy
+	aspf.targetCell = nil
 	openList := make([]*Cell, 0)
 	closedList := make([]*Cell, 0)
 	var currentCell *Cell
@@ -56,15 +62,13 @@ func (aspf *AStarPathfinder) FindPath(costMap *[][]int, fromx, fromy, tox, toy i
 		aspf.analyzeNeighbors(currentCell, &openList, &closedList, costMap, tox, toy)
 		//sub-step 2d:
 		total_steps += 1
-		targetInOpenList := aspf.getCellWithCoordsFromList(&openList, tox, toy)
-		if targetInOpenList != nil {
-			currentCell = targetInOpenList
-			currentCell.setChildsForPath()
+		if aspf.targetCell != nil {
+			aspf.targetCell.setChildsForPath()
 			return origin
 		}
 		if len(openList) == 0 || total_steps > maxSearchDepth {
 			if aspf.ForceGetPath { // makes the routine always return path to the closest possible cell to (tox, toy) even if the precise path does not exist.
-				currentCell = aspf.getCellWithLowestHeuristicFromList(&closedList)
+				currentCell = getCellWithLowestHeuristicFromList(&closedList)
 				currentCell.setChildsForPath()
 				return origin
 			} else {
@@ -84,9 +88,9 @@ func (aspf *AStarPathfinder) analyzeNeighbors(curCell *Cell, openlist *[]*Cell, 
 				continue
 			}
 			x, y := cx+i, cy+j
-			if aspf.areCoordsValidForCostMap(x, y, costMap) {
+			if areCoordsValidForCostMap(x, y, costMap) {
 				// if (x != targetX || y != targetY) &&
-				if (*costMap)[x][y] < 0 || aspf.getCellWithCoordsFromList(closedlist, x, y) != nil { // Cell is impassable or is in closed list
+				if (*costMap)[x][y] < 0 || getCellWithCoordsFromList(closedlist, x, y) != nil { // Cell is impassable or is in closed list
 					if !(aspf.ForceIncludeFinish && x == targetX && y == targetY) { // if ForceIncludeFinish is true, then we won't ignore finish cell whether it is passable or whatever.
 						continue // ignore it
 					}
@@ -97,7 +101,7 @@ func (aspf *AStarPathfinder) analyzeNeighbors(curCell *Cell, openlist *[]*Cell, 
 				} else {
 					cost = STRAIGHT_COST * (*costMap)[x][y]
 				}
-				curNeighbor := aspf.getCellWithCoordsFromList(openlist, x, y)
+				curNeighbor := getCellWithCoordsFromList(openlist, x, y)
 				if curNeighbor != nil {
 					if curNeighbor.g > curCell.g+cost {
 						curNeighbor.parent = curCell
@@ -105,35 +109,16 @@ func (aspf *AStarPathfinder) analyzeNeighbors(curCell *Cell, openlist *[]*Cell, 
 					}
 				} else {
 					curNeighbor = &Cell{X: x, Y: y, parent: curCell, h: heuristicCost(x, y, targetX, targetY, aspf.DiagonalMoveAllowed)}
+					if x == aspf.toX && y == aspf.toY {
+						aspf.targetCell = curNeighbor
+						return 
+					}
 					curNeighbor.setG(cost)
 					*openlist = append(*openlist, curNeighbor)
 				}
 			}
 		}
 	}
-}
-
-func (aspf *AStarPathfinder) getCellWithCoordsFromList(list *[]*Cell, x, y int) *Cell {
-	for _, c := range *list {
-		if c.X == x && c.Y == y {
-			return c
-		}
-	}
-	return nil
-}
-
-func (aspf *AStarPathfinder) getCellWithLowestHeuristicFromList(list *[]*Cell) *Cell {
-	lowest := (*list)[0]
-	for _, c := range *list {
-		if c.h < lowest.h {
-			lowest = c
-		}
-	}
-	return lowest
-}
-
-func (aspf *AStarPathfinder) areCoordsValidForCostMap(x, y int, costMap *[][]int) bool {
-	return x >= 0 && y >= 0 && (x < len(*costMap)) && (y < len((*costMap)[0]))
 }
 
 // АЛГОРИТМ А*:
