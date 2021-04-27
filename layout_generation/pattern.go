@@ -18,3 +18,27 @@ func (p *pattern) getTotalConnectionsForNodeWithName(name string) int {
 	}
 	return conns
 }
+
+func (p *pattern) getTotalNodesToBePlacedAtPath(pathId int) int {
+	nodes := 0
+	for i := range p.instructions {
+		aType := p.instructions[i].actionType
+		if aType == ACTION_PLACE_NODE_AT_PATH && p.instructions[i].pathNumber == pathId {
+			nodes++
+		}
+	}
+	return nodes
+}
+
+//func (p *pattern) getAllNonzeroPathIdsForNodeWithName(name string) []int {
+//	ids := make([]int, 0)
+//	for i := range p.instructions {
+//		aType := p.instructions[i].actionType
+//		if aType == ACTION_PLACE_PATH_FROM_TO {
+//			if p.instructions[i].nameFrom == name || p.instructions[i].nameTo == name && p.instructions[i].pathNumber != 0 {
+//				ids = append(ids, p.instructions[i].pathNumber)
+//			}
+//		}
+//	}
+//	return ids
+//}

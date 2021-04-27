@@ -190,6 +190,7 @@ func (step *patternStep) execPlacePathFromTo(layout *LayoutMap) bool {
 			if path == nil {
 				continue // try another coords
 			}
+			pathLength := 0
 			for path.Child != nil {
 				x, y := path.GetCoords()
 				vx, vy := path.GetNextStepVector()
@@ -198,6 +199,11 @@ func (step *patternStep) execPlacePathFromTo(layout *LayoutMap) bool {
 				x, y = path.GetCoords()
 				layout.placePathAtCoords(x, y, step.pathNumber)
 				layout.elements[x][y].setConnectionByCoords(&connection{pathNum: step.pathNumber}, -vx, -vy) // place reverse connection
+				pathLength += 1
+			}
+			// if the path is too short for following PLACE_ROOM_AT_PATH to ever be finished
+			if pathLength < step.pattern.getTotalNodesToBePlacedAtPath(step.pathNumber)+1 {
+				return false
 			}
 			return true
 		}
