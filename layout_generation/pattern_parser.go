@@ -140,6 +140,12 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
 		}
+	case "LOCKPATH": // LOCKPATH PATHID id LOCKID lockid
+		return &patternStep{
+			actionType:        ACTION_LOCK_PATH,
+			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
+			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
+		}
 	case "SETROOMTAGS": // SETROOMTAGS ROOMNAME roomname TAGS tags
 		return &patternStep{
 			actionType:        ACTION_SET_NODE_TAGS,

@@ -29,6 +29,8 @@ func (step *patternStep) execPatternStep(layout *LayoutMap) bool {
 		return step.execFillWithRandomConnectedNodes(layout)
 	case ACTION_SET_NODE_TAGS:
 		return step.execSetNodeTags(layout)
+	case ACTION_LOCK_PATH:
+		return step.execLockPath(layout)
 	case ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH:
 		return step.execSetNodeConnectionsLockedFromPath(layout)
 	case ACTION_PLACE_NODE_AT_PATH:
@@ -233,6 +235,19 @@ func (step *patternStep) execSetNodeTags(layout *LayoutMap) bool {
 		}
 		randIndex := layout.rnd.Rand(len(suitableCoords))
 		layout.GetElement(suitableCoords[randIndex][0], suitableCoords[randIndex][1]).nodeInfo.setTags(step.tags)
+	}
+	return true
+}
+
+func (step *patternStep) execLockPath(layout *LayoutMap) bool {
+	w, h := layout.GetSize()
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			elem := layout.GetElement(x, y)
+			if elem.IsNode() {
+				layout.setAllNodeConnectionsLockedForPath(x, y, step.pathNumber, step.lockNumber)
+			}
+		}
 	}
 	return true
 }
