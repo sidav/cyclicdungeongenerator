@@ -165,6 +165,50 @@ func (lm *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllow
 	return emptiesX[index], emptiesY[index]
 }
 
+func (lm *LayoutMap) getRandomEmptyCellCoordsWithMinDistanceFromNode(minEmptyCellsNear int, cornerAllowed, edgeAllowed bool, NodeDistMap *map[string]int) (int, int) {
+	w, h := lm.GetSize()
+	emptiesX := make([]int, 0)
+	emptiesY := make([]int, 0)
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			corner := (x == 0 && y == 0) || (x == 0 && y == h-1) || (x == w-1 && y == 0) || (x == w-1 && y == h-1)
+			edge := x*y == 0 || x == w-1 || y == h-1
+			if (!cornerAllowed && corner) || (!edgeAllowed && edge) {
+				continue
+			}
+
+			if lm.elements[x][y].isEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
+				coordsAreInDist := true
+				for nodeName, minDist := range *NodeDistMap {
+					currNodeCoordsForDistCheck := lm.getAllCoordsOfNode(nodeName)
+					if len(currNodeCoordsForDistCheck) == 0 {
+						continue
+					}
+					atLeastOneIsGood := false
+					for i := range currNodeCoordsForDistCheck {
+						if euclideanDistance(currNodeCoordsForDistCheck[i][0], currNodeCoordsForDistCheck[i][1], x, y) >= minDist {
+							atLeastOneIsGood = true
+						}
+					}
+					if !atLeastOneIsGood {
+						coordsAreInDist = false
+						break
+					}
+				}
+				if coordsAreInDist {
+					emptiesX = append(emptiesX, x)
+					emptiesY = append(emptiesY, y)
+				}
+			}
+		}
+	}
+	if len(emptiesX) == 0 {
+		return -1, -1
+	}
+	index := lm.rnd.Rand(len(emptiesX))
+	return emptiesX[index], emptiesY[index]
+}
+
 // creates additional node with the same name.
 func (lm *LayoutMap) tryGrowingNodeByName(nodeName string) {
 	x, y := lm.getAnyOfCoordsOfNode(nodeName)
@@ -369,6 +413,7 @@ func (lm *LayoutMap) getAllCoordsOfNode(nodeName string) [][2]int {
 	if len(possibleCoords) > 0 {
 		return possibleCoords
 	}
+	return [][2]int{}
 	panic("getAllCoordsOfNode failed with node " + nodeName)
 }
 
