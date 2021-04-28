@@ -58,7 +58,7 @@ func (step *patternStep) execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 		// Don't place the node at the edge if there should be more than 3 connections for it
 		edgeAllowed := totalConnections <= 3
 		dists := step.pattern.getAllMinDistancesForNode(step.nameOfNode)
-		x, y = layout.getRandomEmptyCellCoordsWithMinDistanceFromNode(minEmpties, cornerAllowed, edgeAllowed, dists)
+		x, y = layout.getRandomEmptyCellCoords(minEmpties, cornerAllowed, edgeAllowed, dists)
 		//fmt.Printf("%s: %v\n", step.nameOfNode, [2]int{x,y})
 	} else {
 		x, y = layout.getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmpties)
