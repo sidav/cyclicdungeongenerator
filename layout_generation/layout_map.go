@@ -417,10 +417,11 @@ func (lm *LayoutMap) getAllCoordsOfNode(nodeName string) [][2]int {
 	panic("getAllCoordsOfNode failed with node " + nodeName)
 }
 
-func (lm *LayoutMap) setAllNodeConnectionsLockedForPath(nodex, nodey, pathNum int, lockNum int) {
+// if pathNum is 0, lock everything
+func (lm *LayoutMap) setAllNodeConnectionsLocked(nodex, nodey, pathNum int, lockNum int) {
 	e := lm.GetElement(nodex, nodey)
 	for dir, v := range e.connections {
-		if v != nil && v.pathNum == pathNum {
+		if v != nil && (v.pathNum == pathNum || pathNum == 0) {
 			v.IsLocked = true
 			if v.LockNum < lockNum {
 				v.LockNum = lockNum

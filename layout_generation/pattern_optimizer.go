@@ -67,11 +67,11 @@ func (po *PatternOptimizer) optimizePattern(p *pattern) {
 	for swapped {
 		swapped = false
 		for i := range p.instructions {
-			if p.instructions[i].actionType != ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH {
+			if p.instructions[i].actionType != ACTION_SET_NODE_CONNECTIONS_LOCKED {
 				continue
 			}
 			for j := i + 1; j < len(p.instructions); j++ {
-				if p.instructions[j].actionType == ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH {
+				if p.instructions[j].actionType == ACTION_SET_NODE_CONNECTIONS_LOCKED {
 					if p.instructions[i].lockNumber > p.instructions[j].lockNumber {
 						p.swapInstructionsAtIndices(i, j)
 						swapped = true

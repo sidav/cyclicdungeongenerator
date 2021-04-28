@@ -128,9 +128,9 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 			tags:              pp.getStringAfterIdentifier("TAGS"),
 		}
-	case "LOCKROOMFROMPATH": // LOCKROOMFROMPATH PATHID id ROOMNAME roomname LOCKID lockid
+	case "LOCKROOM": // LOCKROOM PATHID id ROOMNAME roomname LOCKID lockid
 		return &patternStep{
-			actionType:        ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH,
+			actionType:        ACTION_SET_NODE_CONNECTIONS_LOCKED,
 			minEmptyCellsNear: pp.getIntAfterIdentifier("MINEMPTYNEAR"),
 			nameOfNode:        pp.getStringAfterIdentifier("ROOMNAME"),
 			nameFrom:          pp.getStringAfterIdentifier("FROM"),

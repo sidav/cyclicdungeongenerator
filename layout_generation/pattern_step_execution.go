@@ -32,8 +32,8 @@ func (step *patternStep) execPatternStep(layout *LayoutMap) bool {
 		return step.execSetNodeTags(layout)
 	case ACTION_LOCK_PATH:
 		return step.execLockPath(layout)
-	case ACTION_SET_NODE_CONNECTION_LOCKED_FROM_PATH:
-		return step.execSetNodeConnectionsLockedFromPath(layout)
+	case ACTION_SET_NODE_CONNECTIONS_LOCKED:
+		return step.execSetNodeConnectionsLocked(layout)
 	case ACTION_PLACE_NODE_AT_PATH:
 		return step.execPlaceNodeAtPath(layout)
 	case ACTION_GROW_ALL_NODES:
@@ -257,14 +257,14 @@ func (step *patternStep) execLockPath(layout *LayoutMap) bool {
 		for y := 0; y < h; y++ {
 			elem := layout.GetElement(x, y)
 			if elem.IsNode() {
-				layout.setAllNodeConnectionsLockedForPath(x, y, step.pathNumber, step.lockNumber)
+				layout.setAllNodeConnectionsLocked(x, y, step.pathNumber, step.lockNumber)
 			}
 		}
 	}
 	return true
 }
 
-func (step *patternStep) execSetNodeConnectionsLockedFromPath(layout *LayoutMap) bool {
+func (step *patternStep) execSetNodeConnectionsLocked(layout *LayoutMap) bool {
 	nname := step.nameOfNode
 	allNodeCoords := layout.getAllCoordsOfNode(nname)
 	if len(allNodeCoords) == 0 {
@@ -272,7 +272,7 @@ func (step *patternStep) execSetNodeConnectionsLockedFromPath(layout *LayoutMap)
 	}
 	for _, coords := range allNodeCoords {
 		nx, ny := coords[0], coords[1]
-		layout.setAllNodeConnectionsLockedForPath(nx, ny, step.pathNumber, step.lockNumber)
+		layout.setAllNodeConnectionsLocked(nx, ny, step.pathNumber, step.lockNumber)
 	}
 	return true
 }
