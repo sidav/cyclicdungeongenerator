@@ -30,6 +30,26 @@ func (p *pattern) getTotalNodesToBePlacedAtPath(pathId int) int {
 	return nodes
 }
 
+func (p *pattern) getAllMinDistancesForNode(nodeName string) *map[string]int {
+	nodedistmap := make(map[string]int, 0)
+	for i := range p.instructions {
+		aType := p.instructions[i].actionType
+		if aType == ACTION_PLACE_PATH_FROM_TO {
+			if p.instructions[i].pathNumber == 0 {
+				continue
+			}
+			if p.instructions[i].nameFrom == nodeName || p.instructions[i].nameTo == nodeName {
+				nodeForDist := p.instructions[i].nameFrom
+				if nodeForDist == nodeName {
+					nodeForDist = p.instructions[i].nameTo
+				}
+				nodedistmap[nodeForDist] = p.getTotalNodesToBePlacedAtPath(p.instructions[i].pathNumber) + 1
+			}
+		}
+	}
+	return &nodedistmap
+}
+
 //func (p *pattern) getAllNonzeroPathIdsForNodeWithName(name string) []int {
 //	ids := make([]int, 0)
 //	for i := range p.instructions {

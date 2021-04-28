@@ -141,7 +141,31 @@ func (lm *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int
 	return px, py, x, y
 }
 
-func (lm *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllowed, edgeAllowed bool) (int, int) {
+//func (lm *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllowed, edgeAllowed bool) (int, int) {
+//	w, h := lm.GetSize()
+//	emptiesX := make([]int, 0)
+//	emptiesY := make([]int, 0)
+//	for x := 0; x < w; x++ {
+//		for y := 0; y < h; y++ {
+//			corner := (x == 0 && y == 0) || (x == 0 && y == h-1) || (x == w-1 && y == 0) || (x == w-1 && y == h-1)
+//			edge := x*y == 0 || x == w-1 || y == h-1
+//			if (!cornerAllowed && corner) || (!edgeAllowed && edge) {
+//				continue
+//			}
+//			if lm.elements[x][y].isEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
+//				emptiesX = append(emptiesX, x)
+//				emptiesY = append(emptiesY, y)
+//			}
+//		}
+//	}
+//	if len(emptiesX) == 0 {
+//		return -1, -1
+//	}
+//	index := lm.rnd.Rand(len(emptiesX))
+//	return emptiesX[index], emptiesY[index]
+//}
+
+func (lm *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllowed, edgeAllowed bool, NodeDistMap *map[string]int) (int, int) {
 	w, h := lm.GetSize()
 	emptiesX := make([]int, 0)
 	emptiesY := make([]int, 0)
@@ -152,9 +176,29 @@ func (lm *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllow
 			if (!cornerAllowed && corner) || (!edgeAllowed && edge) {
 				continue
 			}
+
 			if lm.elements[x][y].isEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
-				emptiesX = append(emptiesX, x)
-				emptiesY = append(emptiesY, y)
+				coordsAreInDist := true
+				for nodeName, minDist := range *NodeDistMap {
+					currNodeCoordsForDistCheck := lm.getAllCoordsOfNode(nodeName)
+					if len(currNodeCoordsForDistCheck) == 0 {
+						continue
+					}
+					atLeastOneIsGood := false
+					for i := range currNodeCoordsForDistCheck {
+						if euclideanDistance(currNodeCoordsForDistCheck[i][0], currNodeCoordsForDistCheck[i][1], x, y) >= minDist {
+							atLeastOneIsGood = true
+						}
+					}
+					if !atLeastOneIsGood {
+						coordsAreInDist = false
+						break
+					}
+				}
+				if coordsAreInDist {
+					emptiesX = append(emptiesX, x)
+					emptiesY = append(emptiesY, y)
+				}
 			}
 		}
 	}
@@ -369,6 +413,7 @@ func (lm *LayoutMap) getAllCoordsOfNode(nodeName string) [][2]int {
 	if len(possibleCoords) > 0 {
 		return possibleCoords
 	}
+	return [][2]int{}
 	panic("getAllCoordsOfNode failed with node " + nodeName)
 }
 

@@ -2,6 +2,7 @@ package layout_generation
 
 import (
 	rpath "CyclicDungeonGenerator/layout_generation/pathfinder"
+	"fmt"
 )
 
 //ACTION_PLACE_NODE_AT_PATH     = iota
@@ -56,7 +57,9 @@ func (step *patternStep) execPlaceNodeAtEmpty(layout *LayoutMap) bool {
 		cornerAllowed := totalConnections <= 2
 		// Don't place the node at the edge if there should be more than 3 connections for it
 		edgeAllowed := totalConnections <= 3
-		x, y = layout.getRandomEmptyCellCoords(minEmpties, cornerAllowed, edgeAllowed)
+		dists := step.pattern.getAllMinDistancesForNode(step.nameOfNode)
+		x, y = layout.getRandomEmptyCellCoords(minEmpties, cornerAllowed, edgeAllowed, dists)
+		//fmt.Printf("%s: %v\n", step.nameOfNode, [2]int{x,y})
 	} else {
 		x, y = layout.getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmpties)
 	}
@@ -205,6 +208,9 @@ func (step *patternStep) execPlacePathFromTo(layout *LayoutMap) bool {
 			// check if the path is too short for following PLACE_ROOM_AT_PATH to ever be finished
 			if pathLength >= step.pattern.getTotalNodesToBePlacedAtPath(step.pathNumber)+1 {
 				return true
+			} else {
+				panic(fmt.Sprintf("IT DOESN'T WORK WTF %s: %d, %v, %v", step.instructionText, pathLength,
+					step.pattern.getAllMinDistancesForNode(step.nameFrom), step.pattern.getAllMinDistancesForNode(step.nameTo)))
 			}
 		}
 	}
