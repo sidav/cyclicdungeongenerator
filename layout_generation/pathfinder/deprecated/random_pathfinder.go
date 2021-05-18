@@ -1,6 +1,6 @@
 package deprecated
 
-import "CyclicDungeonGenerator/random"
+import "cyclicdungeongenerator/random"
 
 // Random pathfinder.
 // It is effectively lobotomized A* (heuristics removed, selecting next path cell mechanism changed to random instead of cost-based)

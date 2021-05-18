@@ -1,9 +1,9 @@
 package main
 
 import (
-	cw "CyclicDungeonGenerator/console_wrapper"
-	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/random"
+	cw "cyclicdungeongenerator/console_wrapper"
+	"cyclicdungeongenerator/layout_generation"
+	"cyclicdungeongenerator/random"
 	"fmt"
 )
 

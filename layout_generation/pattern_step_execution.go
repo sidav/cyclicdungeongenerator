@@ -1,7 +1,7 @@
 package layout_generation
 
 import (
-	rpath "CyclicDungeonGenerator/layout_generation/pathfinder"
+	rpath "cyclicdungeongenerator/layout_generation/pathfinder"
 	"fmt"
 )
 

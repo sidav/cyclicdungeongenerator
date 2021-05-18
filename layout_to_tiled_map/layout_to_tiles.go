@@ -1,8 +1,8 @@
 package layout_to_tiled_map
 
 import (
-	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/random"
+	"cyclicdungeongenerator/layout_generation"
+	"cyclicdungeongenerator/random"
 )
 
 type LayoutToLevel struct {

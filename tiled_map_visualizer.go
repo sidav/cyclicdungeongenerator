@@ -1,10 +1,10 @@
 package main
 
 import (
-	cw "CyclicDungeonGenerator/console_wrapper"
-	"CyclicDungeonGenerator/layout_generation"
-	"CyclicDungeonGenerator/layout_to_tiled_map"
-	"CyclicDungeonGenerator/random"
+	cw "cyclicdungeongenerator/console_wrapper"
+	"cyclicdungeongenerator/layout_generation"
+	"cyclicdungeongenerator/layout_to_tiled_map"
+	"cyclicdungeongenerator/random"
 	"strconv"
 	"fmt"
 )
