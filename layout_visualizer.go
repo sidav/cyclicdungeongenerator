@@ -2,7 +2,7 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/generators/layout_generation"
+	"cyclicdungeongenerator/generators"
 	"fmt"
 )
 
@@ -17,11 +17,11 @@ func (l *layoutVisualiser) putCharArray(x, y int, c *[][]rune) {
 	}
 }
 
-func (l *layoutVisualiser) putMap(a *layout_generation.LayoutMap) {
+func (l *layoutVisualiser) putMap(a generators.LayoutInterface) {
 	l.putCharArray(0, 0, a.WholeMapToCharArray())
 }
 
-func (l *layoutVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
+func (l *layoutVisualiser) putInfo(a generators.LayoutInterface, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {
@@ -34,7 +34,7 @@ func (l *layoutVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desi
 	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*5+2, sy+2)
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*5+2, sy+3)
 	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*5+2, sy+4)
-	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*5+2, sy+5)
+	// cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*5+2, sy+5)
 	cw.PutString(fmt.Sprintf("%dx%d nodes", W, H), sx*5+2, sy+6)
 	if restarts > maxDesiredRestarts {
 		cw.SetColor(cw.BLACK, cw.RED)

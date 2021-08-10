@@ -2,13 +2,11 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
-	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
 	"cyclicdungeongenerator/random"
 	"fmt"
 )
 
 type visBoth struct {
-	currLayout       *layout_generation2.LayoutMap
 	levelVis         tiledMapVisualiser
 	layoutVis        layoutVisualiser
 	currModeIsLayout bool // if false, curr mode is tiles
@@ -24,8 +22,7 @@ func (v *visBoth) do() {
 	key := "none"
 	desiredPatternNum := -1
 	randomPaths := true
-	parser := layout_generation2.PatternParser{}
-	filenames := parser.ListPatternFilenamesInPath("patterns/")
+	filenames := genWrapper.ListPatternFilenamesInPath("patterns/")
 	v.levelVis.roomW = 5
 	v.levelVis.roomH = 5
 
@@ -34,10 +31,8 @@ func (v *visBoth) do() {
 	if desiredPatternNum != -1 {
 		pattNum = desiredPatternNum
 	}
-	gen := layout_generation2.InitCyclicGenerator(randomPaths, W, H, -1)
-	gen.TriesForPattern = v.flawsCritical
-	pattern := parser.ParsePatternFile(filenames[pattNum], true)
-	generatedMap, genRestarts := gen.GenerateLayout(pattern)
+	genWrapper.MaxGenerationTries = v.flawsCritical
+	generatedMap, genRestarts := genWrapper.GenerateLayout(W, H, filenames[pattNum])
 
 	for key != "ESCAPE" {
 		cw.Clear_console()
@@ -47,10 +42,7 @@ func (v *visBoth) do() {
 			if desiredPatternNum != -1 {
 				pattNum = desiredPatternNum
 			}
-			gen = layout_generation2.InitCyclicGenerator(randomPaths, W, H, -1)
-			gen.TriesForPattern = v.flawsCritical
-			pattern = parser.ParsePatternFile(filenames[pattNum], true)
-			generatedMap, genRestarts = gen.GenerateLayout(pattern)
+			generatedMap, genRestarts = genWrapper.GenerateLayout(W, H, filenames[pattNum])
 			reGenerate = false
 		}
 
@@ -72,12 +64,12 @@ func (v *visBoth) do() {
 		} else {
 			if v.currModeIsLayout {
 				v.layoutVis.putMap(generatedMap)
-				v.layoutVis.putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name,
+				v.layoutVis.putInfo(generatedMap, pattNum, desiredPatternNum, filenames[pattNum], "FIXME",
 					genRestarts, v.maxDesiredFlaws, randomPaths)
 			} else {
 				v.levelVis.convertLayoutToLevelAndDraw(&rnd, generatedMap)
-				v.levelVis.putInfo(generatedMap, pattNum, desiredPatternNum, pattern.Filename, pattern.Name,
-					genRestarts, v.maxDesiredFlaws, gen.RandomizePath)
+				v.levelVis.putInfo(generatedMap, pattNum, desiredPatternNum, filenames[pattNum], "FIXME",
+					genRestarts, v.maxDesiredFlaws, randomPaths)
 			}
 		}
 		cw.Flush_console()

@@ -2,6 +2,7 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
+	"cyclicdungeongenerator/generators"
 	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
 	"fmt"
 	"os"
@@ -11,6 +12,7 @@ import (
 var (
 	W = 5
 	H = 5
+	genWrapper *generators.GeneratorsWrapper
 )
 
 func main() {
@@ -36,6 +38,8 @@ func main() {
 			H = 5
 		}
 	}
+
+	genWrapper = generators.InitGeneratorsWrapper()
 
 	switch args[0] {
 	case "-b", "b", "benchmark":

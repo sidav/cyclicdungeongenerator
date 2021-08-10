@@ -3,7 +3,7 @@ package main
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
 	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
-	layout_to_tiled_map2 "cyclicdungeongenerator/generators/layout_to_tiled_map"
+	"cyclicdungeongenerator/generators/layout_to_tiled_map"
 	"cyclicdungeongenerator/random"
 	"fmt"
 	"strconv"
@@ -16,12 +16,8 @@ type tiledMapVisualiser struct {
 
 func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, layout *layout_generation2.LayoutMap) {
 	cw.Clear_console()
-	ltl := layout_to_tiled_map2.LayoutToLevel{}
-	ltl.Init(rnd, g.roomW, g.roomH)
-	ltl.CAConnectionChance = 100
-	ltl.CARoomChance = 15
-	ltl.ProcessLayout(layout, "generators/layout_to_tiled_map/submaps/")
-	g.drawLevel(&ltl.TileMap, 0, 0)
+	tileMap := genWrapper.ConvertLayoutToTiledMap(rnd, layout, g.roomW, g.roomH)
+	g.drawLevel(&tileMap, 0, 0)
 	rw, rh := layout.GetSize()
 
 	if g.drawRoomTags || g.drawRoomNames {
@@ -64,7 +60,7 @@ func (g *tiledMapVisualiser) putInfo(a *layout_generation2.LayoutMap, pattNum, d
 	cw.PutString(fmt.Sprintf("PATTERN SELECTED: #%d  ", desiredPNum), sx*(g.roomW+1)+2, sy+2)
 	cw.PutString(fmt.Sprintf("PATTERN USED: #%d  ", pattNum), sx*(g.roomW+1)+2, sy+3)
 	cw.PutString(fmt.Sprintf("FILE: %s  ", fName), sx*(g.roomW+1)+2, sy+4)
-	cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*(g.roomW+1)+2, sy+5)
+	// cw.PutString(fmt.Sprintf("NAME: %s  ", pName), sx*(g.roomW+1)+2, sy+5)
 	cw.PutString(fmt.Sprintf("%dx%d nodes", W, H), sx*(g.roomW+1)+2, sy+6)
 	if restarts > maxDesiredRestarts {
 		cw.SetColor(cw.BLACK, cw.RED)
@@ -79,7 +75,7 @@ func (g *tiledMapVisualiser) putInfo(a *layout_generation2.LayoutMap, pattNum, d
 	}
 }
 
-func (g *tiledMapVisualiser) drawLevel(level *[][]layout_to_tiled_map2.Tile, sx, sy int) {
+func (g *tiledMapVisualiser) drawLevel(level *[][]layout_to_tiled_map.Tile, sx, sy int) {
 	for x := 0; x < len(*level); x++ {
 		for y := 0; y < len((*level)[x]); y++ {
 			chr := (*level)[x][y].GetChar()
@@ -87,13 +83,13 @@ func (g *tiledMapVisualiser) drawLevel(level *[][]layout_to_tiled_map2.Tile, sx,
 
 			code := (*level)[x][y].Code
 			lockId := (*level)[x][y].LockId
-			if code == layout_to_tiled_map2.TILE_DOOR {
+			if code == layout_to_tiled_map.TILE_DOOR {
 				if lockId != 0 {
 					chr = rune(strconv.Itoa(lockId)[0])
 					cw.SetColor(cw.BLACK, cw.DARK_MAGENTA)
 				}
 			}
-			if code == layout_to_tiled_map2.TILE_KEY_PLACE {
+			if code == layout_to_tiled_map.TILE_KEY_PLACE {
 				chr = rune(strconv.Itoa(lockId)[0])
 				cw.SetColor(cw.DARK_MAGENTA, cw.BLACK)
 			}
