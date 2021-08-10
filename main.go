@@ -2,7 +2,7 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/layout_generation"
+	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
 	"fmt"
 	"os"
 	"strconv"
@@ -50,9 +50,9 @@ func main() {
 	case "o", "-o":
 		if len(args) > 1 {
 			pathToPattern := args[1]
-			pp := layout_generation.PatternParser{WriteLinesInResult: true}
+			pp := layout_generation2.PatternParser{WriteLinesInResult: true}
 			pat := pp.ParsePatternFile(pathToPattern, false)
-			po := layout_generation.PatternOptimizer{}
+			po := layout_generation2.PatternOptimizer{}
 			po.ShowInitialAndOptimizedInstructionOrders(pat)
 		} else {
 			fmt.Println("Path to the pattern is missing.")
@@ -94,7 +94,7 @@ func bench(args []string) {
 	if len(args) > 5 {
 		benchPatternsPath = args[5]
 	}
-	bnch := layout_generation.Benchmark{
+	bnch := layout_generation2.Benchmark{
 		LayoutWidth:  width,
 		LayoutHeight: height,
 

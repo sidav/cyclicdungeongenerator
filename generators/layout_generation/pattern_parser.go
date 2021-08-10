@@ -142,9 +142,9 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 		}
 	case "LOCKPATH": // LOCKPATH PATHID id LOCKID lockid
 		return &patternStep{
-			actionType:        ACTION_LOCK_PATH,
-			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
-			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
+			actionType: ACTION_LOCK_PATH,
+			pathNumber: pp.getIntAfterIdentifier("PATHID"),
+			lockNumber: pp.getIntAfterIdentifier("LOCKID"),
 		}
 	case "SETROOMTAGS": // SETROOMTAGS ROOMNAME roomname TAGS tags
 		return &patternStep{
@@ -178,8 +178,8 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 		}
 	case "GROWALLROOMS": // no params
 		return &patternStep{
-			actionType: ACTION_GROW_ALL_NODES,
-			maxNodeSize:       pp.getIntAfterIdentifier("MAXSIZE"),
+			actionType:  ACTION_GROW_ALL_NODES,
+			maxNodeSize: pp.getIntAfterIdentifier("MAXSIZE"),
 		}
 	}
 

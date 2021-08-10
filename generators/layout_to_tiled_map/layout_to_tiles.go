@@ -1,7 +1,7 @@
 package layout_to_tiled_map
 
 import (
-	"cyclicdungeongenerator/layout_generation"
+	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
 	"cyclicdungeongenerator/random"
 )
 
@@ -11,7 +11,7 @@ type LayoutToLevel struct {
 	roomW, roomH                     int
 	rnd                              *random.FibRandom
 	CARoomChance, CAConnectionChance int
-	layout                           *layout_generation.LayoutMap
+	layout                           *layout_generation2.LayoutMap
 }
 
 func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
@@ -22,7 +22,7 @@ func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
 }
 
 // roomSize is WITHOUT walls taken into account!
-func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation.LayoutMap, submapsDir string) {
+func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation2.LayoutMap, submapsDir string) {
 	ltl.layout = layout
 	ltl.parseSubmapsDir(submapsDir)
 	rw, rh := layout.GetSize()
@@ -76,7 +76,7 @@ func (ltl *LayoutToLevel) GetCharMapForLevel() *[][]rune {
 	return &rmap
 }
 
-func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation.LayoutMap) {
+func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation2.LayoutMap) {
 	rw, rh := layout.GetSize()
 	for lroomx := 0; lroomx < rw; lroomx++ {
 		for lroomy := 0; lroomy < rh; lroomy++ {
@@ -100,7 +100,7 @@ func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation.LayoutMap)
 	}
 }
 
-func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation.LayoutMap, doConnections, doRooms bool) {
+func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation2.LayoutMap, doConnections, doRooms bool) {
 	rw, rh := layout.GetSize()
 	for lroomx := 0; lroomx < rw; lroomx++ {
 		for lroomy := 0; lroomy < rh; lroomy++ {

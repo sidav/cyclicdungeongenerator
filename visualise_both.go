@@ -2,13 +2,13 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/layout_generation"
+	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
 	"cyclicdungeongenerator/random"
 	"fmt"
 )
 
 type visBoth struct {
-	currLayout       *layout_generation.LayoutMap
+	currLayout       *layout_generation2.LayoutMap
 	levelVis         tiledMapVisualiser
 	layoutVis        layoutVisualiser
 	currModeIsLayout bool // if false, curr mode is tiles
@@ -24,7 +24,7 @@ func (v *visBoth) do() {
 	key := "none"
 	desiredPatternNum := -1
 	randomPaths := true
-	parser := layout_generation.PatternParser{}
+	parser := layout_generation2.PatternParser{}
 	filenames := parser.ListPatternFilenamesInPath("patterns/")
 	v.levelVis.roomW = 5
 	v.levelVis.roomH = 5
@@ -34,7 +34,7 @@ func (v *visBoth) do() {
 	if desiredPatternNum != -1 {
 		pattNum = desiredPatternNum
 	}
-	gen := layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
+	gen := layout_generation2.InitCyclicGenerator(randomPaths, W, H, -1)
 	gen.TriesForPattern = v.flawsCritical
 	pattern := parser.ParsePatternFile(filenames[pattNum], true)
 	generatedMap, genRestarts := gen.GenerateLayout(pattern)
@@ -47,7 +47,7 @@ func (v *visBoth) do() {
 			if desiredPatternNum != -1 {
 				pattNum = desiredPatternNum
 			}
-			gen = layout_generation.InitCyclicGenerator(randomPaths, W, H, -1)
+			gen = layout_generation2.InitCyclicGenerator(randomPaths, W, H, -1)
 			gen.TriesForPattern = v.flawsCritical
 			pattern = parser.ParsePatternFile(filenames[pattNum], true)
 			generatedMap, genRestarts = gen.GenerateLayout(pattern)

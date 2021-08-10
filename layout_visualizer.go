@@ -2,7 +2,7 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/layout_generation"
+	"cyclicdungeongenerator/generators/layout_generation"
 	"fmt"
 )
 

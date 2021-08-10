@@ -1,7 +1,7 @@
 package layout_generation
 
 import (
-	rpath "cyclicdungeongenerator/layout_generation/pathfinder"
+	"cyclicdungeongenerator/generators/layout_generation/pathfinder"
 	"fmt"
 )
 
@@ -189,7 +189,7 @@ func (step *patternStep) execPlacePathFromTo(layout *LayoutMap) bool {
 			to := tos[(indTo + randomToIndex) % len(tos)]
 			fx, fy := from[0], from[1]
 			tx, ty := to[0], to[1]
-			path := rpath.FindPath(pmap, fx, fy, tx, ty, false, false, true)
+			path := pathfinder.FindPath(pmap, fx, fy, tx, ty, false, false, true)
 			if path == nil {
 				continue // try another coords
 			}

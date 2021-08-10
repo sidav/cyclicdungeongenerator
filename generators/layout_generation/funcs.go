@@ -8,5 +8,5 @@ func abs(x int) int {
 }
 
 func euclideanDistance(fx, fy, tx, ty int) int {
-	return abs(fx-tx)+abs(fy-ty)
+	return abs(fx-tx)+ abs(fy-ty)
 }
