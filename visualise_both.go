@@ -15,13 +15,17 @@ type visBoth struct {
 }
 
 func (v *visBoth) do() {
-	v.flawsCritical = 1000
-	v.maxDesiredFlaws = 100
 	rnd := random.FibRandom{}
 	rnd.InitBySeed(-1)
+
+	v.flawsCritical = 1000
+	v.maxDesiredFlaws = 100
+	genWrapper.TilingParams.ChanceToCaveAConnection = 85
+	genWrapper.TilingParams.ChanceToCaveARoom = 5
+
 	key := "none"
 	desiredPatternNum := -1
-	randomPaths := true
+	genWrapper.LayoutGenerationParams.RandomPaths = true
 	filenames := genWrapper.ListPatternFilenamesInPath("patterns/")
 	v.levelVis.roomW = 5
 	v.levelVis.roomH = 5
@@ -31,7 +35,7 @@ func (v *visBoth) do() {
 	if desiredPatternNum != -1 {
 		pattNum = desiredPatternNum
 	}
-	genWrapper.MaxGenerationTries = v.flawsCritical
+	genWrapper.LayoutGenerationParams.MaxGenerationTries = v.flawsCritical
 	generatedMap, genRestarts := genWrapper.GenerateLayout(W, H, filenames[pattNum])
 
 	for key != "ESCAPE" {
@@ -65,18 +69,18 @@ func (v *visBoth) do() {
 			if v.currModeIsLayout {
 				v.layoutVis.putMap(generatedMap)
 				v.layoutVis.putInfo(generatedMap, pattNum, desiredPatternNum, filenames[pattNum], "FIXME",
-					genRestarts, v.maxDesiredFlaws, randomPaths)
+					genRestarts, v.maxDesiredFlaws, genWrapper.LayoutGenerationParams.RandomPaths)
 			} else {
 				v.levelVis.convertLayoutToLevelAndDraw(&rnd, generatedMap)
 				v.levelVis.putInfo(generatedMap, pattNum, desiredPatternNum, filenames[pattNum], "FIXME",
-					genRestarts, v.maxDesiredFlaws, randomPaths)
+					genRestarts, v.maxDesiredFlaws, genWrapper.LayoutGenerationParams.RandomPaths)
 			}
 		}
 		cw.Flush_console()
 		key = cw.ReadKey()
 		switch key {
 		case "r", "UP":
-			randomPaths = !randomPaths
+			genWrapper.LayoutGenerationParams.RandomPaths = !genWrapper.LayoutGenerationParams.RandomPaths
 			reGenerate = true
 
 		case "TAB", "m":
