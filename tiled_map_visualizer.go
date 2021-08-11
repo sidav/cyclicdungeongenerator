@@ -16,7 +16,7 @@ type tiledMapVisualiser struct {
 
 func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, layout *layout_generation2.LayoutMap) {
 	cw.Clear_console()
-	tileMap := genWrapper.ConvertLayoutToTiledMap(rnd, layout, g.roomW, g.roomH)
+	tileMap := genWrapper.ConvertLayoutToTiledMap(rnd, layout, g.roomW, g.roomH, "generators/layout_to_tiled_map/submaps/")
 	g.drawLevel(&tileMap, 0, 0)
 	rw, rh := layout.GetSize()
 

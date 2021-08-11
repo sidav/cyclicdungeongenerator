@@ -24,7 +24,7 @@ func (ltl *LayoutToLevel) applySubmaps() {
 	// iterate through tags
 	for tag := range ltl.submaps {
 		totalSubmapUsesForTag := 0
-		maxTagUses := ltl.countTotalTagUsages(tag)
+		maxTagUses := ltl.countTotalTagUsagesInLayout(tag)
 
 		for tries := 0; tries < TRIES_FOR_SUBMAP_PLACEMENT; tries++ {
 			indexOffset := ltl.rnd.Rand(len(ltl.submaps[tag]))

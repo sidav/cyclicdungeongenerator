@@ -9,12 +9,15 @@ import (
 )
 
 func (ltl *LayoutToLevel) parseSubmapsDir(path string) {
-	ltl.parseSubmapsDirRecursively(path, "")
+	if path != "" {
+		ltl.parseSubmapsDirRecursively(path, "")
+	}
 }
 
 func (ltl *LayoutToLevel) parseSubmapsDirRecursively(path, tag string) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
+		return
 		log.Fatal(err)
 	}
 	for _, f := range files {

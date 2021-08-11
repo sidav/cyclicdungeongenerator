@@ -29,11 +29,11 @@ func (gw *GeneratorsWrapper) GenerateLayout(W, H int, patternFilename string) (*
 }
 
 func (gw *GeneratorsWrapper) ConvertLayoutToTiledMap(
-	rnd *random.FibRandom, layout *layout_generation.LayoutMap, roomW, roomH int) [][]layout_to_tiled_map.Tile {
+	rnd *random.FibRandom, layout *layout_generation.LayoutMap, roomW, roomH int, submapsDir string) [][]layout_to_tiled_map.Tile {
 	ltl := layout_to_tiled_map.LayoutToLevel{}
 	ltl.Init(rnd, roomW, roomH)
 	ltl.CAConnectionChance = gw.TilingParams.ChanceToCaveAConnection
 	ltl.CARoomChance = gw.TilingParams.ChanceToCaveARoom
-	ltl.ProcessLayout(layout, "generators/layout_to_tiled_map/submaps/")
+	ltl.ProcessLayout(layout, submapsDir)
 	return ltl.TileMap
 }

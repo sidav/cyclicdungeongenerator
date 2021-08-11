@@ -13,7 +13,7 @@ func (ltl *LayoutToLevel) getTagsForTileAtCoords(x, y int) string {
 	return elem.GetTags()
 }
 
-func (ltl *LayoutToLevel) countTotalTagUsages(tag string) int {
+func (ltl *LayoutToLevel) countTotalTagUsagesInLayout(tag string) int {
 	usages := 0
 	w, h := ltl.layout.GetSize()
 	for x := 0; x < w; x++ {
