@@ -1,11 +1,11 @@
-package layout_to_tiled_map
+package layout_tiler
 
 import (
 	"strconv"
 	"strings"
 )
 
-func (ltl *LayoutToLevel) getTagsForTileAtCoords(x, y int) string {
+func (ltl *LayoutTiler) getTagsForTileAtCoords(x, y int) string {
 	elem := ltl.layout.GetElement(x/(ltl.roomW+1), y/(ltl.roomH+1))
 	if !elem.IsNode() {
 		return ""
@@ -13,7 +13,7 @@ func (ltl *LayoutToLevel) getTagsForTileAtCoords(x, y int) string {
 	return elem.GetTags()
 }
 
-func (ltl *LayoutToLevel) countTotalTagUsagesInLayout(tag string) int {
+func (ltl *LayoutTiler) countTotalTagUsagesInLayout(tag string) int {
 	usages := 0
 	w, h := ltl.layout.GetSize()
 	for x := 0; x < w; x++ {
@@ -30,7 +30,7 @@ func (ltl *LayoutToLevel) countTotalTagUsagesInLayout(tag string) int {
 }
 
 // TODO: rewrite all the following func
-func (ltl *LayoutToLevel) isSpaceEvenlyTagged(xx, yy, w, h int, tag string) bool {
+func (ltl *LayoutTiler) isSpaceEvenlyTagged(xx, yy, w, h int, tag string) bool {
 	for x := xx; x < xx+w; x++ {
 		for y := yy; y < yy+h; y++ {
 			tileTag := ltl.getTagsForTileAtCoords(x, y)
@@ -45,7 +45,7 @@ func (ltl *LayoutToLevel) isSpaceEvenlyTagged(xx, yy, w, h int, tag string) bool
 	return true
 }
 
-func (ltl *LayoutToLevel) finishTagsRelatedStuff() {
+func (ltl *LayoutTiler) finishTagsRelatedStuff() {
 	// finalize keys: set lockId to key places
 	for x := 0; x < len(ltl.TileMap); x++ {
 		for y := 0; y < len(ltl.TileMap[0]); y++ {

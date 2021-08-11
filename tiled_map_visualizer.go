@@ -3,7 +3,7 @@ package main
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
 	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
-	"cyclicdungeongenerator/generators/layout_to_tiled_map"
+	"cyclicdungeongenerator/generators/layout_tiler"
 	"cyclicdungeongenerator/random"
 	"fmt"
 	"strconv"
@@ -16,7 +16,7 @@ type tiledMapVisualiser struct {
 
 func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, layout *layout_generation2.LayoutMap) {
 	cw.Clear_console()
-	tileMap := genWrapper.ConvertLayoutToTiledMap(rnd, layout, g.roomW, g.roomH, "generators/layout_to_tiled_map/submaps/")
+	tileMap := genWrapper.ConvertLayoutToTiledMap(rnd, layout, g.roomW, g.roomH, "generators/layout_tiler/submaps")
 	g.drawLevel(&tileMap, 0, 0)
 	rw, rh := layout.GetSize()
 
@@ -75,7 +75,7 @@ func (g *tiledMapVisualiser) putInfo(a *layout_generation2.LayoutMap, pattNum, d
 	}
 }
 
-func (g *tiledMapVisualiser) drawLevel(level *[][]layout_to_tiled_map.Tile, sx, sy int) {
+func (g *tiledMapVisualiser) drawLevel(level *[][]layout_tiler.Tile, sx, sy int) {
 	for x := 0; x < len(*level); x++ {
 		for y := 0; y < len((*level)[x]); y++ {
 			chr := (*level)[x][y].GetChar()
@@ -83,13 +83,13 @@ func (g *tiledMapVisualiser) drawLevel(level *[][]layout_to_tiled_map.Tile, sx, 
 
 			code := (*level)[x][y].Code
 			lockId := (*level)[x][y].LockId
-			if code == layout_to_tiled_map.TILE_DOOR {
+			if code == layout_tiler.TILE_DOOR {
 				if lockId != 0 {
 					chr = rune(strconv.Itoa(lockId)[0])
 					cw.SetColor(cw.BLACK, cw.DARK_MAGENTA)
 				}
 			}
-			if code == layout_to_tiled_map.TILE_KEY_PLACE {
+			if code == layout_tiler.TILE_KEY_PLACE {
 				chr = rune(strconv.Itoa(lockId)[0])
 				cw.SetColor(cw.DARK_MAGENTA, cw.BLACK)
 			}

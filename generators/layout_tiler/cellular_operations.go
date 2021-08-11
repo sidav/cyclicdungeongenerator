@@ -1,6 +1,6 @@
-package layout_to_tiled_map
+package layout_tiler
 
-func (ltl *LayoutToLevel) erodeWalls(fromx, fromy, tox, toy, iters, chancePerc int) {
+func (ltl *LayoutTiler) erodeWalls(fromx, fromy, tox, toy, iters, chancePerc int) {
 	var coordsToErode [][2]int
 	for i := 0; i < iters; i++ {
 		for x := fromx; x < tox; x++ {
@@ -28,7 +28,7 @@ func (ltl *LayoutToLevel) erodeWalls(fromx, fromy, tox, toy, iters, chancePerc i
 	}
 }
 
-func (ltl *LayoutToLevel) dilateWalls(fromx, fromy, tox, toy, iters, chancePerc int) {
+func (ltl *LayoutTiler) dilateWalls(fromx, fromy, tox, toy, iters, chancePerc int) {
 	var coords [][2]int
 	for i := 0; i < iters; i++ {
 		for x := fromx; x < tox; x++ {
@@ -56,7 +56,7 @@ func (ltl *LayoutToLevel) dilateWalls(fromx, fromy, tox, toy, iters, chancePerc 
 	}
 }
 
-func (ltl *LayoutToLevel) countDoorsNearby(xx, yy int) (int, int) {
+func (ltl *LayoutTiler) countDoorsNearby(xx, yy int) (int, int) {
 	countedPlus, countedCross := 0, 0
 	for x := -1; x <= 1; x++ {
 		for y := -1; y <= 1; y++ {
@@ -79,7 +79,7 @@ func (ltl *LayoutToLevel) countDoorsNearby(xx, yy int) (int, int) {
 	return countedPlus, countedCross
 }
 
-func (ltl *LayoutToLevel) countNeighbouring(xx, yy int, counts tileCode) (int, int) {
+func (ltl *LayoutTiler) countNeighbouring(xx, yy int, counts tileCode) (int, int) {
 	countedPlus, countedCross := 0, 0
 	for x := -1; x <= 1; x++ {
 		for y := -1; y <= 1; y++ {

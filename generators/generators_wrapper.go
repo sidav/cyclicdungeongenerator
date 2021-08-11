@@ -2,7 +2,7 @@ package generators
 
 import (
 	"cyclicdungeongenerator/generators/layout_generation"
-	"cyclicdungeongenerator/generators/layout_to_tiled_map"
+	"cyclicdungeongenerator/generators/layout_tiler"
 	"cyclicdungeongenerator/random"
 )
 
@@ -29,8 +29,8 @@ func (gw *GeneratorsWrapper) GenerateLayout(W, H int, patternFilename string) (*
 }
 
 func (gw *GeneratorsWrapper) ConvertLayoutToTiledMap(
-	rnd *random.FibRandom, layout *layout_generation.LayoutMap, roomW, roomH int, submapsDir string) [][]layout_to_tiled_map.Tile {
-	ltl := layout_to_tiled_map.LayoutToLevel{}
+	rnd *random.FibRandom, layout *layout_generation.LayoutMap, roomW, roomH int, submapsDir string) [][]layout_tiler.Tile {
+	ltl := layout_tiler.LayoutTiler{}
 	ltl.Init(rnd, roomW, roomH)
 	ltl.CAConnectionChance = gw.TilingParams.ChanceToCaveAConnection
 	ltl.CARoomChance = gw.TilingParams.ChanceToCaveARoom

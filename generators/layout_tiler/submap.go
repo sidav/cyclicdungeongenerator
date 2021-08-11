@@ -1,4 +1,4 @@
-package layout_to_tiled_map
+package layout_tiler
 
 type submap struct {
 	chars     [][]rune
@@ -19,7 +19,7 @@ func (sm *submap) rotate(times int) {
 	}
 }
 
-func (ltl *LayoutToLevel) applySubmaps() {
+func (ltl *LayoutTiler) applySubmaps() {
 	const TRIES_FOR_SUBMAP_PLACEMENT = 3
 	// iterate through tags
 	for tag := range ltl.submaps {
@@ -45,7 +45,7 @@ func (ltl *LayoutToLevel) applySubmaps() {
 	}
 }
 
-func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap, tag string) bool {
+func (ltl *LayoutTiler) applySubmapAtRandom(sm *submap, tag string) bool {
 	sm.rotate(ltl.rnd.Rand(4))
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	applicableCoords := make([][2]int, 0)
@@ -65,7 +65,7 @@ func (ltl *LayoutToLevel) applySubmapAtRandom(sm *submap, tag string) bool {
 	return false
 }
 
-func (ltl *LayoutToLevel) applySubmapAtCoords(sm *submap, xx, yy int) {
+func (ltl *LayoutTiler) applySubmapAtCoords(sm *submap, xx, yy int) {
 	smH, smW := len(sm.chars), len(sm.chars[0])
 	for x := 0; x < smW; x++ {
 		for y := 0; y < smH; y++ {
@@ -79,7 +79,7 @@ func (ltl *LayoutToLevel) applySubmapAtCoords(sm *submap, xx, yy int) {
 	}
 }
 
-func (ltl *LayoutToLevel) isSpaceEmpty(xx, yy, w, h int) bool {
+func (ltl *LayoutTiler) isSpaceEmpty(xx, yy, w, h int) bool {
 	for x := xx; x < xx+w; x++ {
 		for y := yy; y < yy+h; y++ {
 			if ltl.TileMap[x][y].Code != TILE_FLOOR {

@@ -1,4 +1,4 @@
-package layout_to_tiled_map
+package layout_tiler
 
 import "strconv"
 

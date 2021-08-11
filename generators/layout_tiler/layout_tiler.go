@@ -1,11 +1,11 @@
-package layout_to_tiled_map
+package layout_tiler
 
 import (
 	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
 	"cyclicdungeongenerator/random"
 )
 
-type LayoutToLevel struct {
+type LayoutTiler struct {
 	TileMap                          [][]Tile
 	submaps                          map[string][]submap
 	roomW, roomH                     int
@@ -14,7 +14,7 @@ type LayoutToLevel struct {
 	layout                           *layout_generation2.LayoutMap
 }
 
-func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
+func (ltl *LayoutTiler) Init(rnd *random.FibRandom, roomW, roomH int) {
 	ltl.rnd = rnd
 	ltl.roomW = roomW
 	ltl.roomH = roomH
@@ -22,7 +22,7 @@ func (ltl *LayoutToLevel) Init(rnd *random.FibRandom, roomW, roomH int) {
 }
 
 // roomSize is WITHOUT walls taken into account!
-func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation2.LayoutMap, submapsDir string) {
+func (ltl *LayoutTiler) ProcessLayout(layout *layout_generation2.LayoutMap, submapsDir string) {
 	ltl.layout = layout
 	ltl.parseSubmapsDir(submapsDir)
 	rw, rh := layout.GetSize()
@@ -61,7 +61,7 @@ func (ltl *LayoutToLevel) ProcessLayout(layout *layout_generation2.LayoutMap, su
 	// ltl.layout = nil // free memory
 }
 
-func (ltl *LayoutToLevel) GetCharMapForLevel() *[][]rune {
+func (ltl *LayoutTiler) GetCharMapForLevel() *[][]rune {
 	w, h := len(ltl.TileMap), len(ltl.TileMap[0])
 	rmap := make([][]rune, w)
 	for i := range rmap {
@@ -76,7 +76,7 @@ func (ltl *LayoutToLevel) GetCharMapForLevel() *[][]rune {
 	return &rmap
 }
 
-func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation2.LayoutMap) {
+func (ltl *LayoutTiler) iterateNodesForCA(layout *layout_generation2.LayoutMap) {
 	rw, rh := layout.GetSize()
 	for lroomx := 0; lroomx < rw; lroomx++ {
 		for lroomy := 0; lroomy < rh; lroomy++ {
@@ -100,7 +100,7 @@ func (ltl *LayoutToLevel) iterateNodesForCA(layout *layout_generation2.LayoutMap
 	}
 }
 
-func (ltl *LayoutToLevel) iterateNodes(layout *layout_generation2.LayoutMap, doConnections, doRooms bool) {
+func (ltl *LayoutTiler) iterateNodes(layout *layout_generation2.LayoutMap, doConnections, doRooms bool) {
 	rw, rh := layout.GetSize()
 	for lroomx := 0; lroomx < rw; lroomx++ {
 		for lroomy := 0; lroomy < rh; lroomy++ {

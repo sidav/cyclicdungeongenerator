@@ -1,4 +1,4 @@
-package layout_to_tiled_map
+package layout_tiler
 
 import (
 	"bufio"
@@ -8,13 +8,13 @@ import (
 	"strings"
 )
 
-func (ltl *LayoutToLevel) parseSubmapsDir(path string) {
+func (ltl *LayoutTiler) parseSubmapsDir(path string) {
 	if path != "" {
 		ltl.parseSubmapsDirRecursively(path, "")
 	}
 }
 
-func (ltl *LayoutToLevel) parseSubmapsDirRecursively(path, tag string) {
+func (ltl *LayoutTiler) parseSubmapsDirRecursively(path, tag string) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return
@@ -30,7 +30,7 @@ func (ltl *LayoutToLevel) parseSubmapsDirRecursively(path, tag string) {
 	}
 }
 
-func (ltl *LayoutToLevel) parseSubmapFile(filename, tag string) {
+func (ltl *LayoutTiler) parseSubmapFile(filename, tag string) {
 	file, _ := os.Open(filename)
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
