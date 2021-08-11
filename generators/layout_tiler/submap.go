@@ -39,6 +39,7 @@ func (ltl *LayoutTiler) applySubmaps() {
 				}
 				if placed {
 					totalSubmapUsesForTag++
+					ltl.increaseTagUsages(tag)
 				}
 			}
 		}

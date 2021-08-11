@@ -32,6 +32,11 @@ func (gw *GeneratorsWrapper) ConvertLayoutToTiledMap(
 	rnd *random.FibRandom, layout *layout_generation.LayoutMap, roomW, roomH int, submapsDir string) [][]layout_tiler.Tile {
 	ltl := layout_tiler.LayoutTiler{}
 	ltl.Init(rnd, roomW, roomH)
+
+	ltl.TagForEntry = "start"
+	ltl.TagForExit = "finish"
+	ltl.TagsForKeys = []string {"ky1", "ky2", "ky3"}
+
 	ltl.CAConnectionChance = gw.TilingParams.ChanceToCaveAConnection
 	ltl.CARoomChance = gw.TilingParams.ChanceToCaveARoom
 	ltl.ProcessLayout(layout, submapsDir)

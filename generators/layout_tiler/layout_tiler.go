@@ -7,21 +7,28 @@ import (
 
 type LayoutTiler struct {
 	TileMap                          [][]Tile
-	submaps                          map[string][]submap
-	roomW, roomH                     int
-	rnd                              *random.FibRandom
 	CARoomChance, CAConnectionChance int
-	layout                           *layout_generation2.LayoutMap
+	// non-necessary vars, useful only in absence of keymaps:
+	TagForEntry, TagForExit string
+	TagsForKeys             []string
+
+	// private
+	submaps      map[string][]submap
+	tagUsages    map[string]int
+	roomW, roomH int
+	rnd          *random.FibRandom
+	layout       *layout_generation2.LayoutMap
 }
 
 func (ltl *LayoutTiler) Init(rnd *random.FibRandom, roomW, roomH int) {
+	// roomW and roomH are WITHOUT walls taken into account!
 	ltl.rnd = rnd
 	ltl.roomW = roomW
 	ltl.roomH = roomH
 	ltl.submaps = make(map[string][]submap)
+	ltl.tagUsages = make(map[string]int)
 }
 
-// roomSize is WITHOUT walls taken into account!
 func (ltl *LayoutTiler) ProcessLayout(layout *layout_generation2.LayoutMap, submapsDir string) {
 	ltl.layout = layout
 	ltl.parseSubmapsDir(submapsDir)
