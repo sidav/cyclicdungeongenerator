@@ -1,7 +1,7 @@
 package layout_tiler
 
 import (
-	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
+	layout_generation2 "cyclicdungeongenerator/generator/layout_generation"
 	"cyclicdungeongenerator/random"
 )
 

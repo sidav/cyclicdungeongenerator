@@ -2,7 +2,7 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/generators"
+	"cyclicdungeongenerator/generator"
 	"fmt"
 )
 
@@ -17,11 +17,11 @@ func (l *layoutVisualiser) putCharArray(x, y int, c *[][]rune) {
 	}
 }
 
-func (l *layoutVisualiser) putMap(a generators.LayoutInterface) {
+func (l *layoutVisualiser) putMap(a generator.LayoutInterface) {
 	l.putCharArray(0, 0, a.WholeMapToCharArray())
 }
 
-func (l *layoutVisualiser) putInfo(a generators.LayoutInterface, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
+func (l *layoutVisualiser) putInfo(a generator.LayoutInterface, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {

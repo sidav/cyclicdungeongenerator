@@ -1,6 +1,6 @@
-package generators
+package generator
 
-import "cyclicdungeongenerator/generators/layout_generation"
+import "cyclicdungeongenerator/generator/layout_generation"
 
 type layoutGenerationAttributes struct {
 	LastGeneratedPatternName, LastGeneratedPatternFilename string

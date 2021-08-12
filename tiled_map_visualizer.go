@@ -2,8 +2,8 @@ package main
 
 import (
 	cw "cyclicdungeongenerator/console_wrapper"
-	layout_generation2 "cyclicdungeongenerator/generators/layout_generation"
-	"cyclicdungeongenerator/generators/layout_tiler"
+	"cyclicdungeongenerator/generator/layout_generation"
+	"cyclicdungeongenerator/generator/layout_tiler"
 	"cyclicdungeongenerator/random"
 	"fmt"
 	"strconv"
@@ -14,9 +14,9 @@ type tiledMapVisualiser struct {
 	drawRoomNames, drawRoomTags bool
 }
 
-func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, layout *layout_generation2.LayoutMap) {
+func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, layout *layout_generation.LayoutMap) {
 	cw.Clear_console()
-	tileMap := genWrapper.ConvertLayoutToTiledMap(rnd, layout, g.roomW, g.roomH, "generators/layout_tiler/submaps")
+	tileMap := genWrapper.ConvertLayoutToTiledMap(rnd, layout, g.roomW, g.roomH, "generator/layout_tiler/submaps")
 	g.drawLevel(&tileMap, 0, 0)
 	rw, rh := layout.GetSize()
 
@@ -47,7 +47,7 @@ func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, 
 	}
 }
 
-func (g *tiledMapVisualiser) putInfo(a *layout_generation2.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
+func (g *tiledMapVisualiser) putInfo(a *layout_generation.LayoutMap, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {
 	sx, sy := a.GetSize()
 	for y := 0; y < sy; y++ {
 		for x := 0; x < sx; x++ {

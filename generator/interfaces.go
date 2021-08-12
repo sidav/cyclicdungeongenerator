@@ -1,4 +1,4 @@
-package generators
+package generator
 
 type LayoutInterface interface {
 	WholeMapToCharArray() *[][]rune

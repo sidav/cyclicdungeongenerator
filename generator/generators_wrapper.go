@@ -1,18 +1,18 @@
-package generators
+package generator
 
 import (
-	"cyclicdungeongenerator/generators/layout_generation"
-	"cyclicdungeongenerator/generators/layout_tiler"
+	"cyclicdungeongenerator/generator/layout_generation"
+	"cyclicdungeongenerator/generator/layout_tiler"
 	"cyclicdungeongenerator/random"
 )
 
-type GeneratorsWrapper struct {
+type CyclicDungeonGenerator struct {
 	LayoutGenerationParams layoutGenerationAttributes
 	TilingParams           layoutTilingAttributes
 }
 
-func InitGeneratorsWrapper() *GeneratorsWrapper {
-	gw := &GeneratorsWrapper{
+func InitGeneratorsWrapper() *CyclicDungeonGenerator {
+	gw := &CyclicDungeonGenerator{
 		LayoutGenerationParams: layoutGenerationAttributes{
 			LastGeneratedPatternName:     "",
 			LastGeneratedPatternFilename: "",
@@ -31,18 +31,18 @@ func InitGeneratorsWrapper() *GeneratorsWrapper {
 	return gw
 }
 
-func (gw *GeneratorsWrapper) ListPatternFilenamesInPath(path string) []string {
+func (gw *CyclicDungeonGenerator) ListPatternFilenamesInPath(path string) []string {
 	return gw.LayoutGenerationParams.patternParser.ListPatternFilenamesInPath(path)
 }
 
-func (gw *GeneratorsWrapper) GenerateLayout(W, H int, patternFilename string) (*layout_generation.LayoutMap, int) {
+func (gw *CyclicDungeonGenerator) GenerateLayout(W, H int, patternFilename string) (*layout_generation.LayoutMap, int) {
 	gen := layout_generation.InitCyclicGenerator(gw.LayoutGenerationParams.RandomPaths, W, H, -1)
 	gen.TriesForPattern = gw.LayoutGenerationParams.MaxGenerationTries
 	pattern := gw.LayoutGenerationParams.patternParser.ParsePatternFile(patternFilename, true)
 	return gen.GenerateLayout(pattern)
 }
 
-func (gw *GeneratorsWrapper) ConvertLayoutToTiledMap(
+func (gw *CyclicDungeonGenerator) ConvertLayoutToTiledMap(
 	rnd *random.FibRandom, layout *layout_generation.LayoutMap, roomW, roomH int, submapsDir string) [][]layout_tiler.Tile {
 
 	ltl := layout_tiler.LayoutTiler{
@@ -59,7 +59,7 @@ func (gw *GeneratorsWrapper) ConvertLayoutToTiledMap(
 	return ltl.TileMap
 }
 
-func (gw *GeneratorsWrapper) GenerateTiledMapFromPattern(
+func (gw *CyclicDungeonGenerator) GenerateTiledMapFromPattern(
 	patternFilename string, w, h, roomW, roomH int, submapsDir string, randomSeed int) [][]layout_tiler.Tile {
 
 	layout, _ := gw.GenerateLayout(w, h, patternFilename)
