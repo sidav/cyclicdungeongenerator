@@ -58,3 +58,12 @@ func (gw *GeneratorsWrapper) ConvertLayoutToTiledMap(
 	ltl.ProcessLayout(layout, submapsDir)
 	return ltl.TileMap
 }
+
+func (gw *GeneratorsWrapper) GenerateTiledMapFromPattern(
+	patternFilename string, w, h, roomW, roomH int, submapsDir string, randomSeed int) [][]layout_tiler.Tile {
+
+	layout, _ := gw.GenerateLayout(w, h, patternFilename)
+	rnd := &random.FibRandom{}
+	rnd.InitBySeed(randomSeed)
+	return gw.ConvertLayoutToTiledMap(rnd, layout, roomW, roomH, submapsDir)
+}
