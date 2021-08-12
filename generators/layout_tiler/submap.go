@@ -26,6 +26,10 @@ func (ltl *LayoutTiler) applySubmaps() {
 		totalSubmapUsesForTag := 0
 		maxTagUses := ltl.countTotalTagUsagesInLayout(tag)
 
+		if ltl.rnd.RandomPercent() > ltl.ChanceToUseSubmapForTag {
+			continue
+		}
+
 		for tries := 0; tries < TRIES_FOR_SUBMAP_PLACEMENT; tries++ {
 			indexOffset := ltl.rnd.Rand(len(ltl.submaps[tag]))
 			for i := range ltl.submaps[tag] {

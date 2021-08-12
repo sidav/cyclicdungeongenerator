@@ -12,7 +12,21 @@ type GeneratorsWrapper struct {
 }
 
 func InitGeneratorsWrapper() *GeneratorsWrapper {
-	gw := &GeneratorsWrapper{}
+	gw := &GeneratorsWrapper{
+		LayoutGenerationParams: layoutGenerationAttributes{
+			LastGeneratedPatternName:     "",
+			LastGeneratedPatternFilename: "",
+			RandomPaths:                  true,
+			MaxGenerationTries:           1000,
+			patternParser:                layout_generation.PatternParser{},
+		},
+		TilingParams:           layoutTilingAttributes{
+			ChanceToCaveAConnection:  85,
+			ChanceToCaveARoom:        5,
+			ChanceToUseSubmapForTag:  100,
+			ChanceOfDoorDisplacement: 100,
+		},
+	}
 	gw.LayoutGenerationParams.patternParser = layout_generation.PatternParser{}
 	return gw
 }
@@ -30,15 +44,17 @@ func (gw *GeneratorsWrapper) GenerateLayout(W, H int, patternFilename string) (*
 
 func (gw *GeneratorsWrapper) ConvertLayoutToTiledMap(
 	rnd *random.FibRandom, layout *layout_generation.LayoutMap, roomW, roomH int, submapsDir string) [][]layout_tiler.Tile {
-	ltl := layout_tiler.LayoutTiler{}
+
+	ltl := layout_tiler.LayoutTiler{
+		ChanceToCaveARoom:        gw.TilingParams.ChanceToCaveARoom,
+		ChanceToCaveAConnection:  gw.TilingParams.ChanceToCaveAConnection,
+		ChanceToUseSubmapForTag:  gw.TilingParams.ChanceToUseSubmapForTag,
+		ChanceOfDoorDisplacement: gw.TilingParams.ChanceOfDoorDisplacement,
+		TagForEntry:              "start",
+		TagForExit:               "finish",
+		TagsForKeys:              []string {"ky1", "ky2", "ky3"},
+	}
 	ltl.Init(rnd, roomW, roomH)
-
-	ltl.TagForEntry = "start"
-	ltl.TagForExit = "finish"
-	ltl.TagsForKeys = []string {"ky1", "ky2", "ky3"}
-
-	ltl.CAConnectionChance = gw.TilingParams.ChanceToCaveAConnection
-	ltl.CARoomChance = gw.TilingParams.ChanceToCaveARoom
 	ltl.ProcessLayout(layout, submapsDir)
 	return ltl.TileMap
 }

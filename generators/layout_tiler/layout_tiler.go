@@ -6,8 +6,9 @@ import (
 )
 
 type LayoutTiler struct {
-	TileMap                          [][]Tile
-	CARoomChance, CAConnectionChance int
+	TileMap                                           [][]Tile
+	ChanceToCaveARoom, ChanceToCaveAConnection        int
+	ChanceToUseSubmapForTag, ChanceOfDoorDisplacement int
 	// non-necessary vars, useful only in absence of keymaps:
 	TagForEntry, TagForExit string
 	TagsForKeys             []string
@@ -92,13 +93,13 @@ func (ltl *LayoutTiler) iterateNodesForCA(layout *layout_generation2.LayoutMap) 
 			fromy := lroomy * (ltl.roomH + 1)
 			toy := (lroomy + 1) * (ltl.roomH + 1)
 			// rooms
-			if layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.CARoomChance {
+			if layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.ChanceToCaveARoom {
 				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 20)
 				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 20)
 				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0) // cleanup for better passability
 			}
 			// connections
-			if !layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.CAConnectionChance {
+			if !layout.GetElement(lroomx, lroomy).IsNode() && ltl.rnd.RandomPercent() <= ltl.ChanceToCaveAConnection {
 				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 40)
 				ltl.erodeWalls(fromx, fromy, tox, toy, 1, 35)
 				ltl.dilateWalls(fromx, fromy, tox, toy, 1, 0) // cleanup for better passability
@@ -159,19 +160,21 @@ func (ltl *LayoutTiler) iterateNodes(layout *layout_generation2.LayoutMap, doCon
 					// randomly displace center for creating random door offset
 					centerXoff := centerX
 					centerYoff := centerY
-					evenWAddition := 0
-					evenHAddition := 0
-					// for dealing with wrong doors placement for non-odd room sizes.
-					if ltl.roomW%2 == 0 {
-						evenWAddition = 1
-					}
-					if ltl.roomH%2 == 0 {
-						evenHAddition = 1
-					}
-					if cx == 0 { // horiz
-						centerXoff = centerX + ltl.rnd.RandInRange(-ltl.roomW/2+evenWAddition, ltl.roomW/2)
-					} else { // ver
-						centerYoff = centerY + ltl.rnd.RandInRange(-ltl.roomH/2+evenHAddition, ltl.roomH/2)
+					if ltl.rnd.RandomPercent() <= ltl.ChanceOfDoorDisplacement {
+						evenWAddition := 0
+						evenHAddition := 0
+						// for dealing with wrong doors placement for non-odd room sizes.
+						if ltl.roomW%2 == 0 {
+							evenWAddition = 1
+						}
+						if ltl.roomH%2 == 0 {
+							evenHAddition = 1
+						}
+						if cx == 0 { // horiz
+							centerXoff = centerX + ltl.rnd.RandInRange(-ltl.roomW/2+evenWAddition, ltl.roomW/2)
+						} else { // ver
+							centerYoff = centerY + ltl.rnd.RandInRange(-ltl.roomH/2+evenHAddition, ltl.roomH/2)
+						}
 					}
 					// for dealing with wrong doors placement for non-odd room sizes.
 					if ltl.roomW%2 == 0 && cx > 0 {

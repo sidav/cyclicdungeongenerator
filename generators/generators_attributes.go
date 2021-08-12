@@ -11,4 +11,5 @@ type layoutGenerationAttributes struct {
 
 type layoutTilingAttributes struct {
 	ChanceToCaveAConnection, ChanceToCaveARoom int
+	ChanceToUseSubmapForTag, ChanceOfDoorDisplacement int
 }
