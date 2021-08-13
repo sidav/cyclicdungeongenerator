@@ -1,8 +1,8 @@
 package layout_tiler
 
 import (
-	layout_generation2 "cyclicdungeongenerator/generator/layout_generation"
-	"cyclicdungeongenerator/random"
+	layout_generation2 "github.com/sidav/cyclicdungeongenerator/generator/layout_generation"
+	"github.com/sidav/cyclicdungeongenerator/random"
 )
 
 type LayoutTiler struct {

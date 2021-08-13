@@ -1,9 +1,9 @@
 package generator
 
 import (
-	"cyclicdungeongenerator/generator/layout_generation"
-	"cyclicdungeongenerator/generator/layout_tiler"
-	"cyclicdungeongenerator/random"
+	"github.com/sidav/cyclicdungeongenerator/generator/layout_generation"
+	"github.com/sidav/cyclicdungeongenerator/generator/layout_tiler"
+	"github.com/sidav/cyclicdungeongenerator/random"
 )
 
 type CyclicDungeonGenerator struct {

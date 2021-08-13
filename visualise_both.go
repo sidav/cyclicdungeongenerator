@@ -1,8 +1,8 @@
 package main
 
 import (
-	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/random"
+	cw "github.com/sidav/cyclicdungeongenerator/console_wrapper"
+	"github.com/sidav/cyclicdungeongenerator/random"
 	"fmt"
 )
 

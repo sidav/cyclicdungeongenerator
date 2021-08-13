@@ -1,7 +1,7 @@
 package layout_generation
 
 import (
-	"cyclicdungeongenerator/generator/layout_generation/pathfinder"
+	"github.com/sidav/cyclicdungeongenerator/generator/layout_generation/pathfinder"
 	"fmt"
 )
 

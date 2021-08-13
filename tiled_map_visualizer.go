@@ -1,11 +1,11 @@
 package main
 
 import (
-	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/generator/layout_generation"
-	"cyclicdungeongenerator/generator/layout_tiler"
-	"cyclicdungeongenerator/random"
 	"fmt"
+	cw "github.com/sidav/cyclicdungeongenerator/console_wrapper"
+	"github.com/sidav/cyclicdungeongenerator/generator/layout_generation"
+	"github.com/sidav/cyclicdungeongenerator/generator/layout_tiler"
+	"github.com/sidav/cyclicdungeongenerator/random"
 	"strconv"
 )
 

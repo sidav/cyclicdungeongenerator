@@ -1,7 +1,7 @@
 package layout_generation
 
 import (
-	"cyclicdungeongenerator/random"
+	"github.com/sidav/cyclicdungeongenerator/random"
 )
 
 type CyclicGenerator struct {

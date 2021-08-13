@@ -1,9 +1,9 @@
 package main
 
 import (
-	cw "cyclicdungeongenerator/console_wrapper"
-	"cyclicdungeongenerator/generator"
-	"cyclicdungeongenerator/generator/layout_generation"
+	cw "github.com/sidav/cyclicdungeongenerator/console_wrapper"
+	"github.com/sidav/cyclicdungeongenerator/generator"
+	"github.com/sidav/cyclicdungeongenerator/generator/layout_generation"
 	"fmt"
 	"os"
 	"strconv"
