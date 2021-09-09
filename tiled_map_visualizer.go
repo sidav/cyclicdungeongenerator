@@ -36,9 +36,13 @@ func (g *tiledMapVisualiser) convertLayoutToLevelAndDraw(rnd *random.FibRandom, 
 						}
 						if g.drawRoomTags {
 							tags := node.GetTags()
+							tagString := ""
+							for _, tag := range tags {
+								tagString += tag
+							}
 							strlen := len(tags)
 							offset := (g.roomW+1)/2 - strlen/2
-							cw.PutString(tags, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2+1)
+							cw.PutString(tagString, rx*(g.roomW+1)+offset, ry*(g.roomH+1)+(g.roomH+1)/2+1)
 						}
 					}
 				}

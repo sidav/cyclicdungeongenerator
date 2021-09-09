@@ -1,8 +1,8 @@
 package layout_generation
 
 import (
-	"github.com/sidav/cyclicdungeongenerator/generator/layout_generation/pathfinder"
 	"fmt"
+	"github.com/sidav/cyclicdungeongenerator/generator/layout_generation/pathfinder"
 )
 
 //ACTION_PLACE_NODE_AT_PATH     = iota
@@ -237,7 +237,7 @@ func (step *patternStep) execSetNodeTags(layout *LayoutMap) bool {
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
 				elem := layout.GetElement(x, y)
-				if elem.IsNode() && elem.nodeInfo.nodeTag == "" {
+				if elem.IsNode() && elem.HasNoTags() {
 					suitableCoords = append(suitableCoords, [2]int{x, y})
 				}
 			}

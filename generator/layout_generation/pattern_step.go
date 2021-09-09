@@ -27,7 +27,7 @@ type patternStep struct {
 	obstacleRadius               int    // for centered non-random obstacle
 	pathNumber                   int    // for... path numbering, I guess o_O
 	allowPlaceNearNode           bool   // for ACTION_PLACE_NODE_NEAR_PATH
-	tags                         string // for ACTION_SET_NODE_TAGS
+	tags                         []string // for ACTION_SET_NODE_TAGS
 	lockNumber                   int    // for various locks
 	allowCrossPaths              bool   // for allowing the new path to cross already existing one
 	instructionText              string // is written only if the parser is set so

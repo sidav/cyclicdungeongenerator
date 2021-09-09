@@ -20,7 +20,7 @@ func (sm *submap) rotate(times int) {
 }
 
 func (ltl *LayoutTiler) applySubmaps() {
-	const TRIES_FOR_SUBMAP_PLACEMENT = 3
+	const TRIES_FOR_SUBMAP_PLACEMENT = 5
 	// iterate through tags
 	for tag := range ltl.submaps {
 		totalSubmapUsesForTag := 0

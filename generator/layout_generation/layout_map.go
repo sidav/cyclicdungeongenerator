@@ -43,21 +43,23 @@ func (lm *LayoutMap) randomizeTagLocationsPerNode() {
 						continue
 					}
 				}
-				tag := ""
+				var tags []string
 				nodesWithName := lm.getAllCoordsOfNode(name)
 				// clear the tag from everything
 				for _, n := range nodesWithName {
 					nde := lm.elements[n[0]][n[1]]
-					if tag == "" {
-						tag = nde.nodeInfo.nodeTag
-						nde.nodeInfo.nodeTag = ""
+					if len(tags) == 0 {
+						tags = nde.nodeInfo.nodeTags
+						nde.nodeInfo.nodeTags = []string{}
 					}
 				}
-				// assign the tag to random node of list
-				randNodeIndex := lm.rnd.Rand(len(nodesWithName))
-				i, j := nodesWithName[randNodeIndex][0], nodesWithName[randNodeIndex][1]
-				lm.elements[i][j].nodeInfo.nodeTag = tag
-				alreadyCheckedNodes = append(alreadyCheckedNodes, name)
+				// assign the tags to random nodes of list
+				for _, tag := range tags {
+					randNodeIndex := lm.rnd.Rand(len(nodesWithName))
+					i, j := nodesWithName[randNodeIndex][0], nodesWithName[randNodeIndex][1]
+					lm.elements[i][j].nodeInfo.nodeTags = append(lm.elements[i][j].nodeInfo.nodeTags, tag)
+					alreadyCheckedNodes = append(alreadyCheckedNodes, name)
+				}
 			}
 		}
 	}

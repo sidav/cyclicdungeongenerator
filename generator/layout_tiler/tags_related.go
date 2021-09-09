@@ -5,12 +5,41 @@ import (
 	"strings"
 )
 
-func (ltl *LayoutTiler) getLayoutTagsForTileAtCoords(x, y int) string {
+func (ltl *LayoutTiler) getLayoutTagsForTileAtCoords(x, y int) []string {
 	elem := ltl.layout.GetElement(x/(ltl.roomW+1), y/(ltl.roomH+1))
 	if !elem.IsNode() {
-		return ""
+		return []string{}
 	}
 	return elem.GetTags()
+}
+
+func (ltl *LayoutTiler) isTagUsedAtcoords(tag string, x, y int) bool {
+	elem := ltl.layout.GetElement(x/(ltl.roomW+1), y/(ltl.roomH+1))
+	if !elem.IsNode() {
+		return tag == ""
+	}
+	tags := elem.GetTags()
+	if len(tags) == 0 && tag == "" {
+		return true 
+	}
+	for _, t := range tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+func (ltl *LayoutTiler) getLockIdForTileAtCoords(x, y int) int {
+	tags := ltl.getLayoutTagsForTileAtCoords(x, y)
+	for _, tag := range tags {
+		lockid, err := strconv.Atoi(strings.Replace(tag, "ky", "", -1))
+		if err != nil {
+			lockid, _ = strconv.Atoi(strings.Replace(tag, "key", "", -1))
+		}
+		return lockid
+	}
+	return 0
 }
 
 func (ltl *LayoutTiler) countTotalTagUsagesInLayout(tag string) int {
@@ -20,8 +49,11 @@ func (ltl *LayoutTiler) countTotalTagUsagesInLayout(tag string) int {
 		for y := 0; y < h; y++ {
 			elem := ltl.layout.GetElement(x, y)
 			if elem.IsNode() {
-				if strings.Contains(elem.GetTags(), tag) {
-					usages++
+				tagsOfElem := elem.GetTags()
+				for _, t := range tagsOfElem {
+					if strings.Contains(t, tag) {
+						usages++
+					}
 				}
 			}
 		}
@@ -53,7 +85,7 @@ func (ltl *LayoutTiler) getRandomFloorTileWithTag(tag string) *Tile {
 	tiles := make([]*Tile, 0)
 	for x := range ltl.TileMap {
 		for y := range ltl.TileMap[x] {
-			if ltl.TileMap[x][y].Code == TILE_FLOOR && ltl.getLayoutTagsForTileAtCoords(x, y) == tag {
+			if ltl.TileMap[x][y].Code == TILE_FLOOR && ltl.isTagUsedAtcoords(tag, x, y) {
 				tiles = append(tiles, &ltl.TileMap[x][y])
 			}
 		}
@@ -69,10 +101,10 @@ func (ltl *LayoutTiler) isSpaceEvenlyTagged(xx, yy, w, h int, tag string) bool {
 	for x := xx; x < xx+w; x++ {
 		for y := yy; y < yy+h; y++ {
 			tileTag := ltl.getLayoutTagsForTileAtCoords(x, y)
-			if tileTag != "" && tag == "" {
+			if len(tileTag) > 0 && tag == "" {
 				return false
 			}
-			if !strings.Contains(tileTag, tag) {
+			if !ltl.isTagUsedAtcoords(tag, x, y) { // strings.Contains(tileTag, tag) {
 				return false
 			}
 		}
@@ -86,8 +118,7 @@ func (ltl *LayoutTiler) finishTagsRelatedStuff() {
 		for y := 0; y < len(ltl.TileMap[0]); y++ {
 			if ltl.TileMap[x][y].Code == TILE_KEY_PLACE {
 				// TODO: consider multiple tags
-				lockID, _ := strconv.Atoi(strings.Replace(ltl.getLayoutTagsForTileAtCoords(x, y), "ky", "", -1))
-				ltl.TileMap[x][y].LockId = lockID
+				ltl.TileMap[x][y].LockId = ltl.getLockIdForTileAtCoords(x, y)
 			}
 		}
 	}

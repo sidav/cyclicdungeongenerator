@@ -77,10 +77,21 @@ func (lm *LayoutMap) CellToCharArray(cellx, celly int) [][]rune {
 		if e.pathInfo != nil {
 			ca[2][1] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
 		}
-		if len(e.nodeInfo.nodeTag) >= 3 {
-			ca[1][3] = rune(e.nodeInfo.nodeTag[0])
-			ca[2][3] = rune(e.nodeInfo.nodeTag[1])
-			ca[3][3] = rune(e.nodeInfo.nodeTag[2])
+		switch len(e.nodeInfo.nodeTags) {
+		case 1:
+			if len(e.nodeInfo.nodeTags[0]) > 2 {
+				ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
+				ca[2][3] = rune(e.nodeInfo.nodeTags[0][1])
+				ca[3][3] = rune(e.nodeInfo.nodeTags[0][2])
+			}
+		case 2:
+			ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
+			ca[2][3] = '-'
+			ca[3][3] = rune(e.nodeInfo.nodeTags[1][0])
+		case 3:
+			ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
+			ca[2][3] = rune(e.nodeInfo.nodeTags[1][0])
+			ca[3][3] = rune(e.nodeInfo.nodeTags[2][0])
 		}
 		// draw path cell
 	} else if e.pathInfo != nil {

@@ -73,8 +73,21 @@ func (e *element) GetName() string {
 	return e.nodeInfo.nodeName
 }
 
-func (e *element) GetTags() string {
-	return e.nodeInfo.nodeTag
+func (e *element) GetTags() []string {
+	return e.nodeInfo.nodeTags
+}
+
+func (e *element) HasNoTags() bool {
+	return len(e.nodeInfo.nodeTags) == 0
+}
+
+func (e *element) HasTag(tag string) bool {
+	for _, t := range e.nodeInfo.nodeTags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
 }
 
 func (e *element) GetAllConnectionsCoords() [][]int {

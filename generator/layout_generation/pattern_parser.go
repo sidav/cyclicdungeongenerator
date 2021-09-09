@@ -81,7 +81,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			fromY:             pp.getIntAfterIdentifier("FY"),
 			toX:               pp.getIntAfterIdentifier("TX"),
 			toY:               pp.getIntAfterIdentifier("TY"),
-			tags:              pp.getStringAfterIdentifier("TAGS"),
+			tags:              pp.getSliceOfAllStringsAfterIdentifier("TAGS"),
 		}
 	case "PLACEPATH": // PLACEPATH PATHID id FROM fromname TO toname
 		return &patternStep{
@@ -113,7 +113,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countFrom:         pp.getIntAfterIdentifier("MIN"),
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
-			tags:              pp.getStringAfterIdentifier("TAGS"),
+			tags:              pp.getSliceOfAllStringsAfterIdentifier("TAGS"),
 		}
 	case "PLACEROOMATPATH": // PLACEROOMATPATH PATHID id ROOMNAME newroomname TAGS tag
 		return &patternStep{
@@ -126,7 +126,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countFrom:         pp.getIntAfterIdentifier("MIN"),
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
-			tags:              pp.getStringAfterIdentifier("TAGS"),
+			tags:              pp.getSliceOfAllStringsAfterIdentifier("TAGS"),
 		}
 	case "LOCKROOM": // LOCKROOM PATHID id ROOMNAME roomname LOCKID lockid
 		return &patternStep{
@@ -157,7 +157,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
-			tags:              pp.getStringAfterIdentifier("TAGS"),
+			tags:              pp.getSliceOfAllStringsAfterIdentifier("TAGS"),
 		}
 	case "PLACEOBSTACLE": // PLACEOBSTACLE FROMX x FROMY y TOX tx TY ty
 		return &patternStep{
@@ -170,7 +170,7 @@ func (pp *PatternParser) parseLineToInstruction(line string) *patternStep {
 			countTo:           pp.getIntAfterIdentifier("MAX"),
 			pathNumber:        pp.getIntAfterIdentifier("PATHID"),
 			lockNumber:        pp.getIntAfterIdentifier("LOCKID"),
-			tags:              pp.getStringAfterIdentifier("TAGS"),
+			tags:              pp.getSliceOfAllStringsAfterIdentifier("TAGS"),
 			fromX:             pp.getIntAfterIdentifier("FX"),
 			fromY:             pp.getIntAfterIdentifier("FY"),
 			toX:               pp.getIntAfterIdentifier("TX"),
@@ -196,6 +196,18 @@ func (pp *PatternParser) getStringAfterIdentifier(ident string) string {
 		}
 	}
 	return ""
+}
+
+func (pp *PatternParser) getSliceOfAllStringsAfterIdentifier(ident string) []string {
+	for i := range pp.currentSplitLine {
+		if i > 0 {
+			str := strings.Replace(strings.ToUpper(pp.currentSplitLine[i-1]), "_", "", -1)
+			if str == ident {
+				return pp.currentSplitLine[i:]
+			}
+		}
+	}
+	return []string{}
 }
 
 func (pp *PatternParser) getIntAfterIdentifier(ident string) int {
