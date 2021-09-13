@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	cw "github.com/sidav/cyclicdungeongenerator/console_wrapper"
 	"github.com/sidav/cyclicdungeongenerator/generator"
-	"fmt"
 )
 
 type layoutVisualiser struct{}
@@ -18,7 +18,7 @@ func (l *layoutVisualiser) putCharArray(x, y int, c *[][]rune) {
 }
 
 func (l *layoutVisualiser) putMap(a generator.LayoutInterface) {
-	l.putCharArray(0, 0, a.WholeMapToCharArray())
+	l.putCharArray(0, 0, a.WholeMapToCharArray(false))
 }
 
 func (l *layoutVisualiser) putInfo(a generator.LayoutInterface, pattNum, desiredPNum int, fName, pName string, restarts, maxDesiredRestarts int, rand bool) {

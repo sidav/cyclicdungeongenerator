@@ -1,7 +1,7 @@
 package generator
 
 type LayoutInterface interface {
-	WholeMapToCharArray() *[][]rune
+	WholeMapToCharArray(bool) *[][]rune
 	GetSize() (int, int)
 	GetCharOfElementAtCoords(int, int) rune
 }
