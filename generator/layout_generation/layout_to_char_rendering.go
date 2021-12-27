@@ -7,7 +7,7 @@ import "strconv"
 func (lm *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for rendering
 	elem := lm.elements[x][y]
 	// rune := '?'
-	if elem.isEmpty() {
+	if elem.IsEmpty() {
 		return '.'
 	}
 	if elem.isObstacle {

@@ -2,7 +2,7 @@ package layout_generation
 
 import "fmt"
 
-type element struct {
+type Element struct {
 	// it's a room or a tile occupied with interconnection.
 	pathInfo    *pathCell
 	nodeInfo    *nodeCell
@@ -10,19 +10,19 @@ type element struct {
 	connections map[string]*connection
 }
 
-func (e *element) isPartOfAPath() bool {
+func (e *Element) isPartOfAPath() bool {
 	return e.pathInfo != nil
 }
 
-func (e *element) isEmpty() bool {
+func (e *Element) IsEmpty() bool {
 	return e.pathInfo == nil && e.nodeInfo == nil && !e.isObstacle
 }
 
-func (e *element) isPathOrEmpty() bool {
+func (e *Element) IsPathOrEmpty() bool {
 	return e.nodeInfo == nil && !e.isObstacle
 }
 
-func (e *element) setConnectionByCoords(c *connection, x, y int) {
+func (e *Element) setConnectionByCoords(c *connection, x, y int) {
 	direction := "wat?"
 	if x == 0 && y == 1 {
 		direction = "south"
@@ -43,7 +43,7 @@ func (e *element) setConnectionByCoords(c *connection, x, y int) {
 	e.connections[direction] = c
 }
 
-func (e *element) GetConnectionByCoords(x, y int) *connection {
+func (e *Element) GetConnectionByCoords(x, y int) *connection {
 	direction := "wat?"
 	if x == 0 && y == 1 {
 		direction = "south"
@@ -65,23 +65,23 @@ func (e *element) GetConnectionByCoords(x, y int) *connection {
 
 // exported
 
-func (e *element) IsNode() bool {
+func (e *Element) IsNode() bool {
 	return e.nodeInfo != nil
 }
 
-func (e *element) GetName() string {
+func (e *Element) GetName() string {
 	return e.nodeInfo.nodeName
 }
 
-func (e *element) GetTags() []string {
+func (e *Element) GetTags() []string {
 	return e.nodeInfo.nodeTags
 }
 
-func (e *element) HasNoTags() bool {
+func (e *Element) HasNoTags() bool {
 	return len(e.nodeInfo.nodeTags) == 0
 }
 
-func (e *element) HasTag(tag string) bool {
+func (e *Element) HasTag(tag string) bool {
 	for _, t := range e.nodeInfo.nodeTags {
 		if t == tag {
 			return true
@@ -90,7 +90,7 @@ func (e *element) HasTag(tag string) bool {
 	return false
 }
 
-func (e *element) GetAllConnectionsCoords() [][]int {
+func (e *Element) GetAllConnectionsCoords() [][]int {
 	arr := make([][]int, 0)
 	if e.connections["north"] != nil {
 		arr = append(arr, []int{0, -1})

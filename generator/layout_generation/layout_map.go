@@ -6,19 +6,19 @@ import (
 
 type LayoutMap struct {
 	// room map with connections or smth
-	elements       [][]*element
+	elements       [][]*Element
 	rnd            *random.FibRandom
 	randomizePaths bool
 }
 
 func (lm *LayoutMap) init(sizex, sizey int, rnd *random.FibRandom, randomizePaths bool) {
-	lm.elements = make([][]*element, sizex)
+	lm.elements = make([][]*Element, sizex)
 	for i := range lm.elements {
-		lm.elements[i] = make([]*element, sizey)
+		lm.elements[i] = make([]*Element, sizey)
 	}
 	for x := 0; x < sizex; x++ {
 		for y := 0; y < sizey; y++ {
-			lm.elements[x][y] = &element{connections: map[string]*connection{"north": nil, "east": nil, "south": nil, "west": nil}}
+			lm.elements[x][y] = &Element{connections: map[string]*connection{"north": nil, "east": nil, "south": nil, "west": nil}}
 		}
 	}
 	lm.rnd = rnd
@@ -82,7 +82,7 @@ func (lm *LayoutMap) countEmptyElements() int {
 	empties := 0
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
-			if lm.elements[x][y].isEmpty() {
+			if lm.elements[x][y].IsEmpty() {
 				empties++
 			}
 		}
@@ -123,7 +123,7 @@ func (lm *LayoutMap) getRandomPathCoordsAndRandomCellNearPath(pathNum int, allow
 			if (px-x)*(py-y) != 0 { // diagonal direction is restricted
 				continue
 			}
-			if lm.areCoordsValid(x, y) && lm.elements[x][y].isEmpty() {
+			if lm.areCoordsValid(x, y) && lm.elements[x][y].IsEmpty() {
 				return px, py, x, y
 			}
 		}
@@ -154,7 +154,7 @@ func (lm *LayoutMap) getRandomNonEmptyCoordsAndRandomCellNearIt() (int, int, int
 //			if (!cornerAllowed && corner) || (!edgeAllowed && edge) {
 //				continue
 //			}
-//			if lm.elements[x][y].isEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
+//			if lm.elements[x][y].IsEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
 //				emptiesX = append(emptiesX, x)
 //				emptiesY = append(emptiesY, y)
 //			}
@@ -179,7 +179,7 @@ func (lm *LayoutMap) getRandomEmptyCellCoords(minEmptyCellsNear int, cornerAllow
 				continue
 			}
 
-			if lm.elements[x][y].isEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
+			if lm.elements[x][y].IsEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
 				coordsAreInDist := true
 				for nodeName, minDist := range *NodeDistMap {
 					currNodeCoordsForDistCheck := lm.getAllCoordsOfNode(nodeName)
@@ -277,7 +277,7 @@ func (lm *LayoutMap) getRandomEmptyCellCoordsInRange(fx, fy, tx, ty, minEmptyCel
 	}
 	for x := fx; x <= tx; x++ {
 		for y := fy; y <= ty; y++ {
-			if lm.elements[x][y].isEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
+			if lm.elements[x][y].IsEmpty() && (lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear) {
 				emptiesX = append(emptiesX, x)
 				emptiesY = append(emptiesY, y)
 			}
@@ -298,7 +298,7 @@ func (lm *LayoutMap) getRandomEmptyCellNearCoords(nx, ny int) (int, int) {
 			if (nx-x)*(ny-y) != 0 { // restrict diagonals
 				continue
 			}
-			if (x != nx || y != ny) && lm.areCoordsValid(x, y) && lm.elements[x][y].isEmpty() {
+			if (x != nx || y != ny) && lm.areCoordsValid(x, y) && lm.elements[x][y].IsEmpty() {
 				emptiesX = append(emptiesX, x)
 				emptiesY = append(emptiesY, y)
 			}
@@ -317,7 +317,7 @@ func (lm *LayoutMap) getRandomNonEmptyCellCoords(minEmptyCellsNear int) (int, in
 	for x := 0; x < len(lm.elements); x++ {
 		for y := 0; y < len(lm.elements[0]); y++ {
 			// obstacles should not be counted as "non-empty"
-			if !lm.elements[x][y].isObstacle && !lm.elements[x][y].isEmpty() && lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear {
+			if !lm.elements[x][y].isObstacle && !lm.elements[x][y].IsEmpty() && lm.countEmptyCellsNear(x, y) >= minEmptyCellsNear {
 				nonEmptiesX = append(nonEmptiesX, x)
 				nonEmptiesY = append(nonEmptiesY, y)
 			}
@@ -356,7 +356,7 @@ func (lm *LayoutMap) getRandomPathCellCoords(desiredPathNum int, nodesAllowed bo
 }
 
 func (lm *LayoutMap) areCoordsEmpty(x, y int) bool {
-	return lm.elements[x][y].isEmpty()
+	return lm.elements[x][y].IsEmpty()
 }
 
 func (lm *LayoutMap) isPathPresentAtCoords(x, y int) bool {
@@ -364,7 +364,7 @@ func (lm *LayoutMap) isPathPresentAtCoords(x, y int) bool {
 }
 
 func (lm *LayoutMap) areCoordsEmptyOrPathOnly(x, y int) bool {
-	return lm.elements[x][y].isPathOrEmpty()
+	return lm.elements[x][y].IsPathOrEmpty()
 }
 
 func (lm *LayoutMap) countEmptyCellsNear(x, y int) int {
@@ -378,7 +378,7 @@ func (lm *LayoutMap) countEmptyCellsNear(x, y int) int {
 			if x+i < 0 || x+i >= w || y+j < 0 || y+j >= h {
 				continue
 			}
-			if lm.elements[x+i][y+j].isEmpty() {
+			if lm.elements[x+i][y+j].IsEmpty() {
 				count++
 			}
 		}
@@ -467,7 +467,7 @@ func (lm *LayoutMap) GetSize() (int, int) {
 	return len(lm.elements), len(lm.elements[0])
 }
 
-func (lm *LayoutMap) GetElement(x, y int) *element {
+func (lm *LayoutMap) GetElement(x, y int) *Element {
 	return lm.elements[x][y]
 }
 
