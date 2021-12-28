@@ -26,7 +26,7 @@ func (lm *LayoutMap) GetCharOfElementAtCoords(x, y int) rune { // just for rende
 	return '?'
 }
 
-func (lm *LayoutMap) CellToCharArray(cellx, celly int, renderPathNumbers bool) [][]rune {
+func (lm *LayoutMap) CellToCharArray(cellx, celly int, renderPathNumbers, renderNames, renderTags bool) [][]rune {
 	e := lm.elements[cellx][celly]
 	ca := make([][]rune, 5)
 	for i := range ca {
@@ -69,7 +69,7 @@ func (lm *LayoutMap) CellToCharArray(cellx, celly int, renderPathNumbers bool) [
 				}
 			}
 		}
-		if e.GetName() != "" {
+		if e.GetName() != "" && renderNames {
 			ca[1][2] = rune(e.nodeInfo.nodeName[0])
 			ca[2][2] = rune(e.nodeInfo.nodeName[1])
 			ca[3][2] = rune(e.nodeInfo.nodeName[2])
@@ -77,21 +77,23 @@ func (lm *LayoutMap) CellToCharArray(cellx, celly int, renderPathNumbers bool) [
 		if renderPathNumbers && e.pathInfo != nil {
 			ca[2][1] = rune(strconv.Itoa(e.pathInfo.pathNumber)[0])
 		}
-		switch len(e.nodeInfo.nodeTags) {
-		case 1:
-			if len(e.nodeInfo.nodeTags[0]) > 2 {
+		if renderTags {
+			switch len(e.nodeInfo.nodeTags) {
+			case 1:
+				if len(e.nodeInfo.nodeTags[0]) > 2 {
+					ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
+					ca[2][3] = rune(e.nodeInfo.nodeTags[0][1])
+					ca[3][3] = rune(e.nodeInfo.nodeTags[0][2])
+				}
+			case 2:
 				ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
-				ca[2][3] = rune(e.nodeInfo.nodeTags[0][1])
-				ca[3][3] = rune(e.nodeInfo.nodeTags[0][2])
+				ca[2][3] = '-'
+				ca[3][3] = rune(e.nodeInfo.nodeTags[1][0])
+			case 3:
+				ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
+				ca[2][3] = rune(e.nodeInfo.nodeTags[1][0])
+				ca[3][3] = rune(e.nodeInfo.nodeTags[2][0])
 			}
-		case 2:
-			ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
-			ca[2][3] = '-'
-			ca[3][3] = rune(e.nodeInfo.nodeTags[1][0])
-		case 3:
-			ca[1][3] = rune(e.nodeInfo.nodeTags[0][0])
-			ca[2][3] = rune(e.nodeInfo.nodeTags[1][0])
-			ca[3][3] = rune(e.nodeInfo.nodeTags[2][0])
 		}
 		// draw path cell
 	} else if e.pathInfo != nil {
@@ -112,7 +114,7 @@ func (lm *LayoutMap) CellToCharArray(cellx, celly int, renderPathNumbers bool) [
 	return ca
 }
 
-func (lm *LayoutMap) WholeMapToCharArray(pathNumbers bool) *[][]rune {
+func (lm *LayoutMap) WholeMapToCharArray(pathNumbers, names, tags bool) *[][]rune {
 	sx, sy := lm.GetSize()
 	ca := make([][]rune, 5*sx)
 	for i := range ca {
@@ -120,7 +122,7 @@ func (lm *LayoutMap) WholeMapToCharArray(pathNumbers bool) *[][]rune {
 	}
 	for x := 0; x < len(lm.elements); x++ {
 		for y := 0; y < len(lm.elements[0]); y++ {
-			cellArr := lm.CellToCharArray(x, y, pathNumbers)
+			cellArr := lm.CellToCharArray(x, y, pathNumbers, names, tags)
 			for i := 0; i < 5; i++ {
 				for j := 0; j < 5; j++ {
 					ca[5*x+i][5*y+j] = cellArr[i][j]

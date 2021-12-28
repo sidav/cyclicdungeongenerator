@@ -1,8 +1,8 @@
 package layout_generation
 
 import (
-	"github.com/sidav/cyclicdungeongenerator/random"
 	"fmt"
+	"github.com/sidav/cyclicdungeongenerator/random"
 	"strings"
 	"time"
 )
@@ -88,7 +88,7 @@ generationStart:
 		}
 		b.layout.randomizeTagLocationsPerNode()
 		elapsed := time.Since(start)
-		return b.layout.WholeMapToCharArray(false), patternTry, true, &flawsPerStep, elapsed, !b.layout.PerformLocksCheckForPattern(pattern)
+		return b.layout.WholeMapToCharArray(false, true, true), patternTry, true, &flawsPerStep, elapsed, !b.layout.PerformLocksCheckForPattern(pattern)
 	}
 	elapsed := 100000 * time.Hour // so it will be obvious if the mean time measurement is bugged
 	return nil, b.TriesForPattern, false, &flawsPerStep, elapsed, false
