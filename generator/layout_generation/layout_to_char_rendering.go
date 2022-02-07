@@ -100,8 +100,17 @@ func (lm *LayoutMap) CellToCharArray(cellx, celly int, renderPathNumbers, render
 		}
 		for x := -1; x <= 1; x++ {
 			for y := -1; y <= 1; y++ {
-				if e.GetConnectionByCoords(x, y) != nil {
-					ca[2+x*2][2+y*2] = ' '
+				conn := e.GetConnectionByCoords(x, y)
+				if conn != nil {
+					if lm.GetElement(cellx+x, celly+y).IsPathOrEmpty() {
+						ca[2+x*2][2+y*2] = ' '
+					} else {
+						if conn.IsLocked {
+							ca[2+x*2][2+y*2] = rune(strconv.Itoa(conn.LockNum)[0])
+						} else {
+							ca[2+x*2][2+y*2] = '+'
+						}
+					}
 					ca[2+x][2+y] = ' '
 				}
 			}
