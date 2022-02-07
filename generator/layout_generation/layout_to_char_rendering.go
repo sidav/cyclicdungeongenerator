@@ -50,11 +50,7 @@ func (lm *LayoutMap) CellToCharArray(cellx, celly int, renderPathNumbers, render
 				conn := e.GetConnectionByCoords(x, y)
 				if conn != nil {
 					if conn.IsLocked {
-						if conn.LockNum == 1 {
-							ca[2+x*2][2+y*2] = '%'
-						} else {
-							ca[2+x*2][2+y*2] = '='
-						}
+						ca[2+x*2][2+y*2] = rune(strconv.Itoa(conn.LockNum)[0])
 					} else {
 						if conn.IsNodeExtension {
 							ca[2+x*2-y][2+y*2] = ' '
