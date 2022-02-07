@@ -7,5 +7,5 @@ type LayoutInterface interface {
 	GetSize() (int, int)
 	GetElement(int, int) *layout_generation.Element
 	GetCharOfElementAtCoords(int, int) rune
-	CellToCharArray(int, int, bool, bool, bool) []rune
+	CellToCharArray(int, int, bool, bool, bool) [][]rune
 }
